@@ -6,8 +6,6 @@ int yylex();
 int yyerror(char *s);
 %}
 
-/* defined matrix as a unidimensional array of integers */
-
 %union{ int* mx; char* string; }
 
 %token DOT_P TRANSP KRAO KNECKER HADAMAR
@@ -18,23 +16,15 @@ int yyerror(char *s);
 %%
 
 
-expression : '(' expression ')' 
-           | expression operation expression 
+expression : '(' expression ')'
+           | expression DOT_P expression
+           | TRANSP expression
+           | expression KRAO expression
+           | expression KNECKER expression
+           | expression HADAMAR expression
            |id
            { printf("%s\n",$1);}
            ;
-
-operation : DOT_P
-         { printf ("invoca multiplicacao mx\n;");}
-         | TRANSP
-         { printf ("invoca transposicao mx;\n");}
-         | KRAO
-         { printf ("invoca khatri-rao mx;\n");}
-         | KNECKER
-         { printf ("invoca khronecker mx;\n");}
-         | HADAMAR
-         { printf ("invoca hadamar mx;\n");}
-         ;
 
 %%
 #include "lex.yy.c"
