@@ -2,14 +2,26 @@
 #include <stdio.h>
 #include <strings.h>
 /* Declaracoes C diversas */
+
+char* expression1, expression2 ;
+
 %}
 
-%token
-%type
+/* defined matrix as a unidimensional array of integers */
 
+%union{ int* mx; char* string; }
+
+%token <string> id
+%type <string> Expression
 %%
 
-expression : operation '(' id , id ')'
+
+Expression : '(' Expression ')' 
+           { $$ = $2; }
+           | '(' Expression ')' 'mult' '(' Expression ')'
+           {  expression1 = $2; expression2 = $6; printf(" multiplica\n");}
+           | id
+           ;
 
 %%
 int yyerror(char *s)
