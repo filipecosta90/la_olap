@@ -6,24 +6,25 @@ int yylex();
 int yyerror(char *s);
 %}
 
-%union{ int* mx; char* string; }
+%union{ char* string; }
 
-%token DOT_P TRANSP KRAO KNECKER HADAMAR
-%left DOT_P TRANSP KRAO KNECKER HADAMAR
+%token DOT_P TRANSP  KRAO KRON HADAMARD
+%left DOT_P TRANSP KRAO KRON HADAMARD
+%token <string> operand_id
 
-%token <string> id
+%start expression
 
 %%
 
 
 expression : '(' expression ')'
            | expression DOT_P expression
-           | TRANSP expression
+           | expression TRANSP expression
            | expression KRAO expression
-           | expression KNECKER expression
-           | expression HADAMAR expression
-           |id
-           { printf("%s\n",$1);}
+           | expression KRON expression
+           | expression HADAMARD expression
+           | operand_id
+           { printf("%s\n",$1); }
            ;
 
 %%
