@@ -1,10 +1,3 @@
-%{
-#include <stdio.h>
-#include <strings.h>
-/* Declaracoes C diversas */
-int yylex();
-int yyerror(char *s);
-%}
 
 %union{ char* string; }
 
