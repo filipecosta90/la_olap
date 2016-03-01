@@ -90,6 +90,11 @@
 
 
 /* Copy the first part of user declarations.  */
+#line 1 "grammar.y"
+
+#include <stdio.h>
+#include <stdlib.h>
+extern FILE *fp;
 
 
 /* Enabling traces.  */
@@ -123,7 +128,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 127 "y.tab.c"
+#line 132 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -410,8 +415,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    10,    61,    62,    66,    67,    71,    72,    76,    86,
-      87,    88,    92,    96,    97,    98,   102,   103,   107
+       0,    17,    68,    69,    73,    74,    78,    79,    83,    93,
+      94,    95,    99,   103,   104,   105,   109,   110,   114
 };
 #endif
 
@@ -1328,7 +1333,7 @@ yyreduce:
     {
       
 /* Line 1267 of yacc.c.  */
-#line 1332 "y.tab.c"
+#line 1337 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1542,17 +1547,26 @@ yyreturn:
 }
 
 
-#line 110 "grammar.y"
+#line 117 "grammar.y"
 
-#include <stdio.h>
 
-extern char yytext[];
-extern int column;
-
-yyerror(s)
-char *s;
+#include"lex.yy.c"
+#include<ctype.h>
+int count=0;
+int main(int argc, char *argv[])
 {
-  fflush(stdout);
-  printf("\n%*s\n%*s\n", column, "^", column, s);
+  yyin = fopen(argv[1], "r");
+
+if(!yyparse())
+printf("\nParsing complete\n");
+else
+printf("\nParsing failed\n");
+fclose(yyin);
+return 0;
 }
+yyerror(char *s) {
+printf("%d : %s %s\n", yylineno, s, yytext );
+}         
+
+
 

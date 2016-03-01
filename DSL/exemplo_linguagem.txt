@@ -1,2 +1,2 @@
-multiplication(katr(tabela1.csv,tabela2.csv),kron(tabela3.csv,tabela4.csv))
-
+vector;
+vector a;

@@ -1,3 +1,10 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+extern FILE *fp;
+%}
+
+
 %token IDENTIFIER CONSTANT STRING_LITERAL 
 %token VECTOR MATRIX BITMAP
 %token KRAO KRON
@@ -108,14 +115,23 @@ external_declaration
           ;
 
 %%
-#include <stdio.h>
 
-extern char yytext[];
-extern int column;
-
-yyerror(s)
-char *s;
+#include"lex.yy.c"
+#include<ctype.h>
+int count=0;
+int main(int argc, char *argv[])
 {
-  fflush(stdout);
-  printf("\n%*s\n%*s\n", column, "^", column, s);
+  yyin = fopen(argv[1], "r");
+
+if(!yyparse())
+printf("\nParsing complete\n");
+else
+printf("\nParsing failed\n");
+fclose(yyin);
+return 0;
 }
+yyerror(char *s) {
+printf("%d : %s %s\n", yylineno, s, yytext );
+}         
+
+

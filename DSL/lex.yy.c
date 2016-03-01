@@ -486,10 +486,7 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "lex_analyser.l"
-#line 6 "lex_analyser.l"
-#include <stdio.h>
-#include "y.tab.h"
-#line 493 "lex.yy.c"
+#line 490 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -671,10 +668,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 10 "lex_analyser.l"
+#line 5 "lex_analyser.l"
 
 
-#line 678 "lex.yy.c"
+#line 675 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -759,122 +756,122 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 12 "lex_analyser.l"
+#line 7 "lex_analyser.l"
 { return("VECTOR"); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 13 "lex_analyser.l"
+#line 8 "lex_analyser.l"
 { return("MATRIX"); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 14 "lex_analyser.l"
+#line 9 "lex_analyser.l"
 { return("BITMAP"); }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 16 "lex_analyser.l"
-{ count(); return(STRING_LITERAL); }
+#line 11 "lex_analyser.l"
+{ return(STRING_LITERAL); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 17 "lex_analyser.l"
-{ count(); return(check_type()); }
+#line 12 "lex_analyser.l"
+{  return(check_type()); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 20 "lex_analyser.l"
+#line 15 "lex_analyser.l"
 { return(';'); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 21 "lex_analyser.l"
+#line 16 "lex_analyser.l"
 { return('{'); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 22 "lex_analyser.l"
+#line 17 "lex_analyser.l"
 { return('}'); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 23 "lex_analyser.l"
+#line 18 "lex_analyser.l"
 { return(','); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 24 "lex_analyser.l"
+#line 19 "lex_analyser.l"
 { return('='); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 25 "lex_analyser.l"
+#line 20 "lex_analyser.l"
 { return('('); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 26 "lex_analyser.l"
+#line 21 "lex_analyser.l"
 { return(')'); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 27 "lex_analyser.l"
+#line 22 "lex_analyser.l"
 { return('.'); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 28 "lex_analyser.l"
+#line 23 "lex_analyser.l"
 { return('-'); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 29 "lex_analyser.l"
+#line 24 "lex_analyser.l"
 { return('+'); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 30 "lex_analyser.l"
+#line 25 "lex_analyser.l"
 { return('*'); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 31 "lex_analyser.l"
+#line 26 "lex_analyser.l"
 { return('/'); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 32 "lex_analyser.l"
-{ return("KRON"); }
+#line 27 "lex_analyser.l"
+{ return KRON ; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 33 "lex_analyser.l"
+#line 28 "lex_analyser.l"
 { return("><"); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 34 "lex_analyser.l"
-{ return("KRAO"); }
+#line 29 "lex_analyser.l"
+{ return KRAO ; }
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 36 "lex_analyser.l"
+#line 31 "lex_analyser.l"
 { }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 37 "lex_analyser.l"
+#line 32 "lex_analyser.l"
 { /* ignore bad characters */ }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 39 "lex_analyser.l"
+#line 34 "lex_analyser.l"
 ECHO;
 	YY_BREAK
-#line 878 "lex.yy.c"
+#line 875 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1871,13 +1868,9 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 39 "lex_analyser.l"
+#line 34 "lex_analyser.l"
 
 
-
-int yywrap(){
-    return(1);
-}
 
 int check_type()
 {
