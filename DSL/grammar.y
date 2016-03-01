@@ -1,34 +1,121 @@
+%token IDENTIFIER CONSTANT STRING_LITERAL 
+%token VECTOR MATRIX BITMAP
+%token KRAO KRON
 
-%union{ char* string; }
-
-%token DOT_P TRANSP  KRAO KRON HADAMARD
-%left DOT_P TRANSP KRAO KRON HADAMARD
-%token <string> operand_id
-
-%start expression
+%start translation_unit
 
 %%
 
+primary_expression
+          : IDENTIFIER
+          | CONSTANT
+          | STRING_LITERAL
+          | '(' expression ')'
+          ;
 
-expression : '(' expression ')'
-           | expression DOT_P expression
-           | expression TRANSP expression
-           | expression KRAO expression
-           | expression KRON expression
-           | expression HADAMARD expression
-           | operand_id
-           { printf("%s\n",$1); }
-           ;
+unary_operator
+          : 'TR'
+          ;
+
+postfix_expression
+          : primary_expression
+          ;
+
+unary_expression 
+          : postfix_expression
+          ;
+
+cast_expression
+          : unary_expression
+          ;
+
+multiplicative_expression
+          : cast_expression
+          | multiplicative_expression '.' cast_expression
+          | multiplicative_expression '><' cast_expression
+          | multiplicative_expression KRON cast_expression
+          | multiplicative_expression KRAO cast_expression
+          ;
+
+additive_expression 
+          : multiplicative_expression
+          | additive_expression '+' multiplicative_expression
+          | additive_expression '-' multiplicative_expression
+          ;
+
+assignment_expression
+          : unary_expression assignment_operator assignment_expression
+          ;
+
+assignment_operator
+          : '='
+          ;
+
+expression
+          : assignment_expression
+          | expression ',' assignment_expression
+          ;
+
+
+declaration
+          : declaration_specifiers ';'
+          | declaration_specifiers init_declarator_list ';'
+          ;
+
+declaration_specifiers
+          : type_specifier
+          | type_specifier declaration_specifiers
+          ;
+
+init_declarator_list
+          : init_declarator
+          | init_declarator_list ',' init_declarator
+          ;
+
+init_declarator
+          : declarator
+          | declarator '=' initializer
+          ;
+
+initializer
+          : assignment_expression
+          ;
+
+
+type_specifier
+          : VECTOR
+          | MATRIX
+          | BITMAP
+          ;
+
+declarator
+          : direct_declarator
+          ;
+
+direct_declarator
+          : IDENTIFIER
+          | '(' declarator ')'
+          | direct_declarator '(' ')'
+          ;
+
+translation_unit
+          : external_declaration
+          | translation_unit external_declaration
+          ;
+
+external_declaration
+          : declaration
+          ;
 
 %%
-#include "lex.yy.c"
-int yyerror(char *s)
-{
-  fprintf(stderr, "ERRO: %s \n", s);
-}
+#include <stdio.h>
 
-int main()
+extern char yytext[];
+extern int column;
+
+yyerror(s)
+char *s;
 {
-  yyparse();
-  return(0);
+  fflush(stdout);
+  printf("\n%*s\n%*s\n", column, "^", column, s);
 }
