@@ -1,28 +1,18 @@
-
-// "cria" a matriz mas nao lhe aloca espaco
 matrix a, b;
-// ira cria uma matriz 2*2 inicializada a zeros
 matrix(2,2) c,d;
 
-// le a matriz do ficheiro e aloca o espaco automaticamente para o tamanho presente no csv
 a = csvread('nomeficheiro1.csv');
 b = csvread('nomeficheiro2.csv');
 
-// exemplo do produto interno
 c = a . b;
 
-// exeplo do produto de hadamard
 d = a >< b;
 
-// exemplo do produto de kronecker
 d = a kron b;
 
-// exemplo do produto de Khatri-Rao
 c  = a krao d;
 
-// a matriz d será o resultado do produto entre a transposta  de d e ( o produto de hadamard entre a e b ) e o produto da matriz c
 d = d' . ( a >< b) * c;
 
-// escreve os resultados no ficheiro csv
 csvwrite('nomedoficheiro.csv',c);
 

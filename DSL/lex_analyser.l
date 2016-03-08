@@ -4,13 +4,9 @@ H     [a-fA-F0-9]
 
 %%
 
-"vector"     { return("VECTOR"); }
-"matrix"     { return("MATRIX"); }
-"bitmap"     { return("BITMAP"); }
-
-L?\"(\\.|[^\\"])*\" { return(STRING_LITERAL); }
-{L}({L}|{D})*   {  return(check_type()); }
-
+"vector"     { return(VECTOR); }
+"matrix"     { return(MATRIX); }
+"bitmap"     { return(BITMAP); }
 
 ";"     { return(';'); }
 "{"     { return('{'); }
@@ -23,11 +19,14 @@ L?\"(\\.|[^\\"])*\" { return(STRING_LITERAL); }
 "-"     { return('-'); }
 "+"     { return('+'); }
 "*"     { return('*'); }
+"'"     {return(''');}
 "/"     { return('/'); }
 "kron"     { return KRON ; }
-"><"     { return("><"); }
+"><"     { return(HADAMARD); }
 "krao"     { return KRAO ; }
 
+L?\"(\\.|[^\\"])*\" { return(STRING_LITERAL); }
+{L}({L}|{D})*   {  return(check_type()); }
 [ \t\v\n\f]   { }
 .     { /* ignore bad characters */ }
 

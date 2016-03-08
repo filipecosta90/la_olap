@@ -7,112 +7,85 @@ extern FILE *fp;
 
 %token IDENTIFIER CONSTANT STRING_LITERAL 
 %token VECTOR MATRIX BITMAP
-%token KRAO KRON
+%token KRAO KRON HADAMARD TR
 
 %start translation_unit
 
 %%
+primary_expression : IDENTIFIER
+                   | CONSTANT
+                   | STRING_LITERAL
+                   | '(' expression ')'
+                   ;
 
-primary_expression
-          : IDENTIFIER
-          | CONSTANT
-          | STRING_LITERAL
-          | '(' expression ')'
-          ;
+unary_operator : TR
+               ;
 
-unary_operator
-          : 'TR'
-          ;
+cast_expression : primary_expression
+                ;
 
-postfix_expression
-          : primary_expression
-          ;
+multiplicative_expression : cast_expression
+                          | multiplicative_expression '.' cast_expression
+                          | multiplicative_expression HADAMARD cast_expression
+                          | multiplicative_expression KRON cast_expression
+                          | multiplicative_expression KRAO cast_expression
+                          ;
 
-unary_expression 
-          : postfix_expression
-          ;
+additive_expression : multiplicative_expression
+                    | additive_expression '+' multiplicative_expression
+                    | additive_expression '-' multiplicative_expression
+                    ;
 
-cast_expression
-          : unary_expression
-          ;
+assignment_expression : primary_expression assignment_operator assignment_expression
+                      ;
 
-multiplicative_expression
-          : cast_expression
-          | multiplicative_expression '.' cast_expression
-          | multiplicative_expression '><' cast_expression
-          | multiplicative_expression KRON cast_expression
-          | multiplicative_expression KRAO cast_expression
-          ;
+assignment_operator : '='
+                    ;
 
-additive_expression 
-          : multiplicative_expression
-          | additive_expression '+' multiplicative_expression
-          | additive_expression '-' multiplicative_expression
-          ;
-
-assignment_expression
-          : unary_expression assignment_operator assignment_expression
-          ;
-
-assignment_operator
-          : '='
-          ;
-
-expression
-          : assignment_expression
-          | expression ',' assignment_expression
-          ;
+expression : assignment_expression
+           | expression ',' assignment_expression
+           ;
 
 
-declaration
-          : declaration_specifiers ';'
-          | declaration_specifiers init_declarator_list ';'
-          ;
+declaration : declaration_specifiers ';'
+            | declaration_specifiers init_declarator_list ';'
+            ;
 
-declaration_specifiers
-          : type_specifier
-          | type_specifier declaration_specifiers
-          ;
+declaration_specifiers : type_specifier
+                       | type_specifier declaration_specifiers
+                       ;
 
-init_declarator_list
-          : init_declarator
-          | init_declarator_list ',' init_declarator
-          ;
+init_declarator_list : init_declarator
+                     | init_declarator_list ',' init_declarator
+                     ;
 
-init_declarator
-          : declarator
-          | declarator '=' initializer
-          ;
+init_declarator : declarator
+                | declarator '=' initializer
+                ;
 
-initializer
-          : assignment_expression
-          ;
+initializer : assignment_expression
+            ;
 
 
-type_specifier
-          : VECTOR
-          | MATRIX
-          | BITMAP
-          ;
+type_specifier : VECTOR
+               | MATRIX
+               | BITMAP
+               ;
 
-declarator
-          : direct_declarator
-          ;
+declarator : direct_declarator
+           ;
 
-direct_declarator
-          : IDENTIFIER
-          | '(' declarator ')'
-          | direct_declarator '(' ')'
-          ;
+direct_declarator : IDENTIFIER
+                  | '(' declarator ')'
+                  | direct_declarator '(' ')'
+                  ;
 
-translation_unit
-          : external_declaration
-          | translation_unit external_declaration
-          ;
+translation_unit : external_declaration
+                 | translation_unit external_declaration
+                 ;
 
-external_declaration
-          : declaration
-          ;
+external_declaration : declaration
+                     ;
 
 %%
 
