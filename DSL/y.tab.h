@@ -41,31 +41,29 @@
    enum yytokentype {
      BGN = 258,
      END = 259,
-     STRING_LITERAL = 260,
-     CHARACTER = 261,
-     INTEGER = 262,
-     HADAMARD = 263,
-     KRAO = 264,
-     KRON = 265,
-     TR = 266,
-     VECTOR = 267,
-     MATRIX = 268,
-     BITMAP = 269
+     IDENTIFIER = 260,
+     INTEGER = 261,
+     HADAMARD = 262,
+     KRAO = 263,
+     KRON = 264,
+     TR = 265,
+     VECTOR = 266,
+     MATRIX = 267,
+     BITMAP = 268
    };
 #endif
 /* Tokens.  */
 #define BGN 258
 #define END 259
-#define STRING_LITERAL 260
-#define CHARACTER 261
-#define INTEGER 262
-#define HADAMARD 263
-#define KRAO 264
-#define KRON 265
-#define TR 266
-#define VECTOR 267
-#define MATRIX 268
-#define BITMAP 269
+#define IDENTIFIER 260
+#define INTEGER 261
+#define HADAMARD 262
+#define KRAO 263
+#define KRON 264
+#define TR 265
+#define VECTOR 266
+#define MATRIX 267
+#define BITMAP 268
 
 
 

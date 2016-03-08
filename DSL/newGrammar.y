@@ -6,7 +6,7 @@
   void yyerror(const char *s);
 %}
 
-%token BGN END STRING_LITERAL CHARACTER INTEGER
+%token BGN END IDENTIFIER INTEGER
 %token HADAMARD KRAO KRON TR
 %token VECTOR MATRIX BITMAP
 
@@ -15,39 +15,43 @@
 initial_expression : BGN body END
                    ;
 
-body : matrix_declaration
-     | body matrix_declaration
-     | atribuition
+body : body elem
+     | elem 
      ;
 
-matrix_declaration : type identifier
-                   | type '(' INTEGER ',' INTEGER ')'
+elem : matrix_declaration
+     | atribuition
+     | function
+     ;
+
+matrix_declaration : type dim idList
                    ;
+dim  : 
+     | '(' INTEGER ',' INTEGER ')'
+     ;
+
+idList : IDENTIFIER 
+       | idList ',' IDENTIFIER
+       ;
 
 type : VECTOR
      | MATRIX
      | BITMAP
      ;
 
-identifier : CHARACTER
-           ;
-
-atribuition : identifier '=' function
-            | identifier '=' expression
+atribuition : IDENTIFIER '=' function
+            | IDENTIFIER '=' expression
             ;
 
-expression : identifier '.' identifier
-           | identifier HADAMARD identifier
-           | identifier KRON identifier
-           | identifier KRAO identifier
-           | identifier TR
+expression : IDENTIFIER '*' IDENTIFIER
+           | IDENTIFIER HADAMARD IDENTIFIER
+           | IDENTIFIER KRON IDENTIFIER
+           | IDENTIFIER KRAO IDENTIFIER
+           | IDENTIFIER TR
            | '(' expression ')'
            ;
 
-function : STRING_LITERAL '(' filename ')'
-         ;
-
-filename : STRING_LITERAL
+function : IDENTIFIER '(' IDENTIFIER ')'
          ;
 
 %%
