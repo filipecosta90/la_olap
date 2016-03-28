@@ -1,0 +1,16 @@
+
+28/03/2016
+  Numerical linear algebra for high-performance computers / Jack J. Dongarra... [et al.]. - XVIII, 342 p. ; 26 cm
+  CHAPTER 6
+
+28/03/2016
+  Numerical linear algebra for high-performance computers / Jack J. Dongarra... [et al.]. - XVIII, 342 p. ; 26 cm
+  CHAPTER 6
+
+
+REFERENCES
+1. Ortega J. M., ”Introduction to Parallel and Vector Solution of Linear Systems”, Plenum Press, (ISBN 0-306-42862-8)
+2. Dongarra J. J., Duff I. S., Sorensen D. C., Van der Vorst H. A., “Solving Linear Systems on Vector and Shared Memory Computers”, SIAM.
+3. Gallivan K. A. et al., “Parallel Algorithms for Matrix Computations”
+4. Bertsekas D., Tsitsiklis J., “Parallel and Distributed Computation, Nu- merical Methods”
+5. Golub G. H., VanLoan C. F., “Matrix Computations”, 3rd Edition
