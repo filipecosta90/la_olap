@@ -1,53 +1,30 @@
 D     [0-9]
 L     [a-zA-Z_]
 H     [a-fA-F0-9]
-
+%{
+  #include "y.tab.h"
+%}
 %%
-
-"vector"     { return(VECTOR); }
-"matrix"     { return(MATRIX); }
-"bitmap"     { return(BITMAP); }
+"BEGIN"   {return (BGN);}
+"END"     {return (END);}
+"vector"  {return (VECTOR);}
+"matrix"  {return (MATRIX);}
+"bitmap"  {return (BITMAP);}
 
 ";"     { return(';'); }
-"{"     { return('{'); }
-"}"     { return('}'); }
 ","     { return(','); }
 "="     { return('='); }
 "("     { return('('); }
 ")"     { return(')'); }
-"."     { return('.'); }
-"-"     { return('-'); }
-"+"     { return('+'); }
-"*"     { return('*'); }
-"'"     {return(''');}
-"/"     { return('/'); }
-"kron"     { return KRON ; }
-"><"     { return(HADAMARD); }
-"krao"     { return KRAO ; }
+"*"     { return('.'); }
+"'"     {return (TR);}
+"kron"     { return (KRON); }
+"><"     { return (HADAMARD); }
+"krao"     { return (KRAO); }
 
-L?\"(\\.|[^\\"])*\" { return(STRING_LITERAL); }
-{L}({L}|{D})*   {  return(check_type()); }
+[0-9]+  {return (INTEGER);}
+L?\"(\\.|[^\\"])*\" { return (IDENTIFIER); }
 [ \t\v\n\f]   { }
 .     { /* ignore bad characters */ }
 
 %%
-
-int check_type()
-{
-/*
-* pseudo code --- this is what it should check
-*
-* if (yytext == type_name)
-*   return(TYPE_NAME);
-*
-* return(IDENTIFIER);
-*/
-
-/*
-* it actually will only return IDENTIFIER
-*/
-
-  return(IDENTIFIER);
-  }
-
-
