@@ -20,42 +20,63 @@ char* getfield(char* line, int num, char* return_string ){
 
 int main( int argc, char* argv[]){
   //define sparse-matrix M
-  int* matrix_values;
-  long* matrix_rows;
-  long* column_index;
+  float* matrix_values;
+  int* matrix_rows;
+  int* column_index;
   int current_values_size = ARRAY_SIZE;
-  matrix_values = (int*) malloc (current_values_size * sizeof(int));
-  matrix_rows = (long*) malloc (current_values_size * sizeof(long));
-  column_index = (long*) malloc (current_values_size * sizeof(long));
+  matrix_values = (float*) malloc (current_values_size * sizeof(float));
+  matrix_rows = (int*) malloc (current_values_size * sizeof(int));
+  column_index = (int*) malloc (current_values_size * sizeof(int));
+
+
 
   FILE* stream = fopen(argv[1], "r");
   char line[1024];
   int column = atoi (argv[2]);
-  int value_num = 0;
-  while (fgets(line, 1024, stream))
+
+  int key_col = atoi (argv[2]);.
+    int column = atoi (argv[3]);.
+
+    int column_num = 1;
+  int number_rows = 1;
+  for( ; (fgets(line, 1024, stream) ) ; )
   {
+    char *key = (char*) malloc( 128 * sizeof(char) );
     char *field = (char*) malloc( 128 * sizeof(char) );
-    char* tmp = strdup(line);
-    field = getfield(tmp, column, field);
-    //GQuark* quark;
-    GQuark quark = g_quark_from_string (field);
-
-    if ( value_num > current_values_size ){
-      matrix_values = (int*) realloc(matrix_values, current_values_size * GROWTH_FACTOR * sizeof(int) );
-      matrix_rows =  (long*) realloc(matrix_rows, current_values_size * GROWTH_FACTOR * sizeof(long) );
-      column_index =  (long*) realloc(column_index, current_values_size * GROWTH_FACTOR * sizeof(long) );
+    char* tmp_key = strdup(line);
+    char* tmp_field = strdup(line);
+    key = getfield(tmp_key, key_col, key);
+    field = getfield(tmp_field, column, field);
+    GQuark* quark_key;
+    quark_key = g_quark_from_string (key);
+    GQuark* quark_field;
+    quark_field = g_quark_from_string (field);
+    if ( column_num > current_values_size ){
       current_values_size *= GROWTH_FACTOR;
+      matrix_values = realloc(matrix_values, current_values_size * GROWTH_FACTOR * sizeof(float) );
+      matrix_rows =  realloc(matrix_rows, current_values_size * GROWTH_FACTOR * sizeof(int) );
+      column_index =  realloc(column_index, current_values_size * GROWTH_FACTOR * sizeof(int) );
     }
-    matrix_values[value_num]=1;
-    //matrix_rows[value_num]=quark;
-    //column_index[value_num]=quark;
 
+    matrix_values[column_num]=1.0;
+    matrix_rows[column_num]= (int) quark;
+    column_index[column_num]= (int) quark;
 
-    printf("%d ,%d \n", value_num, quark);
-    // printf("%d - %d \t Field %d would be: {%s}\tQUARK: {%d}\tRE-CONVERTED: {%s}\n", line_num, quark, column, field, quark, gnu_string );
+    if( quark > number_rows ) {
+      number_rows = quark;
+    }
+
+    printf("%d ,%d\n", (int) quark , column_num);
     free(tmp);
-    value_num++;
+    column_num++; 
   }
-  printf("total columns %d\n int: %dquark: %d\n", value_num, sizeof(int), sizeof(GQuark*));
+
+  sparse_matrix_t A;
+  int stat;
+  stat = mkl_sparse_s_create_csc(&A,SPARSE_INDEX_BASE_ZERO, number_rows, column_num, column_index, column_index +1, column_index, matrix_values );
+  if ( stat == SPARSE_STATUS_SUCCESS){
+    //  printf( "SPARSE_STATUS_SUCCESS\n");
+  }
+  //printf("matrix %d >< %d \n", number_rows, column_num); 
   return 0;
 }
