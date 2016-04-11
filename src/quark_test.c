@@ -9,6 +9,8 @@
 #define LINE_SIZE 64
 #define ARRAY_SIZE LINE_SIZE / sizeof (int)
 #define GROWTH_FACTOR 2
+#define MAX_FIELD_SIZE 128
+#define MAX_REG_SIZE 1024
 
 char* getfield(char* line, int num, char* return_string ){
   return_string = strtok(line, "|");
@@ -23,11 +25,13 @@ int main( int argc, char* argv[]){
   //define sparse-matrix M
   float* matrix_values;
   int* matrix_rows;
-  int* matrix_columns;
+  int* pointer_B;
+  int* pointer_E;
   int current_values_size = ARRAY_SIZE;
   matrix_values = (float*) malloc (current_values_size * sizeof(float));
   matrix_rows = (int*) malloc (current_values_size * sizeof(int));
-  matrix_columns = (int*) malloc (current_values_size * sizeof(int));
+  pointer_B = (int*) malloc (current_values_size * sizeof(int));
+  pointer_E = (int*) malloc (current_values_size * sizeof(int));
 
   FILE* stream = fopen(argv[1], "r");
   char line[1024];
@@ -37,49 +41,45 @@ int main( int argc, char* argv[]){
   int max_row = -1;
   int max_column = -1;
   int element_number = 0;
-  for( element_number = 0 ; (fgets(line, 1024, stream) ) ; ++element_number )
+  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number )
   {
-    char *key = (char*) malloc( 128 * sizeof(char) );
-    char *field = (char*) malloc( 128 * sizeof(char) );
-    char* tmp_key = strdup(line);
+    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     char* tmp_field = strdup(line);
-    key = getfield(tmp_key, key_col, key);
     field = getfield(tmp_field, column, field);
-    GQuark* quark_key;
-    quark_key = g_quark_from_string (key);
     GQuark* quark_field;
     quark_field = g_quark_from_string (field);
+
+    /* if arrays are full double its size */
     if ( element_number > current_values_size ){
       current_values_size *= GROWTH_FACTOR;
       matrix_values = realloc(matrix_values, current_values_size * GROWTH_FACTOR * sizeof(float) );
       matrix_rows =  realloc(matrix_rows, current_values_size * GROWTH_FACTOR * sizeof(int) );
-      matrix_columns =  realloc(matrix_columns, current_values_size * GROWTH_FACTOR * sizeof(int) );
+      pointer_B =  realloc(matrix_rows, current_values_size * GROWTH_FACTOR * sizeof(int) );
+      pointer_E =  realloc(matrix_rows, current_values_size * GROWTH_FACTOR * sizeof(int) );
     }
 
+    /* particular property */
     matrix_values[element_number]=1.0;
+    pointer_B[element_number]=element_number;
+    pointer_E[element_number]=element_number+1;
+
+    /* normal csr property */
     matrix_rows[element_number]=quark_field;
-    matrix_columns[element_number]=quark_key;
+
     if ((int)quark_field > max_row) {
       max_row = quark_field;
     }
-    if ((int)quark_key > max_column ){
-      max_column = quark_key;
-    }
-    //printf("%d ,%d, 1\n", (int) quark_field , quark_key );
-    free(tmp_key);
     free(tmp_field);
-
   }
 
-  sparse_matrix_t A;
+  sparse_matrix_t table_projection;
   int stat;
-  stat = mkl_sparse_s_create_coo(&A,SPARSE_INDEX_BASE_ZERO, max_row, max_column, element_number, matrix_rows, matrix_columns, matrix_values );
+  stat = mkl_sparse_s_create_csr(&table_projection, SPARSE_INDEX_BASE_ZERO ,  max_row, element_number, pointer_B, pointer_E,  matrix_rows, matrix_values );
   if ( stat == SPARSE_STATUS_SUCCESS){
     printf( "SPARSE_STATUS_SUCCESS\n");
   }
-  sparse_matrix_t A_csr;
-
-  int job[5];
+  /*
+     int job[5];
 
   // If job[0]=0, the matrix in the CSR format is converted to the coordinate format;
   // if job[0]=1, the matrix in the coordinate format is converted to the CSR format.
@@ -113,18 +113,18 @@ int main( int argc, char* argv[]){
   float* csr_values;
   int* csr_ia;
   int* csr_ja;
- csr_values = (float*) malloc (current_values_size * sizeof(float));
+  csr_values = (float*) malloc (current_values_size * sizeof(float));
   csr_ia = (int*) malloc (current_values_size * sizeof(int));
   csr_ja = (int*) malloc (current_values_size * sizeof(int));
 
 
   mkl_scsrcoo (&job , &element_number , &csr_values , &csr_ja , &csr_ia , &element_number , &matrix_values , &matrix_rows , &matrix_columns , &convert_stat );
-  
-   if ( convert_stat == 0){
-    printf( "The convert execution was successful.\n");
+
+  if ( convert_stat == 0){
+  printf( "The convert execution was successful.\n");
   }
-  
-  printf("matrix %d >< %d, nonZ %d \n", max_row, max_column, element_number ); 
+  i*/
+  printf("matrix %d >< %d, nonZ %d \n", max_row, element_number, element_number ); 
 
   return 0;
 }
