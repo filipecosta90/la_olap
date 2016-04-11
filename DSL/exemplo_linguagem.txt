@@ -1,8 +1,8 @@
 matrix a, b;
 matrix(2,2) c,d;
 
-a = csvread('nomeficheiro1.csv');
-b = csvread('nomeficheiro2.csv');
+a = csvread('nomeficheiro1.csv', 2);
+b = csvread('nomeficheiro2.csv', 3);
 
 c = a . b;
 
