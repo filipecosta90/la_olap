@@ -23,11 +23,12 @@ elem : matrix_declaration ';'
      | function ';'
      ;
 
-matrix_declaration : type dim idList
+matrix_declaration : type dim idList {printf("Matrix declaration\n");}
                    ;
-dim  : 
-     | '(' INTEGER ',' INTEGER ')'
-     ;
+
+dim :
+    | '(' INTEGER ',' INTEGER ')'
+    ;
 
 idList : IDENTIFIER 
        | idList ',' IDENTIFIER
@@ -38,19 +39,20 @@ type : VECTOR
      | BITMAP
      ;
 
-atribuition : IDENTIFIER '=' function
-            | IDENTIFIER '=' expression
+atribuition : IDENTIFIER '=' function {printf("Function\n");}
+            | IDENTIFIER '=' expression {printf("Expression\n");}
             ;
 
-expression : IDENTIFIER '*' IDENTIFIER
-           | IDENTIFIER HADAMARD IDENTIFIER
-           | IDENTIFIER KRON IDENTIFIER
-           | IDENTIFIER KRAO IDENTIFIER
-           | IDENTIFIER TR
+expression : IDENTIFIER '*' IDENTIFIER {printf("DOT\n");}
+           | IDENTIFIER HADAMARD IDENTIFIER {printf("HADAMARD\n");}
+           | IDENTIFIER KRON IDENTIFIER {printf("KRON\n");}
+           | IDENTIFIER KRAO IDENTIFIER {printf("KRAO\n");}
+           | IDENTIFIER TR {printf("TR\n");}
            | '(' expression ')'
            ;
 
-function : IDENTIFIER '(' IDENTIFIER ')'
+function : IDENTIFIER '(' IDENTIFIER ',' INTEGER ')'
+         | IDENTIFIER '(' INTEGER ')'
          ;
 
 %%
@@ -66,6 +68,9 @@ int yywrap(){
 }
 
 int main(int argc, char *argv[]){
-  yylex();
-  return 0;
+/*  int s;
+  while(s = yylex()){
+    printf("%d\n",s);
+  }*/
+  return (yyparse());
 }
