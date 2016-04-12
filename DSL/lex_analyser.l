@@ -1,9 +1,9 @@
 D     [0-9]
-L     [a-zA-Z_]
 H     [a-fA-F0-9]
 %{
   #include "y.tab.h"
 %}
+
 %%
 "BEGIN"   {return (BGN);}
 "END"     {return (END);}
@@ -16,15 +16,24 @@ H     [a-fA-F0-9]
 "="     { return('='); }
 "("     { return('('); }
 ")"     { return(')'); }
-"*"     { return('.'); }
+"*"     { return('*'); }
 "'"     {return (TR);}
 "kron"     { return (KRON); }
 "><"     { return (HADAMARD); }
 "krao"     { return (KRAO); }
 
 [0-9]+  {return (INTEGER);}
-L?\"(\\.|[^\\"])*\" { return (IDENTIFIER); }
+[a-zA-Z_'.0-9]* { return (IDENTIFIER); }
 [ \t\v\n\f]   { }
 .     { /* ignore bad characters */ }
 
 %%
+
+/*int yywrap(){return 1;}
+
+int main(){
+  int s;
+  while( s = yylex() ){
+  printf("%d\n",s);
+  }
+}*/
