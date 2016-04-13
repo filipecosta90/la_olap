@@ -23,12 +23,9 @@ elem : matrix_declaration ';'
      | function ';'
      ;
 
-matrix_declaration : type dim idList {printf("Matrix declaration\n");}
+matrix_declaration : type idList {printf("Matrix declaration\n");}
+                   | type atribuition {printf("Matrix declaration and atribuition\n");}
                    ;
-
-dim :
-    | '(' INTEGER ',' INTEGER ')'
-    ;
 
 idList : IDENTIFIER 
        | idList ',' IDENTIFIER
