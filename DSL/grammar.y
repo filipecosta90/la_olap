@@ -53,6 +53,7 @@ expression : IDENTIFIER '*' IDENTIFIER {printf("DOT\n");}
 
 function : IDENTIFIER '(' IDENTIFIER ',' INTEGER ')'
          | IDENTIFIER '(' INTEGER ')'
+         | IDENTIFIER '(' IDENTIFIER ')'
          ;
 
 %%

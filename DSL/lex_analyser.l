@@ -23,7 +23,7 @@ H     [a-fA-F0-9]
 "krao"     { return (KRAO); }
 
 [0-9]+  {return (INTEGER);}
-[a-zA-Z_'.0-9]* { return (IDENTIFIER); }
+[a-zA-Z_'.0-9/]* { return (IDENTIFIER); }
 [ \t\v\n\f]   { }
 .     { /* ignore bad characters */ }
 
