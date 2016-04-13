@@ -13,8 +13,8 @@ conv_model = conv(t_model);
 
 matrix inter_result;
 
-inter_result = t_color * t_sales;
+inter_result = t_color krao t_sales;
 
-result = inter_result * conv_model;
+result = inter_result krao conv_model;
 
 END
