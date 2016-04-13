@@ -1,0 +1,13 @@
+BEGIN
+
+matrix t_color, t_sales, t_model;
+
+t_color = tbl_read('__tbl/fig3.tbl', 3);
+t_sales = tbl_read('__tbl/fig3.tbl', 4);
+t_model = tbl_read('__tbl/fig3.tbl', 1);
+
+matrix result;
+
+result = t_color * t_sales * conv(t_model);
+
+END
