@@ -2,17 +2,13 @@
 CC = icc
 LIBLDIR=
 #include
-INCLUDE= 
+INCLUDE=  
 #flags
-CFLAGS=  -DMKL_ILP64 -m64 -std=c99 -Iinclude -Ilib/glib-2.0 -Ilib/glib-2.0/include -lglib-2.0 -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm
+CFLAGS= -g -debug  -I${MKLROOT}/include -Iinclude -Ilib/glib-2.0 -Ilib/glib-2.0/include -lglib-2.0 -std=c99   -L${MKLROOT}/lib -Wl,-rpath,${MKLROOT}/lib -lmkl_intel -lmkl_core -lmkl_sequential -lpthread -lm -ldl
+
 
 test: olap.o 
-	$(CC) olap.c $(INCLUDE)  $(CFLAGS) -o olap 
-
-test.mk: /opt/intel/mkl/bin/mklvars.sh
-	    ./$< > $@ intel64
-
-include test.mk
+	$(CC) $(INCLUDE) $(CFLAGS) olap.c -o olap 
 
 all: test 
 

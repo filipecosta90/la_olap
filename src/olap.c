@@ -12,54 +12,54 @@
 #define MAX_REG_SIZE 1024
 
 char* getfield(char* line, int num, char* return_string ){
-  return_string = strtok(line, "|");
+  return_string = strtok(line, "|\n");
   int pos = 1;
-  for ( ; pos <= num; pos++ ){
+  for ( ; pos < num; pos++ ){
     return_string = strtok(NULL, "|\n");
   }
   return return_string;
 }
 
-void check_errors(int stat ){
-    if ( stat == SPARSE_STATUS_SUCCESS ){
-        printf( "SPARSE_STATUS_SUCCESS.\n");
-    }
-    if ( stat == SPARSE_STATUS_NOT_INITIALIZED ){
-        printf( "SPARSE_STATUS_NOT_INITIALIZED.\n");
-    }
-    if ( stat == SPARSE_STATUS_ALLOC_FAILED ){
-        printf( "SPARSE_STATUS_ALLOC_FAILED.\n");
-    }
-    if ( stat == SPARSE_STATUS_INVALID_VALUE ){
-        printf( "SPARSE_STATUS_INVALID_VALUE.\n");
-    }
-    if ( stat == SPARSE_STATUS_EXECUTION_FAILED){
-        printf( "SPARSE_STATUS_EXECUTION_FAILED.\n");
-    }
-    if ( stat == SPARSE_STATUS_INTERNAL_ERROR){
-        printf( "SPARSE_STATUS_INTERNAL_ERROR.\n");
-    }
-    if ( stat == SPARSE_STATUS_NOT_SUPPORTED){
-        printf( "SPARSE_STATUS_NOT_SUPPORTED.\n");
-    }
+void check_errors(MKL_INT stat ){
+  if ( stat == SPARSE_STATUS_SUCCESS ){
+    printf( "SPARSE_STATUS_SUCCESS.\n");
+  }
+  if ( stat == SPARSE_STATUS_NOT_INITIALIZED ){
+    printf( "SPARSE_STATUS_NOT_INITIALIZED.\n");
+  }
+  if ( stat == SPARSE_STATUS_ALLOC_FAILED ){
+    printf( "SPARSE_STATUS_ALLOC_FAILED.\n");
+  }
+  if ( stat == SPARSE_STATUS_INVALID_VALUE ){
+    printf( "SPARSE_STATUS_INVALID_VALUE.\n");
+  }
+  if ( stat == SPARSE_STATUS_EXECUTION_FAILED){
+    printf( "SPARSE_STATUS_EXECUTION_FAILED.\n");
+  }
+  if ( stat == SPARSE_STATUS_INTERNAL_ERROR){
+    printf( "SPARSE_STATUS_INTERNAL_ERROR.\n");
+  }
+  if ( stat == SPARSE_STATUS_NOT_SUPPORTED){
+    printf( "SPARSE_STATUS_NOT_SUPPORTED.\n");
+  }
 }
 
 int main( int argc, char* argv[]){
 
   MKL_INT current_values_size = ARRAY_SIZE;
-  
+
   //define COO sparse-matrix M
-  int* aux_coo_rows;
+  MKL_INT* aux_coo_rows;
   aux_coo_rows = (int*) malloc (current_values_size * sizeof(int));
 
   FILE* stream = fopen(argv[1], "r");
   char line[1024];
-  int column = atoi (argv[2]);
+  MKL_INT column = atoi (argv[2]);
   MKL_INT number_rows = - 1;
   MKL_INT number_columns = -1 ;
   MKL_INT element_number = 1;
-  
-    for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number )
+
+  for( element_number = 1 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number )
   {
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     char* tmp_field = strdup(line);
@@ -67,70 +67,112 @@ int main( int argc, char* argv[]){
     unsigned int quark_field;
     quark_field = g_quark_from_string (field);
 
-      //printf("%u %d\n", quark_field, number_rowIntel MKL ERROR: Parameter 1 was incorrect on entry to MKL_SCSRCOO.s);
     /* if arrays are full double its size */
     if ( element_number > current_values_size ){
-
       current_values_size *= GROWTH_FACTOR;
-      aux_coo_rows = (int*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
-
+      aux_coo_rows =  realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
     }
 
     /* normal coo property */
-    aux_coo_rows[element_number]= quark_field;
+    aux_coo_rows[element_number-1]= (short) quark_field;
 
     if ( (short) quark_field > number_rows ) {
       number_rows = ( short ) quark_field;
     }
-      
     free(tmp_field);
   }
-    MKL_INT NNZ = element_number - 1 ;
-    number_columns = element_number;
 
-    //define COO sparse-matrix M
-    float* coo_values;
-    MKL_INT* coo_rows;
-    MKL_INT* coo_columns;
-    
-    coo_values = mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
-    coo_rows =  mkl_malloc ((element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    coo_columns =  mkl_malloc ((element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  MKL_INT NNZ = element_number;
+  number_columns = element_number;
 
-    for (MKL_INT pos = 0; pos < element_number; ++pos) {
-        coo_values[pos] = 1.0;
-        coo_columns[pos] = pos;
-        coo_rows[pos] = aux_coo_rows[pos];
-    }
-    free(aux_coo_rows);
-    
-    
+  //define COO sparse-matrix M
+  float* coo_values;
+  MKL_INT* coo_rows;
+  MKL_INT* coo_columns;
+
+  coo_values = mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  coo_rows =  mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_columns =  mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  for (int pos = 0; pos < element_number; ++pos) {
+    coo_values[pos] = 1.0;
+    coo_columns[pos] = pos;
+    coo_rows[pos] = aux_coo_rows[pos]-1;
+  }
+  //free(aux_coo_rows);
+
   /////////////////////////////////
   //
   //   CONVERT FROM COO TO CSR
   //
   ////////////////////////////////
-  
+
   float* csr_values = NULL;
-    long long job[6];
-    job[0]=2;
-    job[1]=0;
-    job[2]=0;
-    job[3]=0;
-  job[4]=NNZ;
-    job[5]=0;
 
-    MKL_INT* AJ;
-    MKL_INT* AI;
-    csr_values = mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
-    AJ = mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
-    AI = mkl_malloc ((element_number+1 * sizeof(float)), MEM_LINE_SIZE );
-    
-    printf("going to convert matrix N x M = %d x %d\n", number_rows, number_columns);
-    int info;
-    mkl_scsrcoo (&job[0], &number_columns, csr_values, AJ, AI, &NNZ, coo_values, coo_rows, coo_columns, &info);
-    
-    check_errors(info);
+  MKL_INT job[6] = {
+    1, // if job[0]=2, the matrix in the coordinate format is converted to the CSR
+       // format, and the column indices in CSR representation are sorted in the
+       // increasing order within each row.
+    0, // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    0, // If job[2]=0, zero-based indexing for the matrix in coordinate format is
+       //used;
+    0, 
+    NNZ,// job[4]=nzmax - maximum number of the non-zero elements allowed if
+        // job[0]=0.
+    0   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+  };
 
-    return 0;
+  MKL_INT* JA;
+  MKL_INT* IA;
+
+  csr_values = mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  JA = mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA = mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  printf("going to convert matrix N x M = %d x %d\nNNZ: %d JOB4: %d\n", number_rows, number_columns, NNZ, job[4]);
+  MKL_INT info=-1;
+  mkl_scsrcoo (job, &number_columns, csr_values, JA, IA, &NNZ, coo_values, coo_rows, coo_columns, &info);
+  check_errors(info);
+  for (MKL_INT pos = 0; pos < NNZ; pos++){
+    printf("%f, ", csr_values[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos < NNZ; pos++){
+    printf("%d, ", JA[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos <= number_columns; pos++){
+    printf("%d, ", IA[pos]);
+  }
+  printf("\n");
+
+  /////////////////////////////////
+  //
+  //   CONVERT FROM CSR TO BSR
+  //
+  ////////////////////////////////
+  MKL_INT job_b[6] = {
+    0, //If job[0]=0, the matrix in the CSR format is converted to the BSR format;
+    0, //If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    0, //If job[2]=0, zero-based indexing for the matrix in the BSR format is used;
+    0, //
+    0, // 
+    1  //If job[5]>0, all output arrays absr, jab, and iab are filled in for the
+      // output storage.
+  };
+  float* bsr_values = NULL;
+  MKL_INT* JAB;
+  MKL_INT* IAB;
+  bsr_values = mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  JAB = mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IAB = mkl_malloc (((number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  MKL_INT info_bsr=-1;
+  MKL_INT mblk = 1;
+  MKL_INT ldabsr = 1;
+  printf("going to convert to BSR:\n");
+  mkl_scsrbsr ( job_b ,&number_rows, &mblk, &ldabsr, csr_values, JA, IA, bsr_values, JAB, IAB, &info_bsr );
+  printf("ok\n");
+  check_errors(info_bsr);
+  return 0;
 }
