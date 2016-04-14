@@ -179,7 +179,6 @@ int main( int argc, char* argv[]){
   MKL_INT ldAbsr;
   ldAbsr=mblk*mblk;
   MKL_INT NROWS =  ( number_rows / mblk ) +1 ;
-  printf( "%d %d\n", number_rows, NROWS );
   bsr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
   JAB = (MKL_INT*) mkl_malloc( ((MBLK+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   IAB = (MKL_INT*) mkl_malloc (((NROWS+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
@@ -192,7 +191,6 @@ int main( int argc, char* argv[]){
 
   printf("going to convert to BSR:\n");
   mkl_scsrbsr ( job ,&number_rows, &mblk, &ldAbsr, csr_values, JA, IA, bsr_values, JAB, IAB, &info_bsr );
-  printf("ok\n");
   check_errors(info_bsr);
 
   for ( int i=0; i < NNZ; i++){
