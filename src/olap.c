@@ -15,6 +15,8 @@
 #define MAX_FIELD_SIZE 128
 #define MAX_REG_SIZE 1024
 
+#define MBLK  2
+
 char* getfield(char* line, int num, char* return_string ){
   return_string = strtok(line, "|\n");
   int pos = 1;
@@ -61,6 +63,7 @@ int main( int argc, char* argv[]){
   MKL_INT number_rows = - 1;
   MKL_INT number_columns = -1 ;
   MKL_INT element_number = 1;
+  MKL_INT job[8];
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number )
   {
@@ -98,13 +101,13 @@ int main( int argc, char* argv[]){
   coo_rows =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   coo_columns =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-  for (int pos = 0; pos < element_number; ++pos) {
+  for (int pos = 0; pos < NNZ; pos++) {
     coo_values[pos] = 1.0;
     coo_columns[pos] = pos;
     coo_rows[pos] = aux_coo_rows[pos];
     printf("%f %d %d\n", coo_values[pos], coo_rows[pos], coo_columns[pos]);
   }
-  mkl_free(aux_coo_rows);
+  free(aux_coo_rows);
 
   /////////////////////////////////
   //
@@ -114,30 +117,30 @@ int main( int argc, char* argv[]){
 
   float* csr_values = NULL;
 
-  MKL_INT job[6] = {
-    1, // if job[0]=2, the matrix in the coordinate format is converted to the CSR
-    // format, and the column indices in CSR representation are sorted in the
-    // increasing order within each row.
-    0, // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-    0, // If job[2]=0, zero-based indexing for the matrix in coordinate format is
-    //used;
-    0, 
-    NNZ,// job[4]=nzmax - maximum number of the non-zero elements allowed if
-    // job[0]=0.
-    0   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
-  };
+  job[0]=  2; // if job[0]=2, the matrix in the coordinate format is converted to the CSR
+  // format, and the column indices in CSR representation are sorted in the
+  // increasing order within each row.
+  job[1]= 0; // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  job[2]= 0; // If job[2]=0, zero-based indexing for the matrix in coordinate format is
+  //used;
+  job[3]= 0;
+  job[4]= NNZ;// job[4]=nzmax - maximum number of the non-zero elements allowed if
+  // job[0]=0.
+  job[5]= 0;   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+
 
   MKL_INT* JA;
   MKL_INT* IA;
 
   csr_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
   JA = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  IA = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
+  IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  printf("hello\n");
   printf("going to convert matrix N x M = %d x %d\nNNZ: %d JOB4: %d\n", number_rows, number_columns, NNZ, job[4]);
   MKL_INT info=-1;
-  mkl_scsrcoo (job, &number_columns, csr_values, JA, IA, &NNZ, coo_values, coo_rows, coo_columns, &info);
+  mkl_scsrcoo (job, &number_rows, csr_values, JA, IA, &NNZ, coo_values, coo_rows, coo_columns, &info);
   check_errors(info);
+
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", csr_values[pos]);
   }
@@ -146,7 +149,7 @@ int main( int argc, char* argv[]){
     printf("%d, ", JA[pos]);
   }
   printf("\n");
-  for (int pos = 0; pos <= number_columns; pos++){
+  for (int pos = 0; pos <= number_rows; pos++){
     printf("%d, ", IA[pos]);
   }
   printf("\n");
@@ -155,34 +158,54 @@ int main( int argc, char* argv[]){
   mkl_free(coo_rows);
   mkl_free(coo_columns);
 
-
   /////////////////////////////////
   //
   //   CONVERT FROM CSR TO BSR
   //
   ////////////////////////////////
-  MKL_INT job_b[6] = {
-    0, //If job[0]=0, the matrix in the CSR format is converted to the BSR format;
-    0, //If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-    0, //If job[2]=0, zero-based indexing for the matrix in the BSR format is used;
-    0, //
-    0, // 
-    1  //If job[5]>0, all output arrays absr, jab, and iab are filled in for the
-      // output storage.
-  };
+
+  job[0] = 0;  //If job[0]=0, the matrix in the CSR format is converted to the BSR format;
+  job[1] = 0;  //If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  job[2] = 0;  //If job[2]=0, zero-based indexing for the matrix in the BSR format is used;
+  job[3] = 0;  //
+  job[4] = 0;  //
+  job[5] = 1;  //If job[5]>0, all output arrays absr, jab, and iab are filled in for the
+  // output storage.
+
   float* bsr_values = NULL;
   MKL_INT* JAB;
   MKL_INT* IAB;
+  MKL_INT mblk = MBLK;
+  MKL_INT ldAbsr;
+  ldAbsr=mblk*mblk;
+  MKL_INT NROWS =  ( number_rows / mblk ) +1 ;
+  printf( "%d %d\n", number_rows, NROWS );
   bsr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-  JAB = (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  IAB = (MKL_INT*) mkl_malloc (((number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  JAB = (MKL_INT*) mkl_malloc( ((MBLK+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IAB = (MKL_INT*) mkl_malloc (((NROWS+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   MKL_INT info_bsr=-1;
-  MKL_INT mblk = 1;
-  MKL_INT ldabsr = 1;
+
+  for ( MKL_INT i=0; i < NNZ; i++){
+    csr_values[i]=0.0;
+  }
+
   printf("going to convert to BSR:\n");
-  mkl_scsrbsr ( job_b ,&number_rows, &mblk, &ldabsr, csr_values, JA, IA, bsr_values, JAB, IAB, &info_bsr );
+  mkl_scsrbsr ( job ,&number_rows, &mblk, &ldAbsr, csr_values, JA, IA, bsr_values, JAB, IAB, &info_bsr );
   printf("ok\n");
   check_errors(info_bsr);
+
+  for ( int i=0; i < NNZ; i++){
+    printf("%f, ", bsr_values[i]);
+  }
+  printf("\n");
+  for ( int i=0; i < mblk; i++){ 
+    printf("%d, ", JAB[i]);
+  }
+  printf("\n");
+  for ( int i=0; i < NROWS+1; i++){
+    printf("%d, ", IAB[i]);
+  }
+  printf("\n");
   return 0;
 }
