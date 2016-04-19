@@ -192,14 +192,14 @@ int main( int argc, char* argv[]){
 
 
   float* csc_values = NULL;
-   MKL_INT* JA1;
+  MKL_INT* JA1;
   MKL_INT* IA1;
 
-csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
   JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
   IA1 = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   sparse_status_t status_convert_csc;
-  
+
   printf("going to transpose CSR:\n");
   mkl_scsrcsc(job, &NNZ, csr_values, JA, IA, csc_values, JA1, IA1, &status_convert_csc);
   check_errors(status_convert_csc); 
@@ -217,6 +217,82 @@ csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZ
   }
   printf("\n");
 
+  /////////////////////////////////
+  //
+  //   Khatri-Rao CSR 
+  //   C = A krao B 
+  //
+  ////////////////////////////////
+
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job[0] = 0;
+  // job[1]
+  job[1] = 0;
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+
+  float* csc_values_A = NULL;
+  MKL_INT* JA1_A;
+  MKL_INT* IA1_A;
+
+  csc_values_A = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  JA1_A = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA1_A = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  float* csc_values_B = NULL;
+  MKL_INT* JA1_B;
+  MKL_INT* IA1_B;
+
+  csc_values_B = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  JA1_B = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA1_B = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  printf("going to convert CSR A to CSC A:\n");
+  mkl_scsrcsc(job, &NNZ, csr_values, JA, IA, csc_values_A, JA1_A, IA1_B, &status_convert_csc);
+  check_errors(status_convert_csc); 
+
+  printf("going to convert CSR B to CSC B:\n");
+  mkl_scsrcsc(job, &NNZ, csr_values, JA, IA, csc_values_B, JA1_B, IA1_B, &status_convert_csc);
+  check_errors(status_convert_csc); 
+
+  MKL_INT number_rows_A = number_rows;
+  MKL_INT number_rows_B = number_rows;
+  MKL_INT number_rows_C = number_rows_A * number_rows_B;
+  MKL_INT nnz_B = NNZ;
+  MKL_INT nnz_C = nnz_B * number_rows_A;
+
+  float* csc_values_C = NULL;
+  MKL_INT* JA1_C;
+  MKL_INT* IA1_C;
+
+  csc_values_C = (float*) mkl_malloc (( nnz_C * sizeof(float)), MEM_LINE_SIZE );
+  JA1_C = (MKL_INT*) mkl_malloc (( nnz_C * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA1_C = (MKL_INT*) mkl_malloc ((number_rows_C+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  // go through all columns of B 
+  // lets refer to it as column X of matrix B
+  for (MKL_INT column_krao = 0; column_krao < number_columns; ++column_krao ){
+    MKL_INT padding_row = column_krao * number_rows_A;
+    // go through all row elements of column X of matrix B
+    for ( MKL_INT B_column_pos = 0; B_column_pos < number_rows_B ; ++B_column_pos ){
+      // go through all row elements of column X of matrix A
+      MKL_INT pos_B = padding_row + B_column_pos;
+      ifor (MKL_INT A_column_pos = 0; A_column_pos < number_rows_A; ++A_column_pos ){
+        MKL_INT pos_A = padding_row + A_column_pos;
+        MKL_INT pos_C = padding_row + A_column_pos;
+        csc_values_C[pos_A+p]
+        float current_value = csc_values_B[pos_B] * 
+      }
+    }
+  }
 
   /////////////////////////////////
   //
