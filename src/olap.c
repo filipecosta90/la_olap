@@ -281,15 +281,15 @@ int main( int argc, char* argv[]){
   // lets refer to it as column X of matrix B
   for (MKL_INT column_krao = 0; column_krao < number_columns; ++column_krao ){
     MKL_INT padding_row = column_krao * number_rows_A;
+    MKL_INT padding_c_row = column_krao * number_rows_C;
     // go through all row elements of column X of matrix B
     for ( MKL_INT B_column_pos = 0; B_column_pos < number_rows_B ; ++B_column_pos ){
       // go through all row elements of column X of matrix A
       MKL_INT pos_B = padding_row + B_column_pos;
-      ifor (MKL_INT A_column_pos = 0; A_column_pos < number_rows_A; ++A_column_pos ){
+      for (MKL_INT A_column_pos = 0; A_column_pos < number_rows_A; ++A_column_pos ){
         MKL_INT pos_A = padding_row + A_column_pos;
-        MKL_INT pos_C = padding_row + A_column_pos;
-        csc_values_C[pos_A+p]
-        float current_value = csc_values_B[pos_B] * 
+        MKL_INT pos_C = padding_c_row + ( B_column_pos * number_rows_B) + A_column_pos;
+        csc_values_C[pos_C] = csc_values_B[pos_B] * csc_values_A[pos_A];
       }
     }
   }
