@@ -171,6 +171,55 @@ int main( int argc, char* argv[]){
 
   /////////////////////////////////
   //
+  //   TRANSPOSE CSR
+  //
+  ////////////////////////////////
+
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job[0] = 0;
+  // job[1]
+  job[1] = 0;
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+
+
+  float* csc_values = NULL;
+   MKL_INT* JA1;
+  MKL_INT* IA1;
+
+csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA1 = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  sparse_status_t status_convert_csc;
+  
+  printf("going to transpose CSR:\n");
+  mkl_scsrcsc(job, &NNZ, csr_values, JA, IA, csc_values, JA1, IA1, &status_convert_csc);
+  check_errors(status_convert_csc); 
+
+  for (MKL_INT pos = 0; pos < NNZ; pos++){
+    printf("%f, ", csc_values[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos < NNZ; pos++){
+    printf("%d, ", JA1[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos <= number_columns; pos++){
+    printf("%d, ", IA1[pos]);
+  }
+  printf("\n");
+
+
+  /////////////////////////////////
+  //
   //   CONVERT FROM CSR TO BSR
   //
   ////////////////////////////////
