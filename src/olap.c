@@ -26,7 +26,7 @@ char* getfield(char* line, int num, char* return_string ){
   return return_string;
 }
 
-void check_errors(MKL_INT stat ){
+void check_errors( sparse_status_t stat ){
   if ( stat == SPARSE_STATUS_SUCCESS ){
     printf( "SPARSE_STATUS_SUCCESS.\n");
   }
@@ -157,6 +157,7 @@ int main( int argc, char* argv[]){
   mkl_free(coo_values);
   mkl_free(coo_rows);
   mkl_free(coo_columns);
+
 
   /////////////////////////////////
   //
