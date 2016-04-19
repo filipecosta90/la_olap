@@ -10,12 +10,10 @@
 
 //Cache-Lines size is (typically) 64 bytes
 #define MEM_LINE_SIZE 64
-#define ARRAY_SIZE MEM_LINE_SIZE / sizeof (int)
+#define ARRAY_SIZE MEM_LINE_SIZE / sizeof (MKL_INT)
 #define GROWTH_FACTOR 2
 #define MAX_FIELD_SIZE 128
 #define MAX_REG_SIZE 1024
-
-#define MBLK  2
 
 char* getfield(char* line, int num, char* return_string ){
   return_string = strtok(line, "|\n");
@@ -51,6 +49,7 @@ void check_errors( sparse_status_t stat ){
 }
 
 int main( int argc, char* argv[]){
+  mkl_verbose(1);
   MKL_INT current_values_size = ARRAY_SIZE;
 
   //define COO sparse-matrix M
@@ -128,18 +127,16 @@ int main( int argc, char* argv[]){
   // job[0]=0.
   job[5]= 0;   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
 
-
   MKL_INT* JA;
   MKL_INT* IA;
 
   csr_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
   JA = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
   IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  printf("hello\n");
   printf("going to convert matrix N x M = %d x %d\nNNZ: %d JOB4: %d\n", number_rows, number_columns, NNZ, job[4]);
-  MKL_INT info=-1;
-  mkl_scsrcoo (job, &number_rows, csr_values, JA, IA, &NNZ, coo_values, coo_rows, coo_columns, &info);
-  check_errors(info);
+  sparse_status_t status_coo_csr;
+  mkl_scsrcoo (job, &number_rows, csr_values, JA, IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
+  check_errors(status_coo_csr);
 
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", csr_values[pos]);
@@ -161,49 +158,59 @@ int main( int argc, char* argv[]){
 
   /////////////////////////////////
   //
+  //   CREATE CSR
+  //
+  ////////////////////////////////
+
+  sparse_matrix_t  A_csr;
+  sparse_status_t status_create_csr;
+
+  printf("going to create CSR:\n");
+  status_create_csr = mkl_sparse_s_create_csr ( &A_csr, SPARSE_INDEX_BASE_ZERO, number_rows, number_columns, IA, IA+1, JA, csr_values);
+  check_errors(status_create_csr); 
+
+  /////////////////////////////////
+  //
   //   CONVERT FROM CSR TO BSR
   //
   ////////////////////////////////
 
-  job[0] = 0;  //If job[0]=0, the matrix in the CSR format is converted to the BSR format;
-  job[1] = 0;  //If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  job[2] = 0;  //If job[2]=0, zero-based indexing for the matrix in the BSR format is used;
-  job[3] = 0;  //
-  job[4] = 0;  //
-  job[5] = 1;  //If job[5]>0, all output arrays absr, jab, and iab are filled in for the
-  // output storage.
-
-  float* bsr_values = NULL;
-  MKL_INT* JAB;
-  MKL_INT* IAB;
-  MKL_INT mblk = MBLK;
-  MKL_INT ldAbsr;
-  ldAbsr=mblk*mblk;
-  MKL_INT NROWS =  ( number_rows / mblk ) +1 ;
-  bsr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-  JAB = (MKL_INT*) mkl_malloc( ((MBLK+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  IAB = (MKL_INT*) mkl_malloc (((NROWS+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
-  MKL_INT info_bsr=-1;
-
-  for ( MKL_INT i=0; i < NNZ; i++){
-    csr_values[i]=0.0;
-  }
+  sparse_matrix_t  A_bsr;
+  sparse_status_t status_convert_bsr;
+  MKL_INT mblk = 1;
 
   printf("going to convert to BSR:\n");
-  mkl_scsrbsr ( job ,&number_rows, &mblk, &ldAbsr, csr_values, JA, IA, bsr_values, JAB, IAB, &info_bsr );
-  check_errors(info_bsr);
+  status_convert_bsr = mkl_sparse_convert_bsr ( A_csr,   mblk, SPARSE_LAYOUT_ROW_MAJOR, SPARSE_OPERATION_NON_TRANSPOSE, &A_bsr );
+  check_errors(status_convert_bsr); 
 
+  float* bsr_values = NULL;
+  MKL_INT* JA_B;
+  MKL_INT* IA_B;
+  MKL_INT* ROWS_END;
+  MKL_INT ROWS_B = 0;
+  MKL_INT COLS_B = 0;
+  MKL_INT BLOCK_SIZE;
+
+  sparse_index_base_t indexing = SPARSE_INDEX_BASE_ZERO; 
+  sparse_layout_t block_layout = SPARSE_LAYOUT_ROW_MAJOR;
+
+  sparse_status_t status_export_bsr;
+  printf("going to export BSR:\n");
+  mkl_verbose(1);
+  status_export_bsr = mkl_sparse_s_export_bsr ( A_bsr, &indexing, &block_layout, &ROWS_B, &COLS_B, &BLOCK_SIZE, &IA_B, &ROWS_END, &JA_B, &bsr_values);
+  check_errors(status_export_bsr); 
+  mkl_verbose(1);
   for ( int i=0; i < NNZ; i++){
     printf("%f, ", bsr_values[i]);
   }
+
   printf("\n");
   for ( int i=0; i < mblk; i++){ 
-    printf("%d, ", JAB[i]);
+    printf("%d, ", JA_B[i]);
   }
   printf("\n");
-  for ( int i=0; i < NROWS+1; i++){
-    printf("%d, ", IAB[i]);
+  for ( int i=0; i < ROWS_B+1; i++){
+    printf("%d, ", IA_B[i]);
   }
   printf("\n");
   return 0;
