@@ -197,7 +197,7 @@ int main( int argc, char* argv[]){
 
   csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
   JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  IA1 = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA1 = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   sparse_status_t status_convert_csc;
 
   printf("going to transpose CSR:\n");
@@ -245,7 +245,7 @@ int main( int argc, char* argv[]){
 
   csc_values_A = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
   JA1_A = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  IA1_A = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA1_A = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   float* csc_values_B = NULL;
   MKL_INT* JA1_B;
@@ -253,19 +253,23 @@ int main( int argc, char* argv[]){
 
   csc_values_B = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
   JA1_B = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  IA1_B = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA1_B = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   printf("going to convert CSR A to CSC A:\n");
-  mkl_scsrcsc(job, &NNZ, csr_values, JA, IA, csc_values_A, JA1_A, IA1_B, &status_convert_csc);
+  mkl_scsrcsc(job, &number_columns, csr_values, JA, IA, csc_values_A, JA1_A, IA1_A, &status_convert_csc);
   check_errors(status_convert_csc); 
 
   printf("going to convert CSR B to CSC B:\n");
-  mkl_scsrcsc(job, &NNZ, csr_values, JA, IA, csc_values_B, JA1_B, IA1_B, &status_convert_csc);
+  mkl_scsrcsc(job, &number_columns, csr_values, JA, IA, csc_values_B, JA1_B, IA1_B, &status_convert_csc);
   check_errors(status_convert_csc); 
 
   MKL_INT number_rows_A = number_rows;
+  MKL_INT number_cols_A = number_columns;
+  MKL_INT number_cols_C = number_columns;
   MKL_INT number_rows_B = number_rows;
+
   MKL_INT number_rows_C = number_rows_A * number_rows_B;
+  MKL_INT nnz_A = NNZ;
   MKL_INT nnz_B = NNZ;
   MKL_INT nnz_C = nnz_B * number_rows_A;
 
@@ -275,27 +279,50 @@ int main( int argc, char* argv[]){
 
   csc_values_C = (float*) mkl_malloc (( nnz_C * sizeof(float)), MEM_LINE_SIZE );
   JA1_C = (MKL_INT*) mkl_malloc (( nnz_C * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  IA1_C = (MKL_INT*) mkl_malloc ((number_rows_C+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  IA1_C = (MKL_INT*) mkl_malloc ((number_cols_C+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   // go through all columns of B 
   // lets refer to it as column X of matrix B
+  MKL_INT lower_limit_A, upper_limit_A, lower_limit_B, upper_limit_B; 
+  MKL_INT lower_pos_A, upper_pos_A, lower_pos_B, upper_pos_B; 
   MKL_INT c_value_pos = 0;
-  for (MKL_INT column_krao = 0; column_krao < number_columns; ++column_krao ){
-    MKL_INT padding_row = column_krao * number_rows_A;
-    MKL_INT padding_c_row = column_krao * number_rows_C;
-    // go through all row elements of column X of matrix B
-    for ( MKL_INT B_column_pos = 0; B_column_pos < number_rows_B ; ++B_column_pos ){
-      // go through all row elements of column X of matrix A
-      
-      MKL_INT pos_B = padding_row + B_column_pos;
-      for (MKL_INT A_column_pos = 0; A_column_pos < number_rows_A; ++A_column_pos, ++c_value_pos ){
-        MKL_INT pos_A = padding_row + A_column_pos;
-        MKL_INT pos_C = padding_c_row + ( B_column_pos * number_rows_B) + A_column_pos;
-        csc_values_C[pos_C] = csc_values_B[pos_B] * csc_values_A[pos_A];
-        printf("%d %d ( %d(%f) %d(%f) ) -- %f \n", c_value_pos, pos_C, pos_A, csc_values_A[pos_A], pos_B,csc_values_B[pos_B], csc_values_C[pos_C] );
+  for (int a_column_pos = 0; a_column_pos < number_cols_A ; a_column_pos++ ){
+    lower_pos_A = JA1_A[a_column_pos];
+    upper_pos_A = JA1_A[a_column_pos+1] ;
+    lower_pos_B = JA1_B[a_column_pos];
+    upper_pos_B = JA1_B[a_column_pos+1] ;
+    lower_limit_A = IA1_A[lower_pos_A];
+    upper_limit_A = IA1_A[upper_pos_A];
+    lower_limit_B = IA1_B[lower_pos_B];
+    upper_limit_B = IA1_B[upper_pos_B];
+    printf("col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_pos_A, upper_pos_A, lower_pos_B, upper_pos_B);
+    printf("col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_limit_A, upper_limit_A, lower_limit_B, upper_limit_B);
+    JA1_C[a_column_pos] = c_value_pos;
+    for (MKL_INT B_pos = lower_limit_B; B_pos < upper_limit_B; B_pos++){
+      for (MKL_INT A_pos = lower_limit_A; A_pos < upper_limit_A; A_pos++, c_value_pos++ ){
+        csc_values_C[c_value_pos] = csc_values_B[B_pos] * csc_values_A[A_pos];
+        MKL_INT A_padding = IA1_A[A_pos] * number_rows_B;
+        IA1_C[c_value_pos] = A_padding;
+        printf("\t\t%d ( %d(%f) %d(%f) ) -- %f \n", c_value_pos, A_pos, csc_values_A[A_pos], B_pos , csc_values_B[B_pos], csc_values_C[c_value_pos] );
       }
     }
   }
+  /* for (MKL_INT column_krao = 0; column_krao < number_columns; ++column_krao ){
+     MKL_INT padding_row = column_krao * number_rows_A;
+     MKL_INT padding_c_row = column_krao * number_rows_C;
+  // go through all row elements of column X of matrix B
+  for ( MKL_INT B_column_pos = 0; B_column_pos < number_rows_B ; ++B_column_pos ){
+  // go through all row elements of column X of matrix A
+
+  MKL_INT pos_B = padding_row + B_column_pos;
+  for (MKL_INT A_column_pos = 0; A_column_pos < number_rows_A; ++A_column_pos, ++c_value_pos ){
+  MKL_INT pos_A = padding_row + A_column_pos;
+  MKL_INT pos_C = padding_c_row + ( B_column_pos * number_rows_B) + A_column_pos;
+  csc_values_C[pos_C] = csc_values_B[pos_B] * csc_values_A[pos_A];
+  printf("%d %d ( %d(%f) %d(%f) ) -- %f \n", c_value_pos, pos_C, pos_A, csc_values_A[pos_A], pos_B,csc_values_B[pos_B], csc_values_C[pos_C] );
+  }
+  }
+  }*/
 
   /////////////////////////////////
   //
