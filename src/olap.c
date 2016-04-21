@@ -295,8 +295,8 @@ int main( int argc, char* argv[]){
     upper_limit_A = IA1_A[upper_pos_A];
     lower_limit_B = IA1_B[lower_pos_B];
     upper_limit_B = IA1_B[upper_pos_B];
-    printf("col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_pos_A, upper_pos_A, lower_pos_B, upper_pos_B);
-    printf("col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_limit_A, upper_limit_A, lower_limit_B, upper_limit_B);
+    printf("pos col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_pos_A, upper_pos_A, lower_pos_B, upper_pos_B);
+    printf("limit col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_limit_A, upper_limit_A, lower_limit_B, upper_limit_B);
     JA1_C[a_column_pos] = c_value_pos;
     for (MKL_INT B_pos = lower_limit_B; B_pos < upper_limit_B; B_pos++){
       for (MKL_INT A_pos = lower_limit_A; A_pos < upper_limit_A; A_pos++, c_value_pos++ ){
