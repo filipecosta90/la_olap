@@ -1,0 +1,12 @@
+﻿  windows_src.c
+windows_src.c(22): warning #1786: function "strtok" (declared at line 453 of "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h") was declared deprecated ("This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.")
+    	return_string = strtok(line, "|\n");
+    	                ^
+  
+windows_src.c(64): warning #1786: function "fopen" (declared at line 205 of "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h") was declared deprecated ("This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.")
+    	FILE* stream = fopen(argv[1], "r");
+    	               ^
+  
+windows_src.obj : error LNK2019: unresolved external symbol _g_quark_from_string referenced in function _main
+C:\Users\filipeoliveira\Documents\CPD_PI_OLAP\windows_src\gtk\lib\glib-2.0.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'X86'
+C:\Users\filipeoliveira\Documents\CPD_PI_OLAP\windows_src\Debug\windows_src.exe : fatal error LNK1120: 1 unresolved externals

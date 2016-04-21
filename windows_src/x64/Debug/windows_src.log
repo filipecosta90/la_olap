@@ -1,0 +1,9 @@
+﻿  windows_src.c
+windows_src.c(21): warning #1786: function "strtok" (declared at line 453 of "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h") was declared deprecated ("This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.")
+    	return_string = strtok(line, "|\n");
+    	                ^
+  
+windows_src.c(63): warning #1786: function "fopen" (declared at line 205 of "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h") was declared deprecated ("This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.")
+    	FILE* stream = fopen(argv[1], "r");
+    	               ^
+  
