@@ -114,7 +114,8 @@ int main( int argc, char* argv[]){
   //
   ////////////////////////////////
 
-  float* csr_values = NULL;
+
+
 
   job[0]=  2; // if job[0]=2, the matrix in the coordinate format is converted to the CSR
   // format, and the column indices in CSR representation are sorted in the
@@ -127,15 +128,34 @@ int main( int argc, char* argv[]){
   // job[0]=0.
   job[5]= 0;   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
 
+  float* csr_values = NULL;
+  float* B_csr_values = NULL;
+  float* C_csr_values = NULL;
+
   MKL_INT* JA;
   MKL_INT* IA;
+  MKL_INT* B_JA;
+  MKL_INT* B_IA;
+  MKL_INT* C_JA;
+  MKL_INT* C_IA;
 
   csr_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
   JA = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
   IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  B_csr_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  B_JA = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  B_IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  C_csr_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  C_JA = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
   printf("going to convert matrix N x M = %d x %d\nNNZ: %d JOB4: %d\n", number_rows, number_columns, NNZ, job[4]);
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, csr_values, JA, IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
+  check_errors(status_coo_csr);
+  mkl_scsrcoo (job, &number_rows, B_csr_values, B_JA, B_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
   check_errors(status_coo_csr);
 
   for (MKL_INT pos = 0; pos < NNZ; pos++){
@@ -155,6 +175,26 @@ int main( int argc, char* argv[]){
   mkl_free(coo_rows);
   mkl_free(coo_columns);
 
+  /////////////////////////////////
+  //
+  //   COMPUTE HADAMARD
+  //
+  ////////////////////////////////
+  for (MKL_INT at_row = 0; at_row < number_rows; ++at_row){
+    //pivot positions
+    MKL_INT column_A_pivot = IA[at_row];
+    MKL_INT column_B_pivot = B_IA[at_row];
+    //limit positions
+    MKL_INT column_A_limit = IA[at_row+1];
+    MKL_INT column_B_limit =B_IA[at_row+1];
+
+    MKL_INT column_A_pivot_position = JA[column_A_pivot];
+    MKL_INT column_B_pivot_position = B_JA[column_B_pivot];
+
+    MKL_INT A_line_sizeof = column_A_limit - column_A_pivot;
+    MKL_INT B_line_sizeof = column_B_limit - column_B_pivot;
+
+  }
 
   /////////////////////////////////
   //
@@ -295,15 +335,15 @@ int main( int argc, char* argv[]){
     upper_limit_A = IA1_A[upper_pos_A];
     lower_limit_B = IA1_B[lower_pos_B];
     upper_limit_B = IA1_B[upper_pos_B];
-    printf("pos col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_pos_A, upper_pos_A, lower_pos_B, upper_pos_B);
-    printf("limit col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_limit_A, upper_limit_A, lower_limit_B, upper_limit_B);
+    //    printf("pos col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_pos_A, upper_pos_A, lower_pos_B, upper_pos_B);
+    //   printf("limit col %d :: A( %d:%d) B(%d:%d)\n", a_column_pos, lower_limit_A, upper_limit_A, lower_limit_B, upper_limit_B);
     JA1_C[a_column_pos] = c_value_pos;
     for (MKL_INT B_pos = lower_limit_B; B_pos < upper_limit_B; B_pos++){
       for (MKL_INT A_pos = lower_limit_A; A_pos < upper_limit_A; A_pos++, c_value_pos++ ){
         csc_values_C[c_value_pos] = csc_values_B[B_pos] * csc_values_A[A_pos];
         MKL_INT A_padding = IA1_A[A_pos] * number_rows_B;
         IA1_C[c_value_pos] = A_padding;
-        printf("\t\t%d ( %d(%f) %d(%f) ) -- %f \n", c_value_pos, A_pos, csc_values_A[A_pos], B_pos , csc_values_B[B_pos], csc_values_C[c_value_pos] );
+        //     printf("\t\t%d ( %d(%f) %d(%f) ) -- %f \n", c_value_pos, A_pos, csc_values_A[A_pos], B_pos , csc_values_B[B_pos], csc_values_C[c_value_pos] );
       }
     }
   }
