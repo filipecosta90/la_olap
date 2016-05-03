@@ -163,11 +163,11 @@ int main( int argc, char* argv[]){
   }
   printf("\n");
   for (int pos = 0; pos < NNZ; pos++){
-    printf("%d, ", JA[pos]);
+    printf("%d, ", IA[pos]);
   }
   printf("\n");
   for (int pos = 0; pos <= number_rows; pos++){
-    printf("%d, ", IA[pos]);
+    printf("%d, ", JA[pos]);
   }
   printf("\n");
 
@@ -175,12 +175,29 @@ int main( int argc, char* argv[]){
   mkl_free(coo_rows);
   mkl_free(coo_columns);
 
+  csr_values[0] = 2.0;
+  csr_values[1] = 4.0;
+  csr_values[2] = 8.0;
+  csr_values[3] = 1.0;
+ 
+  IA[0]=0;
+  IA[1]=0;
+  IA[2]=4;
+
+  JA[0]=2;
+  JA[1]=3;
+  JA[2]=4;
+  JA[3]=5;
   /////////////////////////////////
   //
   //   COMPUTE HADAMARD
   //
   ////////////////////////////////
-  for (MKL_INT at_row = 0; at_row < number_rows; ++at_row){
+  MKL_INT c_pos = 0;
+  MKL_INT at_row = 0;
+  for ( ; at_row < number_rows; ++at_row){
+    // insert start of line int C_IA
+    C_IA[at_row] = c_pos;
     //pivot positions
     MKL_INT column_A_pivot = IA[at_row];
     MKL_INT column_B_pivot = B_IA[at_row];
@@ -188,14 +205,84 @@ int main( int argc, char* argv[]){
     MKL_INT column_A_limit = IA[at_row+1];
     MKL_INT column_B_limit =B_IA[at_row+1];
 
-    MKL_INT column_A_pivot_position = JA[column_A_pivot];
-    MKL_INT column_B_pivot_position = B_JA[column_B_pivot];
-
     MKL_INT A_line_sizeof = column_A_limit - column_A_pivot;
     MKL_INT B_line_sizeof = column_B_limit - column_B_pivot;
 
+    if (A_line_sizeof > B_line_sizeof){
+      for ( ; column_A_pivot < column_A_limit  ; ++column_A_pivot){
+        for ( ; JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit; ++column_B_pivot ){
+        }
+        if (JA[column_A_pivot] == B_JA[column_B_pivot]){
+          //insert into C
+          C_csr_values[c_pos] = csr_values[c_pos] * B_csr_values[c_pos];
+          C_JA[c_pos]=column_A_pivot;
+          ++c_pos;
+        }
+
+      }
+    }
+    else {
+      for ( ; column_B_pivot < column_B_limit  ; ++column_B_pivot){
+        for ( ; JA[column_A_pivot] < B_JA[column_B_pivot] && column_A_pivot < column_A_limit; ++column_A_pivot ){
+        }
+        if (JA[column_A_pivot] == B_JA[column_B_pivot]){
+          //insert into C
+          C_csr_values[c_pos] = csr_values[c_pos] * B_csr_values[c_pos];
+          C_JA[c_pos]=column_B_pivot;
+          ++c_pos;
+        }
+      }
+    }
+  }
+  //insert the final C_JA position 
+  C_IA[at_row]=c_pos;
+
+  printf("\nAAAAAAAA\n");
+  
+  for (MKL_INT pos = 0; pos < NNZ; pos++){
+    printf("%f, ", csr_values[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos < NNZ; pos++){
+    printf("%d, ", JA[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos <= number_rows; pos++){
+    printf("%d, ", IA[pos]);
+  }
+  printf("\nBBBBBBBB\n");
+
+ 
+  for (MKL_INT pos = 0; pos < NNZ; pos++){
+    printf("%f, ", B_csr_values[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos < NNZ; pos++){
+    printf("%d, ", B_JA[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos <= number_rows; pos++){
+    printf("%d, ", B_IA[pos]);
   }
 
+ printf("\nCCCCCCCCC\n");
+
+ 
+  for (MKL_INT pos = 0; pos < NNZ; pos++){
+    printf("%f, ", C_csr_values[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos < NNZ; pos++){
+    printf("%d, ", C_JA[pos]);
+  }
+  printf("\n");
+  for (int pos = 0; pos <= number_rows; pos++){
+    printf("%d, ", C_IA[pos]);
+  }
+  printf("\n");
+
+
+  
   /////////////////////////////////
   //
   //   CREATE CSR
