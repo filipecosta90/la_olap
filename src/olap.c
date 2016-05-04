@@ -6,7 +6,7 @@
 #include "mkl_spblas.h"
 #include "mkl_types.h"
 #include "mkl.h"
-
+#include "olap.h"
 
 //Cache-Lines size is (typically) 64 bytes
 #define MEM_LINE_SIZE 64
@@ -15,14 +15,6 @@
 #define MAX_FIELD_SIZE 128
 #define MAX_REG_SIZE 1024
 
-char* getfield(char* line, int num, char* return_string ){
-  return_string = strtok(line, "|\n");
-  int pos = 1;
-  for ( ; pos < num; pos++ ){
-    return_string = strtok(NULL, "|\n");
-  }
-  return return_string;
-}
 
 void check_errors( sparse_status_t stat ){
   if ( stat == SPARSE_STATUS_SUCCESS ){
