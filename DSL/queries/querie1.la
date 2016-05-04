@@ -1,0 +1,22 @@
+BEGIN
+bitmap returnFlag, lineStatus, shipdate;
+matrix quantity;
+
+returnFlag = tbl_read('lineitem.tbl', 8);
+lineStatus = tbl_read('lineitem.tbl', 9);
+quantity = tbl_read('lineitem.tbl', 4);
+
+shipdate = tbl_read('lineitem.tbl', 10);
+
+
+bitmap projection, selection;
+matrix aggregation, result;
+
+vector bang_6;
+bang_6 = bang(6);
+
+projection = returnFlag krao lineStatus;
+aggregation = quantity * bang_6;
+result = projection *aggregation;
+
+END
