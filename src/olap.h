@@ -24,6 +24,48 @@ char* getfield(char* line, int num, char* return_string ){
   return return_string;
 }
 
+void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA){
+  printf("VALUES:\n\t");
+
+  for (MKL_INT pos = 0; pos < NNZ; pos++){
+    printf("%f, ", csr_values[pos]);
+  }
+  printf("\nJA:\n\t");
+
+  for (int pos = 0; pos < NNZ; pos++){
+    printf("%d, ", JA[pos]);
+  }
+  printf("\nIA:\n\t");
+  for (int pos = 0; pos <= number_rows; pos++){
+    printf("%d, ", IA[pos]);
+  }
+  printf("\n");
+}
+
+void check_errors( sparse_status_t stat ){
+  if ( stat == SPARSE_STATUS_SUCCESS ){
+    printf( "SPARSE_STATUS_SUCCESS.\n");
+  }
+  if ( stat == SPARSE_STATUS_NOT_INITIALIZED ){
+    printf( "SPARSE_STATUS_NOT_INITIALIZED.\n");
+  }
+  if ( stat == SPARSE_STATUS_ALLOC_FAILED ){
+    printf( "SPARSE_STATUS_ALLOC_FAILED.\n");
+  }
+  if ( stat == SPARSE_STATUS_INVALID_VALUE ){
+    printf( "SPARSE_STATUS_INVALID_VALUE.\n");
+  }
+  if ( stat == SPARSE_STATUS_EXECUTION_FAILED){
+    printf( "SPARSE_STATUS_EXECUTION_FAILED.\n");
+  }
+  if ( stat == SPARSE_STATUS_INTERNAL_ERROR){
+    printf( "SPARSE_STATUS_INTERNAL_ERROR.\n");
+  }
+  if ( stat == SPARSE_STATUS_NOT_SUPPORTED){
+    printf( "SPARSE_STATUS_NOT_SUPPORTED.\n");
+  }
+}
+
 void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA){
   MKL_INT current_values_size = ARRAY_SIZE;
 
@@ -109,4 +151,145 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   mkl_free(coo_rows);
   mkl_free(coo_columns);
 }
+
+
+/////////////////////////////////
+//
+//   COMPUTE HADAMARD
+//
+/////////////////////////////////
+void csr_hadamard( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
+
+  MKL_INT c_pos = 0;
+  MKL_INT at_row = 0;
+  for ( ; at_row < number_rows; ++at_row){
+    // insert start of line int C_IA
+    C_IA[at_row] = c_pos;
+    //pivot positions
+    MKL_INT column_A_pivot = A_IA[at_row];
+    MKL_INT column_B_pivot = B_IA[at_row];
+    //limit positions
+    MKL_INT column_A_limit = A_IA[at_row+1];
+    MKL_INT column_B_limit =B_IA[at_row+1];
+
+    MKL_INT A_line_sizeof = column_A_limit - column_A_pivot;
+    MKL_INT B_line_sizeof = column_B_limit - column_B_pivot;
+
+    if (A_line_sizeof > B_line_sizeof){
+      for ( ; column_A_pivot < column_A_limit  ; ++column_A_pivot){
+        for ( ; JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit; ++column_B_pivot ){
+        }
+        if (JA[column_A_pivot] == B_JA[column_B_pivot]){
+          //insert into C
+          C_csr_values[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
+          C_JA[c_pos]=column_A_pivot;
+          ++c_pos;
+        }
+      }
+    }
+    else {
+      for ( ; column_B_pivot < column_B_limit  ; ++column_B_pivot){
+        for ( ; JA[column_A_pivot] < B_JA[column_B_pivot] && column_A_pivot < column_A_limit; ++column_A_pivot ){
+        }
+        if (JA[column_A_pivot] == B_JA[column_B_pivot]){
+          //insert into C
+          C_csr_values[c_pos] = csr_values[c_pos] * B_csr_values[c_pos];
+          C_JA[c_pos]=column_B_pivot;
+          ++c_pos;
+        }
+      }
+    }
+  }
+  //insert the final C_JA position 
+  C_IA[at_row]=c_pos;
+}
+
+/////////////////////////////////
+//
+//   COMPUTE KHATRI-RAO
+//
+/////////////////////////////////
+void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
+  MKL_INT job[8];
+  /////////////////////////////////
+  //
+  //   CONVERT A and B to CSC
+  //
+  ////////////////////////////////
+
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job[0] = 0;
+  // job[1]
+  job[1] = 0;
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+  sparse_status_t status_convert_csc;
+
+
+  float* A_csc_values = NULL;
+  MKL_INT* A_JA1;
+  MKL_INT* A_IA1;
+
+  A_csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  A_JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  A_IA1 = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &NNZ, A_csr_values, JA, IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+
+  float* B_csc_values = NULL;
+  MKL_INT* B_JA1;
+  MKL_INT* B_IA1;
+
+  B_csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  B_JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  B_IA1 = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+
+  /////////////////////////////////
+  //
+  //   COMPUTE KRAO
+  //
+  ////////////////////////////////
+
+  float* C_csc_values = NULL;
+  MKL_INT* C_JA1;
+  MKL_INT* C_IA1;
+
+  C_csc_values = (float*) mkl_malloc (( element_number * number_columns * sizeof(float)), MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) mkl_malloc (( element_number * number_columns * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) mkl_malloc (( number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  MKL_INT c1_pos = 0;
+  MKL_INT at_column = 0;
+
+  for ( ; at_column < number_columns; ++at_column){
+    // insert start of column int C_IA1
+    C_IA1[at_column] = c1_pos;
+    //pivot positions
+    MKL_INT line_A_pivot = IA[at_column];
+    MKL_INT line_B_pivot = B_IA[at_column];
+    //limit positions
+    MKL_INT line_A_limit = IA[at_column+1];
+    MKL_INT line_B_limit = B_IA[at_column+1];
+
+    for ( ; line_A_pivot < line_A_limit  ; ++line_A_pivot){
+      line_B_pivot = B_IA[at_column];
+      for ( ; line_B_pivot < line_B_limit ; ++line_B_pivot ){
+        C_csc_values[c1_pos] = A_csc_values[c1_pos] * B_csc_values[c1_pos];
+        C_JA1[c1_pos]=line_A_pivot*line_B_pivot;
+        ++c1_pos;
+      }
+    }
+  }
+  //insert the final C_JA position 
+  C_IA1[at_column]=c1_pos;
+}
+
 
