@@ -39,7 +39,7 @@
     \State $++col\_B\_pivot$
     \EndFor
             \If{$A\_JA[col\_A\_pivot] == B\_JA[col\_B\_pivot]$}
-               \State $C\_csr\_values[c\_pos] \gets A\_csr\_values[c\_pos] * B\_csr\_values[c\_pos]$
+               \State $C\_csr\_values[c\_pos] \gets A\_csr\_values[c\_pos] \times B\_csr\_values[c\_pos]$
                \State $C\_JA[c\_pos] \gets col\_A\_pivot$
                \State $++c\_pos$
             \EndIf
@@ -51,7 +51,7 @@
     \State $++col\_A\_pivot$
     \EndFor
             \If{$A\_JA[col\_A\_pivot] == B\_JA[col\_B\_pivot]$}
-               \State $C\_csr\_values[c\_pos] \gets A\_csr\_values[c\_pos] * B\_csr\_values[c\_pos]$
+               \State $C\_csr\_values[c\_pos] \gets A\_csr\_values[c\_pos] \times B\_csr\_values[c\_pos]$
                \State $C\_JA[c\_pos] \gets col\_B\_pivot$
                \State $++c\_pos$
             \EndIf
@@ -64,7 +64,42 @@
 \end{algorithmic}
 \end{algorithm}
 
+\newpage
+\section{Kathri-Rao}
+\begin{algorithm}
+\caption{CSR Kathri-Rao Computation}\label{hada}
+\begin{algorithmic}[1]
 
+\Require A($m\times n$), B($o\times n$)
+\Ensure C($(m\times o) \times n$)
+\Statex
+\State $A1 \gets A^{T}$
+\State $B1 \gets B^{T}$
+\Statex
+\Require A1($n\times m$), B1($n\times o$)
+\Statex
+
+\State $c1\_pos \gets 0$
+\For {$ at\_column = 0$ \textbf{to} $number\_columns-1$}
+    \State $C\_IA1[at\_column] \gets c1\_pos$
+    \State $line\_A\_pivot \gets IA[at\_column]$
+    \State $line\_B\_pivot \gets B\_IA[at\_column]$
+    \State $line\_A\_limit \gets IA[at\_column+1]$
+    \State $line\_B\_limit = B\_IA[at\_column+1]$
+    \Statex
+	\For {$line\_A\_pivot=0$ \textbf{to} $line\_A\_limit-1 $}
+		\State $line\_B\_pivot \gets B\_IA[at\_column]$
+		\For {$ line\_B\_pivot = 0$ \textbf{to} $line\_B\_limit-1$}
+			\State $C\_csc\_values[c1\_pos] =\gets A\_csc\_values[c1\_pos] \times B\_csc\_values[c1\_pos];$
+			\State $C\_JA1[c1\_pos] \gets line\_A\_pivot \times line\_B\_pivot$
+			\State $++c1\_pos$
+		\EndFor
+	\EndFor
+\EndFor
+\Statex
+\State $C\_IA1[at\_column]=c1\_pos$
+\end{algorithmic}
+\end{algorithm}
 
 
 
