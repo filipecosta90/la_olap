@@ -1,137 +1,74 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-extern FILE *fp;
+  #include <stdio.h>
+  #include <stdlib.h>
+  int yylex();
+  void yyerror(const char *s);
 %}
 
-
-%token IDENTIFIER CONSTANT STRING_LITERAL 
+%token BGN END IDENTIFIER INTEGER
+%token HADAMARD KRAO KRON TR
 %token VECTOR MATRIX BITMAP
-%token KRAO KRON
-
-%start translation_unit
 
 %%
 
-primary_expression
-          : IDENTIFIER
-          | CONSTANT
-          | STRING_LITERAL
-          | '(' expression ')'
-          ;
+initial_expression : BGN body END
+                   ;
 
-unary_operator
-          : 'TR'
-          ;
+body : body elem
+     | elem 
+     ;
 
-postfix_expression
-          : primary_expression
-          ;
+elem : matrix_declaration ';'
+     | atribuition ';'
+     | function ';'
+     ;
 
-unary_expression 
-          : postfix_expression
-          ;
+matrix_declaration : type idList {printf("Matrix declaration\n");}
+                   | type atribuition {printf("Matrix declaration and atribuition\n");}
+                   ;
 
-cast_expression
-          : unary_expression
-          ;
+idList : IDENTIFIER {printf("%s\n",$1);}
+       | idList ',' IDENTIFIER
+       ;
 
-multiplicative_expression
-          : cast_expression
-          | multiplicative_expression '.' cast_expression
-          | multiplicative_expression '><' cast_expression
-          | multiplicative_expression KRON cast_expression
-          | multiplicative_expression KRAO cast_expression
-          ;
+type : VECTOR
+     | MATRIX
+     | BITMAP
+     ;
 
-additive_expression 
-          : multiplicative_expression
-          | additive_expression '+' multiplicative_expression
-          | additive_expression '-' multiplicative_expression
-          ;
+atribuition : IDENTIFIER '=' function {printf("Function\n");}
+            | IDENTIFIER '=' expression {printf("Expression\n");}
+            ;
 
-assignment_expression
-          : unary_expression assignment_operator assignment_expression
-          ;
+expression : IDENTIFIER '*' IDENTIFIER {printf("DOT\n");}
+           | IDENTIFIER HADAMARD IDENTIFIER {printf("HADAMARD\n");}
+           | IDENTIFIER KRON IDENTIFIER {printf("KRON\n");}
+           | IDENTIFIER KRAO IDENTIFIER {printf("KRAO\n");}
+           | IDENTIFIER TR {printf("TR\n");}
+           | '(' expression ')'
+           ;
 
-assignment_operator
-          : '='
-          ;
-
-expression
-          : assignment_expression
-          | expression ',' assignment_expression
-          ;
-
-
-declaration
-          : declaration_specifiers ';'
-          | declaration_specifiers init_declarator_list ';'
-          ;
-
-declaration_specifiers
-          : type_specifier
-          | type_specifier declaration_specifiers
-          ;
-
-init_declarator_list
-          : init_declarator
-          | init_declarator_list ',' init_declarator
-          ;
-
-init_declarator
-          : declarator
-          | declarator '=' initializer
-          ;
-
-initializer
-          : assignment_expression
-          ;
-
-
-type_specifier
-          : VECTOR
-          | MATRIX
-          | BITMAP
-          ;
-
-declarator
-          : direct_declarator
-          ;
-
-direct_declarator
-          : IDENTIFIER
-          | '(' declarator ')'
-          | direct_declarator '(' ')'
-          ;
-
-translation_unit
-          : external_declaration
-          | translation_unit external_declaration
-          ;
-
-external_declaration
-          : declaration
-          ;
+function : IDENTIFIER '(' IDENTIFIER ',' INTEGER ')'
+         | IDENTIFIER '(' INTEGER ')'
+         | IDENTIFIER '(' IDENTIFIER ')'
+         ;
 
 %%
 
-#include"lex.yy.c"
 #include<ctype.h>
-int count=0;
-int main(int argc, char *argv[])
-{
-  yyin = fopen(argv[1], "r");
 
-if(!yyparse())
-printf("\nParsing complete\n");
-else
-printf("\nParsing failed\n");
-fclose(yyin);
-return 0;
+void yyerror (const char *s) {
+  fprintf (stderr, "%s\n", s);
 }
-yyerror(char *s) {
-printf("%d : %s %s\n", yylineno, s, yytext );
-}         
 
+int yywrap(){
+  return 1;
+}
 
+int main(int argc, char *argv[]){
+/*  int s;
+  while(s = yylex()){
+    printf("%d\n",s);
+  }*/
+  return (yyparse());
+}

@@ -1,0 +1,19 @@
+BEGIN
+
+matrix t_color, t_sales, t_model;
+
+t_color = tbl_read('__tbl/fig3.tbl', 3);
+t_sales = tbl_read('__tbl/fig3.tbl', 4);
+t_model = tbl_read('__tbl/fig3.tbl', 1);
+
+matrix result;
+
+matrix conv_model = conv(t_model);
+
+matrix inter_result;
+
+inter_result = t_color krao t_sales;
+
+result = inter_result krao conv_model;
+
+END

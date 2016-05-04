@@ -1,0 +1,15 @@
+BEGIN
+matrix proj_tModel, proj_tSeason, proj_tSales;
+
+proj_tModel = tbl_read('sales.tbl', 2);
+proj_tSeason = tbl_read('sales.tbl', 3);
+proj_tSales = tbl_read('sales.tbl', 4);
+
+matrix krao_tModel_tSeason, result, sales;
+vector bang_6;
+bang_6 = bang(6);
+
+krao_tModel_tSeason = proj_tModel krao proj_tSeason;
+sales = proj_tSales * krao_tModel_tSeason; 
+result = sales * bang_6;
+END

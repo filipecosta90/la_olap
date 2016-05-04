@@ -1,54 +1,39 @@
 D     [0-9]
-L     [a-zA-Z_]
 H     [a-fA-F0-9]
+%{
+  #include "y.tab.h"
+%}
 
 %%
-
-"vector"     { return("VECTOR"); }
-"matrix"     { return("MATRIX"); }
-"bitmap"     { return("BITMAP"); }
-
-L?\"(\\.|[^\\"])*\" { return(STRING_LITERAL); }
-{L}({L}|{D})*   {  return(check_type()); }
-
+"BEGIN"   {return (BGN);}
+"END"     {return (END);}
+"vector"  {return (VECTOR);}
+"matrix"  {return (MATRIX);}
+"bitmap"  {return (BITMAP);}
 
 ";"     { return(';'); }
-"{"     { return('{'); }
-"}"     { return('}'); }
 ","     { return(','); }
 "="     { return('='); }
 "("     { return('('); }
 ")"     { return(')'); }
-"."     { return('.'); }
-"-"     { return('-'); }
-"+"     { return('+'); }
 "*"     { return('*'); }
-"/"     { return('/'); }
-"kron"     { return KRON ; }
-"><"     { return("><"); }
-"krao"     { return KRAO ; }
+"'"     {return (TR);}
+"kron"     { return (KRON); }
+"><"     { return (HADAMARD); }
+"krao"     { return (KRAO); }
 
+[0-9]+  {return (INTEGER);}
+[a-zA-Z_'.0-9/]* { return (IDENTIFIER); }
 [ \t\v\n\f]   { }
 .     { /* ignore bad characters */ }
 
 %%
 
-int check_type()
-{
-/*
-* pseudo code --- this is what it should check
-*
-* if (yytext == type_name)
-*   return(TYPE_NAME);
-*
-* return(IDENTIFIER);
-*/
+/*int yywrap(){return 1;}
 
-/*
-* it actually will only return IDENTIFIER
-*/
-
-  return(IDENTIFIER);
+int main(){
+  int s;
+  while( s = yylex() ){
+  printf("%d\n",s);
   }
-
-
+}*/
