@@ -81,23 +81,27 @@
 
 \State $c1\_pos \gets 0$
 \For {$ at\_column = 0$ \textbf{to} $number\_columns-1$}
-    \State $C\_IA1[at\_column] \gets c1\_pos$
-    \State $line\_A\_pivot \gets IA[at\_column]$
-    \State $line\_B\_pivot \gets B\_IA[at\_column]$
-    \State $line\_A\_limit \gets IA[at\_column+1]$
-    \State $line\_B\_limit = B\_IA[at\_column+1]$
+    \State $C1\_IA[at\_column] \gets c1\_pos$
+    \State $line\_A\_pivot \gets A1\_IA[at\_column]$
+    \State $line\_B\_pivot \gets B1\_IA[at\_column]$
+    \State $line\_A\_limit \gets A1\_IA[at\_column+1]$
+    \State $line\_B\_limit = B1\_IA[at\_column+1]$
     \Statex
 	\For {$line\_A\_pivot=0$ \textbf{to} $line\_A\_limit-1 $}
-		\State $line\_B\_pivot \gets B\_IA[at\_column]$
+		\State $line\_B\_pivot \gets B1\_IA[at\_column]$
 		\For {$ line\_B\_pivot = 0$ \textbf{to} $line\_B\_limit-1$}
-			\State $C\_csc\_values[c1\_pos] =\gets A\_csc\_values[c1\_pos] \times B\_csc\_values[c1\_pos];$
-			\State $C\_JA1[c1\_pos] \gets line\_A\_pivot \times line\_B\_pivot$
+			\State $C\_csc\_values[c1\_pos]  \gets A\_csc\_values[c1\_pos] \times B\_csc\_values[c1\_pos]$
+			\State $C1\_JA[c1\_pos] \gets line\_A\_pivot \times line\_B\_pivot$
 			\State $++c1\_pos$
 		\EndFor
 	\EndFor
 \EndFor
 \Statex
-\State $C\_IA1[at\_column]=c1\_pos$
+\State $C1\_IA[at\_column]=c1\_pos$
+
+\Statex
+\State $C \gets C1^{T}$
+
 \end{algorithmic}
 \end{algorithm}
 
