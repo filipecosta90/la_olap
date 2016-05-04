@@ -179,7 +179,7 @@ int main( int argc, char* argv[]){
   csr_values[1] = 4.0;
   csr_values[2] = 8.0;
   csr_values[3] = 1.0;
- 
+
   IA[0]=0;
   IA[1]=0;
   IA[2]=4;
@@ -238,7 +238,7 @@ int main( int argc, char* argv[]){
   C_IA[at_row]=c_pos;
 
   printf("\nAAAAAAAA\n");
-  
+
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", csr_values[pos]);
   }
@@ -252,7 +252,7 @@ int main( int argc, char* argv[]){
   }
   printf("\nBBBBBBBB\n");
 
- 
+
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", B_csr_values[pos]);
   }
@@ -265,9 +265,9 @@ int main( int argc, char* argv[]){
     printf("%d, ", B_IA[pos]);
   }
 
- printf("\nCCCCCCCCC\n");
+  printf("\nCCCCCCCCC\n");
 
- 
+
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", C_csr_values[pos]);
   }
@@ -282,7 +282,7 @@ int main( int argc, char* argv[]){
   printf("\n");
 
 
-  
+
   /////////////////////////////////
   //
   //   CREATE CSR
@@ -318,31 +318,92 @@ int main( int argc, char* argv[]){
   job[5] = 1;
 
 
-  float* csc_values = NULL;
-  MKL_INT* JA1;
-  MKL_INT* IA1;
+  float* A_csc_values = NULL;
+  MKL_INT* A_JA1;
+  MKL_INT* A_IA1;
 
-  csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
-  JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  IA1 = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  A_csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  A_JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  A_IA1 = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   sparse_status_t status_convert_csc;
 
   printf("going to transpose CSR:\n");
-  mkl_scsrcsc(job, &NNZ, csr_values, JA, IA, csc_values, JA1, IA1, &status_convert_csc);
+  mkl_scsrcsc(job, &NNZ, csr_values, JA, IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
   check_errors(status_convert_csc); 
 
-  for (MKL_INT pos = 0; pos < NNZ; pos++){
-    printf("%f, ", csc_values[pos]);
+  /////////////////////////////////
+  //
+  //   COMPUTE KRONECKER
+  //
+  ////////////////////////////////
+
+
+
+  printf("going to convert B CSR to B CSC:\n");
+  float* B_csc_values = NULL;
+  MKL_INT* B_JA1;
+  MKL_INT* B_IA1;
+
+  B_csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
+  B_JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  B_IA1 = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  mkl_scsrcsc(job, &NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+  check_errors(status_convert_csc); 
+
+  printf("done converting B CSR to B CSC:\n");
+  float* C_csc_values = NULL;
+  MKL_INT* C_JA1;
+  MKL_INT* C_IA1;
+
+  C_csc_values = (float*) mkl_malloc (( element_number * number_columns * sizeof(float)), MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) mkl_malloc (( element_number * number_columns * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) mkl_malloc (( number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+ MKL_INT c1_pos = 0;
+  MKL_INT at_column = 0;
+  
+  for ( ; at_column < number_columns; ++at_column){
+    // insert start of column int C_IA1
+    C_IA1[at_column] = c1_pos;
+    //pivot positions
+    MKL_INT line_A_pivot = IA[at_column];
+    MKL_INT line_B_pivot = B_IA[at_column];
+    //limit positions
+    MKL_INT line_A_limit = IA[at_column+1];
+    MKL_INT line_B_limit = B_IA[at_column+1];
+
+    for ( ; line_A_pivot < line_A_limit  ; ++line_A_pivot){
+      line_B_pivot = B_IA[at_column];
+      for ( ; line_B_pivot < line_B_limit ; ++line_B_pivot ){
+        C_csc_values[c1_pos] = A_csc_values[c1_pos] * B_csc_values[c1_pos];
+        C_JA1[c1_pos]=line_A_pivot*line_B_pivot;
+        ++c1_pos;
+      }
+    }
   }
-  printf("\n");
-  for (int pos = 0; pos < NNZ; pos++){
-    printf("%d, ", JA1[pos]);
-  }
-  printf("\n");
-  for (int pos = 0; pos <= number_columns; pos++){
-    printf("%d, ", IA1[pos]);
-  }
-  printf("\n");
+  //insert the final C_JA position 
+  C_IA1[at_column]=c1_pos;
+
+  printf("going to reconvert to csr :: D \n");
+
+  MKL_INT A_number_columns = number_columns;
+  MKL_INT B_number_columns = number_columns;
+  MKL_INT D_number_columns = A_number_columns * B_number_columns;
+  MKL_INT A_number_rows = number_rows;
+  MKL_INT B_number_rows = number_rows;
+  MKL_INT D_number_rows = A_number_rows * B_number_rows;
+
+  float* D_csr_values = NULL;
+  MKL_INT* D_JA;
+  MKL_INT* D_IA;
+
+
+  D_csr_values = (float*) mkl_malloc (( element_number * number_columns * sizeof(float)), MEM_LINE_SIZE );
+  D_JA = (MKL_INT*) mkl_malloc (( element_number * number_columns * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  D_IA = (MKL_INT*) mkl_malloc (( D_number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+
 
   /////////////////////////////////
   //
