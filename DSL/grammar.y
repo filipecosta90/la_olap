@@ -27,7 +27,7 @@ matrix_declaration : type idList {printf("Matrix declaration\n");}
                    | type atribuition {printf("Matrix declaration and atribuition\n");}
                    ;
 
-idList : IDENTIFIER 
+idList : IDENTIFIER {printf("%s\n",$1);}
        | idList ',' IDENTIFIER
        ;
 
