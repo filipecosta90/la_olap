@@ -24,19 +24,22 @@ char* getfield(char* line, int num, char* return_string ){
   return return_string;
 }
 
-void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA){
+void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA, MKL_INT* NNZ, MKL_INT* number_rows, MKL_INT* number_columns ){
+  printf("NNZ: %d\n", *NNZ);
+  printf("N ROWS: %d\n", *number_rows);
+  printf("N COLS: %d\n", *number_columns);
   printf("VALUES:\n\t");
 
-  for (MKL_INT pos = 0; pos < NNZ; pos++){
+  for (MKL_INT pos = 0; pos < *NNZ; pos++){
     printf("%f, ", csr_values[pos]);
   }
   printf("\nJA:\n\t");
 
-  for (int pos = 0; pos < NNZ; pos++){
+  for (int pos = 0; pos < *NNZ; pos++){
     printf("%d, ", JA[pos]);
   }
   printf("\nIA:\n\t");
-  for (int pos = 0; pos <= number_rows; pos++){
+  for (int pos = 0; pos <= *number_rows; pos++){
     printf("%d, ", IA[pos]);
   }
   printf("\n");
@@ -120,10 +123,10 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
     coo_values[pos] = 1.0;
     coo_columns[pos] = pos;
     coo_rows[pos] = aux_coo_rows[pos];
-    printf("%f %d %d\n", coo_values[pos], coo_rows[pos], coo_columns[pos]);
   }
   free(aux_coo_rows);
 
+  printf("%d %d \n", number_rows, number_columns);
   /////////////////////////////////
   //
   //   CONVERT FROM COO TO CSR
@@ -141,8 +144,8 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   // job[0]=0.
   job[5]= 0;   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
 
-  A_csr_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
-  A_JA = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   A_IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   sparse_status_t status_coo_csr;
@@ -150,6 +153,10 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   mkl_free(coo_values);
   mkl_free(coo_rows);
   mkl_free(coo_columns);
+  printf("%d %d \n", number_rows, number_columns);
+  rows = &number_rows;
+  columns = &number_columns;
+  printf("%d %d \n", *rows, *columns);
 }
 
 
@@ -158,7 +165,7 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
 //   COMPUTE HADAMARD
 //
 /////////////////////////////////
-void csr_hadamard( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
+void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
 
   MKL_INT c_pos = 0;
   MKL_INT at_row = 0;
@@ -177,9 +184,9 @@ void csr_hadamard( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_c
 
     if (A_line_sizeof > B_line_sizeof){
       for ( ; column_A_pivot < column_A_limit  ; ++column_A_pivot){
-        for ( ; JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit; ++column_B_pivot ){
+        for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit; ++column_B_pivot ){
         }
-        if (JA[column_A_pivot] == B_JA[column_B_pivot]){
+        if (A_JA[column_A_pivot] == B_JA[column_B_pivot]){
           //insert into C
           C_csr_values[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
           C_JA[c_pos]=column_A_pivot;
@@ -189,11 +196,11 @@ void csr_hadamard( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_c
     }
     else {
       for ( ; column_B_pivot < column_B_limit  ; ++column_B_pivot){
-        for ( ; JA[column_A_pivot] < B_JA[column_B_pivot] && column_A_pivot < column_A_limit; ++column_A_pivot ){
+        for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_A_pivot < column_A_limit; ++column_A_pivot ){
         }
-        if (JA[column_A_pivot] == B_JA[column_B_pivot]){
+        if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
           //insert into C
-          C_csr_values[c_pos] = csr_values[c_pos] * B_csr_values[c_pos];
+          C_csr_values[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
           C_JA[c_pos]=column_B_pivot;
           ++c_pos;
         }
@@ -209,7 +216,7 @@ void csr_hadamard( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_c
 //   COMPUTE KHATRI-RAO
 //
 /////////////////////////////////
-void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
+void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_columns, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_columns, float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
   MKL_INT job[8];
   /////////////////////////////////
   //
@@ -238,19 +245,19 @@ void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_v
   MKL_INT* A_JA1;
   MKL_INT* A_IA1;
 
-  A_csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
-  A_JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  A_IA1 = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &NNZ, A_csr_values, JA, IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+  A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
+  A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  A_IA1 = (MKL_INT*) mkl_malloc ((A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
 
   float* B_csc_values = NULL;
   MKL_INT* B_JA1;
   MKL_INT* B_IA1;
 
-  B_csc_values = (float*) mkl_malloc ((element_number * sizeof(float)), MEM_LINE_SIZE );
-  B_JA1 = (MKL_INT*) mkl_malloc (( element_number * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  B_IA1 = (MKL_INT*) mkl_malloc ((number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+  B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
+  B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  B_IA1 = (MKL_INT*) mkl_malloc (( B_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
 
   /////////////////////////////////
   //
@@ -262,25 +269,25 @@ void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_v
   MKL_INT* C_JA1;
   MKL_INT* C_IA1;
 
-  C_csc_values = (float*) mkl_malloc (( element_number * number_columns * sizeof(float)), MEM_LINE_SIZE );
-  C_JA1 = (MKL_INT*) mkl_malloc (( element_number * number_columns * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  C_IA1 = (MKL_INT*) mkl_malloc (( number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_csc_values = (float*) mkl_malloc (( A_NNZ * B_number_columns * sizeof(float)), MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * B_number_columns * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) mkl_malloc (( A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   MKL_INT c1_pos = 0;
   MKL_INT at_column = 0;
 
-  for ( ; at_column < number_columns; ++at_column){
+  for ( ; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     C_IA1[at_column] = c1_pos;
     //pivot positions
-    MKL_INT line_A_pivot = IA[at_column];
-    MKL_INT line_B_pivot = B_IA[at_column];
+    MKL_INT line_A_pivot = A_IA1[at_column];
+    MKL_INT line_B_pivot = B_IA1[at_column];
     //limit positions
-    MKL_INT line_A_limit = IA[at_column+1];
-    MKL_INT line_B_limit = B_IA[at_column+1];
+    MKL_INT line_A_limit = A_IA1[at_column+1];
+    MKL_INT line_B_limit = B_IA1[at_column+1];
 
     for ( ; line_A_pivot < line_A_limit  ; ++line_A_pivot){
-      line_B_pivot = B_IA[at_column];
+      line_B_pivot = B_IA1[at_column];
       for ( ; line_B_pivot < line_B_limit ; ++line_B_pivot ){
         C_csc_values[c1_pos] = A_csc_values[c1_pos] * B_csc_values[c1_pos];
         C_JA1[c1_pos]=line_A_pivot*line_B_pivot;
