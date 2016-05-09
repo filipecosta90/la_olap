@@ -8,6 +8,7 @@
 %token BGN END IDENTIFIER INTEGER
 %token HADAMARD KRAO KRON TR
 %token VECTOR MATRIX BITMAP
+%token BANG TBL_READ TBL_FILTER TBL_WRITE CONDITION KEY_CONDITION
 
 %%
 
@@ -27,7 +28,7 @@ matrix_declaration : type idList {printf("Matrix declaration\n");}
                    | type atribuition {printf("Matrix declaration and atribuition\n");}
                    ;
 
-idList : IDENTIFIER {printf("%s\n",$1);}
+idList : IDENTIFIER 
        | idList ',' IDENTIFIER
        ;
 
@@ -36,7 +37,7 @@ type : VECTOR
      | BITMAP
      ;
 
-atribuition : IDENTIFIER '=' function {printf("Function\n");}
+atribuition : IDENTIFIER '=' function {printf("Function \n");}
             | IDENTIFIER '=' expression {printf("Expression\n");}
             ;
 
@@ -48,9 +49,10 @@ expression : IDENTIFIER '*' IDENTIFIER {printf("DOT\n");}
            | '(' expression ')'
            ;
 
-function : IDENTIFIER '(' IDENTIFIER ',' INTEGER ')'
-         | IDENTIFIER '(' INTEGER ')'
-         | IDENTIFIER '(' IDENTIFIER ')'
+function : TBL_READ '(' IDENTIFIER ',' INTEGER ')' {printf("TBL_READ\n");}
+         | TBL_WRITE '(' IDENTIFIER ',' IDENTIFIER ')' {printf("TBL_WRITE\n");}
+         | TBL_FILTER '(' IDENTIFIER ',' INTEGER ',' CONDITION ',' KEY_CONDITION ')' {printf("TBL_FILTER\n");}
+         | BANG '(' INTEGER ')' {printf("BANG\n");}
          ;
 
 %%
