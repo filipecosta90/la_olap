@@ -14,6 +14,7 @@
 #define MAX_FIELD_SIZE 128
 #define MAX_REG_SIZE 1024
 
+//starts at position 1 
 char* getfield(char* line, int num, char* return_string ){
   return_string = strtok(line, "|\n");
   int pos = 1;
@@ -28,7 +29,6 @@ void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA, MKL_INT NNZ, MKL_INT
   printf("N ROWS: %d\t", number_rows);
   printf("N COLS: %d\n", number_columns);
   printf("VALUES(%d):\t", sizeof(csr_values));
-  
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", csr_values[pos]);
   }
@@ -42,7 +42,6 @@ void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA, MKL_INT NNZ, MKL_INT
   for (int pos = 0; pos <= number_rows; pos++){
     printf("%d, ", IA[pos]);
   }
- 
   printf("\n");
 }
 
@@ -72,7 +71,6 @@ void check_errors( sparse_status_t stat ){
 
 void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA){
   MKL_INT current_values_size = ARRAY_SIZE;
-
   //define COO sparse-matrix M
   MKL_INT* aux_coo_rows;
   aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
@@ -83,7 +81,7 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   MKL_INT number_columns = -1 ;
   MKL_INT element_number = 1;
   MKL_INT job[8];
-
+MKL_INT padding_quark = 0;
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number )
   {
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
@@ -92,7 +90,10 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
     MKL_INT quark_field;
 
     quark_field = g_quark_from_string (field);
-
+    if (quark_field > 1 && element_number == 0 ){
+    padding_quark = quark_field - 1;
+    }
+    quark_field -= padding_quark;
     /* if arrays are full double its size */
     if ( element_number >= current_values_size ){
       current_values_size *= GROWTH_FACTOR;
@@ -100,7 +101,7 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
     }
 
     /* normal coo property */
-    aux_coo_rows[element_number]=  quark_field -1 ;
+    aux_coo_rows[element_number]=  quark_field - 1 ;
 
     if (  quark_field > number_rows ) {
       number_rows =  quark_field;
@@ -165,8 +166,18 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
 //   COMPUTE HADAMARD
 //
 /////////////////////////////////
-void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA ){
-
+void csr_hadamard(
+  float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT number_rows, 
+    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ,
+    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT *C_NNZ
+    ){
+  MKL_INT NNZ; 
+  if (A_NNZ > B_NNZ ){
+    NNZ = A_NNZ;
+  }
+  else {
+  NNZ = B_NNZ;
+  }
   *C_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
   *C_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
@@ -186,26 +197,29 @@ void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_IN
     MKL_INT A_line_sizeof = column_A_limit - column_A_pivot;
     MKL_INT B_line_sizeof = column_B_limit - column_B_pivot;
 
-    if (A_line_sizeof > B_line_sizeof){
-      for ( ; column_A_pivot < column_A_limit  ; ++column_A_pivot){
-        for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit; ++column_B_pivot ){
-        }
-        if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
+    if (A_line_sizeof < B_line_sizeof){
+      for ( ; column_A_pivot < column_A_limit  ; ++column_A_pivot ){
+        for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit ; ++column_B_pivot){
+      }
+  if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
           //insert into C
           (*C_csr_values)[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
           (*C_JA)[c_pos]=column_A_pivot;
           ++c_pos;
-        }
+          ++column_B_pivot;
+  }
+        
       }
     }
     else {
       for ( ; column_B_pivot < column_B_limit  ; ++column_B_pivot){
-        for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_A_pivot < column_A_limit; ++column_A_pivot ){
+        for ( ; B_JA[column_A_pivot] <  A_JA[column_B_pivot] && column_A_pivot < column_A_limit; ++column_A_pivot ){
         }
         if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
           //insert into C
           (*C_csr_values)[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
           (*C_JA)[c_pos]=column_B_pivot;
+        ++column_A_pivot;
           ++c_pos;
         }
       }
@@ -213,6 +227,7 @@ void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_IN
   }
   //insert the final C_JA position 
   (*C_IA)[at_row]=c_pos;
+  *C_NNZ = c_pos;
 }
 
 /////////////////////////////////
@@ -220,15 +235,18 @@ void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_IN
 //   COMPUTE KHATRI-RAO
 //
 /////////////////////////////////
+void csr_krao( 
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_columns,
+    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_columns,
+    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns  
+    ){
 
-void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_columns, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_columns, float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
   MKL_INT job[8];
-  /////////////////////////////////
+  /////////////////////////////////////
   //
-  //   CONVERT A and B to CSC
+  //   CONVERT A and B from CSR to CSC
   //
-  ////////////////////////////////
-
+  /////////////////////////////////////
   // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
   job[0] = 0;
   // job[1]
@@ -244,8 +262,6 @@ void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ,
   // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
   job[5] = 1;
   sparse_status_t status_convert_csc;
-
-
   float* A_csc_values = NULL;
   MKL_INT* A_JA1;
   MKL_INT* A_IA1;
@@ -254,6 +270,7 @@ void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ,
   A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   A_IA1 = (MKL_INT*) mkl_malloc ((A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+  check_errors(status_convert_csc);
 
   float* B_csc_values = NULL;
   MKL_INT* B_JA1;
@@ -263,13 +280,13 @@ void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ,
   B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   B_IA1 = (MKL_INT*) mkl_malloc (( B_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+  check_errors(status_convert_csc);
 
   /////////////////////////////////
   //
   //   COMPUTE KRAO
   //
   ////////////////////////////////
-
   float* C_csc_values = NULL;
   MKL_INT* C_JA1;
   MKL_INT* C_IA1;
@@ -280,7 +297,9 @@ void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ,
 
   MKL_INT c1_pos = 0;
   MKL_INT at_column = 0;
-
+  MKL_INT CSC_nnz=0;
+  MKL_INT max_row = -1;
+  MKL_INT row_pos = -1;
   for ( ; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     C_IA1[at_column] = c1_pos;
@@ -294,14 +313,56 @@ void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ,
     for ( ; line_A_pivot < line_A_limit  ; ++line_A_pivot){
       line_B_pivot = B_IA1[at_column];
       for ( ; line_B_pivot < line_B_limit ; ++line_B_pivot ){
-        C_csc_values[c1_pos] = A_csc_values[c1_pos] * B_csc_values[c1_pos];
-        C_JA1[c1_pos]=line_A_pivot*line_B_pivot;
-        ++c1_pos;
+        float value =  A_csc_values[c1_pos] * B_csc_values[c1_pos];
+        if ( value != 0 ) {
+          C_csc_values[c1_pos] = value;
+          row_pos = (line_A_pivot+1)*(line_B_pivot+1);
+          if (max_row < row_pos){
+            max_row = row_pos;
+          }
+          C_JA1[c1_pos]=row_pos;
+          ++CSC_nnz;
+          ++c1_pos;
+        }
       }
     }
   }
   //insert the final C_JA position 
   C_IA1[at_column]=c1_pos;
+
+  /////////////////////////////////
+  //
+  //   CONVERT C from CSC to CSR
+  //
+  ////////////////////////////////
+
+  // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
+  job[0] = 1;
+
+  // job[1]
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job[1] = 0;
+
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+  sparse_status_t status_convert_csr;
+
+  *C_csr_values = (float*) mkl_malloc (( CSC_nnz * sizeof(float)), MEM_LINE_SIZE );
+  *C_JA = (MKL_INT*) mkl_malloc (( CSC_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *C_IA = (MKL_INT*) mkl_malloc (( max_row + 1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &CSC_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
+  check_errors(status_convert_csr);
+  *C_number_rows = max_row;
+  *C_number_columns = A_number_columns;
+  *C_NNZ = CSC_nnz;
 }
 
 
