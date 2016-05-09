@@ -7,7 +7,6 @@
 #include "mkl_types.h"
 #include "mkl.h"
 
-
 //Cache-Lines size is (typically) 64 bytes
 #define MEM_LINE_SIZE 64
 #define ARRAY_SIZE MEM_LINE_SIZE / sizeof (MKL_INT)
@@ -24,24 +23,26 @@ char* getfield(char* line, int num, char* return_string ){
   return return_string;
 }
 
-void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA, MKL_INT* NNZ, MKL_INT* number_rows, MKL_INT* number_columns ){
-  printf("NNZ: %d\n", *NNZ);
-  printf("N ROWS: %d\n", *number_rows);
-  printf("N COLS: %d\n", *number_columns);
-  printf("VALUES:\n\t");
-
-  for (MKL_INT pos = 0; pos < *NNZ; pos++){
+void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA, MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns ){
+  printf("NNZ: %d\n", NNZ);
+  printf("N ROWS: %d\n", number_rows);
+  printf("N COLS: %d\n", number_columns);
+  printf("VALUES(%d):\t\n", sizeof(csr_values));
+  
+  for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", csr_values[pos]);
   }
-  printf("\nJA:\n\t");
+  printf("\nJA:\t");
 
-  for (int pos = 0; pos < *NNZ; pos++){
+  for (int pos = 0; pos < NNZ; pos++){
     printf("%d, ", JA[pos]);
   }
-  printf("\nIA:\n\t");
-  for (int pos = 0; pos <= *number_rows; pos++){
+
+  printf("\nIA:\t");
+  for (int pos = 0; pos <= number_rows; pos++){
     printf("%d, ", IA[pos]);
   }
+ 
   printf("\n");
 }
 
@@ -69,7 +70,7 @@ void check_errors( sparse_status_t stat ){
   }
 }
 
-void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA){
+void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA){
   MKL_INT current_values_size = ARRAY_SIZE;
 
   //define COO sparse-matrix M
@@ -126,7 +127,6 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   }
   free(aux_coo_rows);
 
-  printf("%d %d \n", number_rows, number_columns);
   /////////////////////////////////
   //
   //   CONVERT FROM COO TO CSR
@@ -150,13 +150,14 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
 
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, A_csr_values, A_JA, A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
+  check_errors(status_coo_csr);
   mkl_free(coo_values);
   mkl_free(coo_rows);
   mkl_free(coo_columns);
-  printf("%d %d \n", number_rows, number_columns);
-  rows = &number_rows;
-  columns = &number_columns;
-  printf("%d %d \n", *rows, *columns);
+  print_csr(A_csr_values, A_JA, A_IA, NNZ, number_rows, number_columns );
+  *rows = number_rows;
+  *columns = number_columns;
+  *nnz = NNZ;
 }
 
 
