@@ -36,7 +36,7 @@ int main( int argc, char* argv[]){
 
   MKL_INT tbl_column = atoi (argv[2]);
   tbl_read( argv[1], tbl_column, &A_nnz, &A_rows, &A_columns , &A_csr_values, &A_JA, &A_IA);
-  print_csr( &A_csr_values, &A_JA, &A_IA, A_nnz, A_rows, A_columns);
+  print_csr( A_csr_values, A_JA, A_IA, A_nnz, A_rows, A_columns);
 
   /*
   /////////////////////////////////

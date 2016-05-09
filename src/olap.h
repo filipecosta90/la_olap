@@ -24,10 +24,10 @@ char* getfield(char* line, int num, char* return_string ){
 }
 
 void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA, MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns ){
-  printf("NNZ: %d\n", NNZ);
-  printf("N ROWS: %d\n", number_rows);
+  printf("N NONZ: %d\t", NNZ);
+  printf("N ROWS: %d\t", number_rows);
   printf("N COLS: %d\n", number_columns);
-  printf("VALUES(%d):\t\n", sizeof(csr_values));
+  printf("VALUES(%d):\t", sizeof(csr_values));
   
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", csr_values[pos]);
@@ -144,17 +144,16 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   // job[0]=0.
   job[5]= 0;   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
 
-  A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-  A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  A_IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *A_IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   sparse_status_t status_coo_csr;
-  mkl_scsrcoo (job, &number_rows, A_csr_values, A_JA, A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
+  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
   check_errors(status_coo_csr);
   mkl_free(coo_values);
   mkl_free(coo_rows);
   mkl_free(coo_columns);
-  print_csr(A_csr_values, A_JA, A_IA, NNZ, number_rows, number_columns );
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
