@@ -24,11 +24,32 @@ char* getfield(char* line, int num, char* return_string ){
   return return_string;
 }
 
+void print_csc(float* csc_values, MKL_INT* JA1, MKL_INT* IA1, MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns ){
+  printf("N NONZ: %d\t", NNZ);
+  printf("N ROWS: %d\t", number_rows);
+  printf("N COLS: %d\n", number_columns);
+  printf("CSC VALUES(%d):\t", sizeof(csc_values));
+  for (MKL_INT pos = 0; pos < NNZ; pos++){
+    printf("%f, ", csc_values[pos]);
+  }
+  printf("\nJA1:\t");
+
+  for (int pos = 0; pos < NNZ; pos++){
+    printf("%d, ", JA1[pos]);
+  }
+
+  printf("\nIA1:\t");
+  for (int pos = 0; pos <= number_columns; pos++){
+    printf("%d, ", IA1[pos]);
+  }
+  printf("\n");
+}
+
 void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA, MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns ){
   printf("N NONZ: %d\t", NNZ);
   printf("N ROWS: %d\t", number_rows);
   printf("N COLS: %d\n", number_columns);
-  printf("VALUES(%d):\t", sizeof(csr_values));
+  printf("CSR VALUES(%d):\t", sizeof(csr_values));
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", csr_values[pos]);
   }
@@ -81,7 +102,7 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   MKL_INT number_columns = -1 ;
   MKL_INT element_number = 1;
   MKL_INT job[8];
-MKL_INT padding_quark = 0;
+  MKL_INT padding_quark = 0;
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number )
   {
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
@@ -91,7 +112,7 @@ MKL_INT padding_quark = 0;
 
     quark_field = g_quark_from_string (field);
     if (quark_field > 1 && element_number == 0 ){
-    padding_quark = quark_field - 1;
+      padding_quark = quark_field - 1;
     }
     quark_field -= padding_quark;
     /* if arrays are full double its size */
@@ -167,7 +188,7 @@ MKL_INT padding_quark = 0;
 //
 /////////////////////////////////
 void csr_hadamard(
-  float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT number_rows, 
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT number_rows, 
     float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT *C_NNZ
     ){
@@ -176,7 +197,7 @@ void csr_hadamard(
     NNZ = A_NNZ;
   }
   else {
-  NNZ = B_NNZ;
+    NNZ = B_NNZ;
   }
   *C_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
   *C_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
@@ -200,15 +221,15 @@ void csr_hadamard(
     if (A_line_sizeof < B_line_sizeof){
       for ( ; column_A_pivot < column_A_limit  ; ++column_A_pivot ){
         for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit ; ++column_B_pivot){
-      }
-  if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
+        }
+        if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
           //insert into C
           (*C_csr_values)[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
           (*C_JA)[c_pos]=column_A_pivot;
           ++c_pos;
           ++column_B_pivot;
-  }
-        
+        }
+
       }
     }
     else {
@@ -219,7 +240,7 @@ void csr_hadamard(
           //insert into C
           (*C_csr_values)[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
           (*C_JA)[c_pos]=column_B_pivot;
-        ++column_A_pivot;
+          ++column_A_pivot;
           ++c_pos;
         }
       }
@@ -236,8 +257,8 @@ void csr_hadamard(
 //
 /////////////////////////////////
 void csr_krao( 
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_columns,
-    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_columns,
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns  
     ){
 
@@ -270,8 +291,10 @@ void csr_krao(
   A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   A_IA1 = (MKL_INT*) mkl_malloc ((A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+  printf("A csr -> csr ok?\n");
   check_errors(status_convert_csc);
 
+  print_csc(A_csc_values, A_JA1, A_IA1, A_NNZ, A_number_rows, A_number_columns );
   float* B_csc_values = NULL;
   MKL_INT* B_JA1;
   MKL_INT* B_IA1;
@@ -280,8 +303,9 @@ void csr_krao(
   B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   B_IA1 = (MKL_INT*) mkl_malloc (( B_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+  printf("A csr -> csr ok?\n");
   check_errors(status_convert_csc);
-
+  print_csc(B_csc_values, B_JA1, B_IA1, B_NNZ, B_number_rows, B_number_columns );
   /////////////////////////////////
   //
   //   COMPUTE KRAO
@@ -291,8 +315,8 @@ void csr_krao(
   MKL_INT* C_JA1;
   MKL_INT* C_IA1;
 
-  C_csc_values = (float*) mkl_malloc (( A_NNZ * B_number_columns * sizeof(float)), MEM_LINE_SIZE );
-  C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * B_number_columns * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
   C_IA1 = (MKL_INT*) mkl_malloc (( A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   MKL_INT c1_pos = 0;
@@ -316,7 +340,7 @@ void csr_krao(
         float value =  A_csc_values[c1_pos] * B_csc_values[c1_pos];
         if ( value != 0 ) {
           C_csc_values[c1_pos] = value;
-          row_pos = (line_A_pivot+1)*(line_B_pivot+1);
+          row_pos = (line_A_pivot+1)*(line_B_pivot+1)-1;
           if (max_row < row_pos){
             max_row = row_pos;
           }
@@ -327,6 +351,7 @@ void csr_krao(
       }
     }
   }
+
   //insert the final C_JA position 
   C_IA1[at_column]=c1_pos;
 

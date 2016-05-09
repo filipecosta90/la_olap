@@ -47,18 +47,22 @@ int main( int argc, char* argv[]){
   //read A
   tbl_read( argv[1], tbl_column, &A_nnz, &A_rows, &A_columns , &A_csr_values, &A_JA, &A_IA);
   print_csr( A_csr_values, A_JA, A_IA, A_nnz, A_rows, A_columns);
-  
+
   //read B
   tbl_read( argv[1], tbl_column_2, &B_nnz, &B_rows, &B_columns , &B_csr_values, &B_JA, &B_IA);
   print_csr( B_csr_values, B_JA, B_IA, B_nnz, B_rows, B_columns);
 
-//   compute C = A hadarmard B
-  csr_hadamard( A_csr_values, A_JA, A_IA, A_nnz, A_rows, B_csr_values, B_JA, B_IA , B_nnz, &C_csr_values, &C_JA, &C_IA, &C_nnz );
-  print_csr( C_csr_values, C_JA, C_IA, C_nnz, B_rows, B_columns);
-  
+  //   compute C = A hadarmard B
+  //  csr_hadamard( A_csr_values, A_JA, A_IA, A_nnz, A_rows, B_csr_values, B_JA, B_IA , B_nnz, &C_csr_values, &C_JA, &C_IA, &C_nnz );
+  //  print_csr( C_csr_values, C_JA, C_IA, C_nnz, B_rows, B_columns);
+
   // compute C = A krao B
-//  csr_krao( A_csr_values, A_JA, A_IA, A_nnz, A_columns, B_csr_values, B_JA, B_IA, B_nnz, B_columns, &C_csr_values, &C_JA, &C_IA, &C_nnz, &C_rows, &C_columns );
- // print_csr( C_csr_values, C_JA, C_IA, C_nnz, C_rows, C_columns);
+  csr_krao( 
+      A_csr_values, A_JA, A_IA, A_nnz, A_rows, A_columns, 
+      B_csr_values, B_JA, B_IA, B_nnz, A_rows, B_columns, 
+      &C_csr_values, &C_JA, &C_IA, &C_nnz, &C_rows, &C_columns 
+      );
+  print_csr( C_csr_values, C_JA, C_IA, C_nnz, C_rows, C_columns);
 
   /*
   /////////////////////////////////
