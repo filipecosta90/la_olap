@@ -165,19 +165,23 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
 //   COMPUTE HADAMARD
 //
 /////////////////////////////////
-void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
+void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA ){
+
+  *C_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *C_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *C_IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   MKL_INT c_pos = 0;
   MKL_INT at_row = 0;
   for ( ; at_row < number_rows; ++at_row){
     // insert start of line int C_IA
-    C_IA[at_row] = c_pos;
+    (*C_IA)[at_row] = c_pos;
     //pivot positions
     MKL_INT column_A_pivot = A_IA[at_row];
     MKL_INT column_B_pivot = B_IA[at_row];
     //limit positions
     MKL_INT column_A_limit = A_IA[at_row+1];
-    MKL_INT column_B_limit =B_IA[at_row+1];
+    MKL_INT column_B_limit = B_IA[at_row+1];
 
     MKL_INT A_line_sizeof = column_A_limit - column_A_pivot;
     MKL_INT B_line_sizeof = column_B_limit - column_B_pivot;
@@ -186,10 +190,10 @@ void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_IN
       for ( ; column_A_pivot < column_A_limit  ; ++column_A_pivot){
         for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit; ++column_B_pivot ){
         }
-        if (A_JA[column_A_pivot] == B_JA[column_B_pivot]){
+        if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
           //insert into C
-          C_csr_values[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
-          C_JA[c_pos]=column_A_pivot;
+          (*C_csr_values)[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
+          (*C_JA)[c_pos]=column_A_pivot;
           ++c_pos;
         }
       }
@@ -200,15 +204,15 @@ void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_IN
         }
         if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
           //insert into C
-          C_csr_values[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
-          C_JA[c_pos]=column_B_pivot;
+          (*C_csr_values)[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
+          (*C_JA)[c_pos]=column_B_pivot;
           ++c_pos;
         }
       }
     }
   }
   //insert the final C_JA position 
-  C_IA[at_row]=c_pos;
+  (*C_IA)[at_row]=c_pos;
 }
 
 /////////////////////////////////
@@ -216,6 +220,7 @@ void csr_hadamard( MKL_INT NNZ, MKL_INT number_rows, float* A_csr_values, MKL_IN
 //   COMPUTE KHATRI-RAO
 //
 /////////////////////////////////
+
 void csr_krao( float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_columns, float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_columns, float* C_csr_values, MKL_INT* C_JA, MKL_INT* C_IA ){
   MKL_INT job[8];
   /////////////////////////////////
