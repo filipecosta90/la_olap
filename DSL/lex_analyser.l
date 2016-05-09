@@ -10,6 +10,10 @@ H     [a-fA-F0-9]
 "vector"  {return (VECTOR);}
 "matrix"  {return (MATRIX);}
 "bitmap"  {return (BITMAP);}
+"bang"    {return (BANG);}
+"tbl_read" {return (TBL_READ);}
+"tbl_write" {return (TBL_WRITE);}
+"tbl_filter" {return (TBL_FILTER);}
 
 ";"     { return(';'); }
 ","     { return(','); }
@@ -24,6 +28,8 @@ H     [a-fA-F0-9]
 
 [0-9]+  {return (INTEGER);}
 [a-zA-Z_'.0-9/]* { return (IDENTIFIER); }
+[<=>]+ { return (CONDITION); }
+[\t\r]*\'[^']+\' {return(KEY_CONDITION);}
 [ \t\v\n\f]   { }
 .     { /* ignore bad characters */ }
 
