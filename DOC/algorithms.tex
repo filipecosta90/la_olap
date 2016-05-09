@@ -134,12 +134,14 @@
 \Statex
 
 \State $c1\_pos \gets 0$
-\For {$ at\_column = 0$ \textbf{to} $number\_columns-1$}
+\For {$ A\_at\_column = 0$ \textbf{to} $A\_number\_columns-1$}
     \State $C1\_IA[at\_column] \gets c1\_pos$
     \State $line\_A\_pivot \gets A1\_IA[at\_column]$
     \State $line\_B\_pivot \gets B1\_IA[at\_column]$
     \State $line\_A\_limit \gets A1\_IA[at\_column+1]$
     \State $line\_B\_limit = B1\_IA[at\_column+1]$
+    \Statex
+\For {$ B\_at\_column = 0$ \textbf{to} $B\_number\_columns-1$}
     \Statex
 	\For {$line\_A\_pivot=0$ \textbf{to} $line\_A\_limit-1 $}
 		\State $line\_B\_pivot \gets B1\_IA[at\_column]$
@@ -150,8 +152,10 @@
 		\EndFor
 	\EndFor
 \EndFor
+
+\EndFor
 \Statex
-\State $C1\_IA[at\_column]=c1\_pos$
+\State $C1\_IA[A\_at\_column+B\_at\_column]=c1\_pos$
 
 \Statex
 \State $C \gets C1^{T}$
