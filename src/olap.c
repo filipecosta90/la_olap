@@ -57,7 +57,7 @@ int main( int argc, char* argv[]){
   //  print_csr( C_csr_values, C_JA, C_IA, C_nnz, B_rows, B_columns);
 
   // compute C = A krao B
-  csr_krao( 
+  csr_kron( 
       A_csr_values, A_JA, A_IA, A_nnz, A_rows, A_columns, 
       B_csr_values, B_JA, B_IA, B_nnz, A_rows, B_columns, 
       &C_csr_values, &C_JA, &C_IA, &C_nnz, &C_rows, &C_columns 

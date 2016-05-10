@@ -181,7 +181,11 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   *nnz = NNZ;
 }
 
-
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
 /////////////////////////////////
 //
 //   COMPUTE HADAMARD
@@ -252,6 +256,11 @@ void csr_hadamard(
 }
 
 /////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
 //
 //   COMPUTE KHATRI-RAO
 //
@@ -291,7 +300,7 @@ void csr_krao(
   A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   A_IA1 = (MKL_INT*) mkl_malloc ((A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
-  printf("A csr -> csr ok?\n");
+  printf("A csr -> csc ok?\n");
   check_errors(status_convert_csc);
 
   print_csc(A_csc_values, A_JA1, A_IA1, A_NNZ, A_number_rows, A_number_columns );
@@ -303,7 +312,7 @@ void csr_krao(
   B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   B_IA1 = (MKL_INT*) mkl_malloc (( B_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
-  printf("A csr -> csr ok?\n");
+  printf("A csr -> csc ok?\n");
   check_errors(status_convert_csc);
   print_csc(B_csc_values, B_JA1, B_IA1, B_NNZ, B_number_rows, B_number_columns );
   /////////////////////////////////
@@ -319,42 +328,23 @@ void csr_krao(
   C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
   C_IA1 = (MKL_INT*) mkl_malloc (( A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-  MKL_INT c1_pos = 0;
   MKL_INT at_column = 0;
-  MKL_INT CSC_nnz=0;
-  MKL_INT max_row = -1;
-  MKL_INT row_pos = -1;
+  MKL_INT max_row = 0;
+  MKL_INT row_pos = 0;
+
   for ( ; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
-    C_IA1[at_column] = c1_pos;
-    //pivot positions
-    MKL_INT line_A_pivot = A_IA1[at_column];
-    MKL_INT line_B_pivot = B_IA1[at_column];
-    //limit positions
-    MKL_INT line_A_limit = A_IA1[at_column+1];
-    MKL_INT line_B_limit = B_IA1[at_column+1];
-
-    for ( ; line_A_pivot < line_A_limit  ; ++line_A_pivot){
-      line_B_pivot = B_IA1[at_column];
-      for ( ; line_B_pivot < line_B_limit ; ++line_B_pivot ){
-        float value =  A_csc_values[c1_pos] * B_csc_values[c1_pos];
-        if ( value != 0 ) {
-          C_csc_values[c1_pos] = value;
-          row_pos = (line_A_pivot+1)*(line_B_pivot+1)-1;
-          if (max_row < row_pos){
-            max_row = row_pos;
-          }
-          C_JA1[c1_pos]=row_pos;
-          ++CSC_nnz;
-          ++c1_pos;
-        }
-      }
+    C_IA1[at_column] = A_IA1[at_column];
+    C_csc_values[at_column] = A_csc_values[at_column] * B_csc_values[at_column];
+    row_pos  = ( A_JA1[at_column] * B_number_rows ) + B_JA1[at_column];
+    C_JA1[at_column] = row_pos;
+    if (max_row < row_pos){
+      max_row = row_pos;
     }
   }
-
-  //insert the final C_JA position 
-  C_IA1[at_column]=c1_pos;
-
+  ++max_row;
+  C_IA1[at_column] = A_NNZ;
+  print_csc(C_csc_values, C_JA1, C_IA1, A_NNZ, max_row, A_number_columns );
   /////////////////////////////////
   //
   //   CONVERT C from CSC to CSR
@@ -380,14 +370,154 @@ void csr_krao(
   job[5] = 1;
   sparse_status_t status_convert_csr;
 
-  *C_csr_values = (float*) mkl_malloc (( CSC_nnz * sizeof(float)), MEM_LINE_SIZE );
-  *C_JA = (MKL_INT*) mkl_malloc (( CSC_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *C_csr_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc (( max_row + 1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &CSC_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
+  mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
   check_errors(status_convert_csr);
-  *C_number_rows = max_row;
+  printf("C csc -> csr ok?\n");
+  *C_number_rows = max_row ;
   *C_number_columns = A_number_columns;
-  *C_NNZ = CSC_nnz;
+  *C_NNZ = A_NNZ;
 }
+
+
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
+//
+//   COMPUTE KRONECKER PRODUCT
+//
+/////////////////////////////////
+
+void csr_kron(
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    ){
+
+  MKL_INT job[8];
+  /////////////////////////////////////
+  //
+  //   CONVERT A and B from CSR to CSC
+  //
+  /////////////////////////////////////
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job[0] = 0;
+  // job[1]
+  job[1] = 0;
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+  sparse_status_t status_convert_csc;
+  float* A_csc_values = NULL;
+  MKL_INT* A_JA1;
+  MKL_INT* A_IA1;
+
+  A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
+  A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  A_IA1 = (MKL_INT*) mkl_malloc ((A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+  printf("A csr -> csc ok?\n");
+  check_errors(status_convert_csc);
+
+  print_csc(A_csc_values, A_JA1, A_IA1, A_NNZ, A_number_rows, A_number_columns );
+  float* B_csc_values = NULL;
+  MKL_INT* B_JA1;
+  MKL_INT* B_IA1;
+
+  B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
+  B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  B_IA1 = (MKL_INT*) mkl_malloc (( B_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+  printf("B csr -> csc ok?\n");
+  check_errors(status_convert_csc);
+  print_csc(B_csc_values, B_JA1, B_IA1, B_NNZ, B_number_rows, B_number_columns );
+  /////////////////////////////////
+  //
+  //   COMPUTE KRON
+  //
+  ////////////////////////////////
+  float* C_csc_values = NULL;
+  MKL_INT* C_JA1;
+  MKL_INT* C_IA1;
+  MKL_INT C_nnz = A_NNZ * B_NNZ;
+  MKL_INT C_ncols = A_number_columns * B_number_columns;
+  C_csc_values = (float*) mkl_malloc (( C_nnz * sizeof(float)), MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) mkl_malloc (( C_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) mkl_malloc (( C_ncols +1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  MKL_INT at_column = 0;
+  MKL_INT at_column_A = 0;
+  MKL_INT at_column_B = 0;
+  MKL_INT max_row = 0;
+  MKL_INT row_pos = 0;
+
+
+  for ( ; at_column_A < A_number_columns; ++at_column_A ){
+    at_column_B = 0;
+    for ( ; at_column_B < B_number_columns; ++at_column_B ){
+      at_column = A_IA1[at_column_A] * B_number_columns + B_IA1[at_column_B];
+      C_IA1[at_column] = at_column;
+      C_csc_values[at_column] = A_csc_values[at_column_A] * B_csc_values[at_column_B];
+      row_pos  = ( A_JA1[at_column_A] * B_number_rows ) + B_JA1[at_column_B];
+      C_JA1[at_column] = row_pos;
+      if (max_row < row_pos){
+        max_row = row_pos;
+      }
+    }
+  }
+  at_column++;
+  ++max_row;
+  C_IA1[at_column] = C_nnz;
+  print_csc(C_csc_values, C_JA1, C_IA1, C_nnz, max_row,   C_ncols );
+  printf("printed\n");
+  /////////////////////////////////
+  //
+  //   CONVERT C from CSC to CSR
+  //
+  ////////////////////////////////
+
+  // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
+  job[0] = 1;
+
+  // job[1]
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job[1] = 0;
+
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+  sparse_status_t status_convert_csr;
+
+  *C_csr_values = (float*) mkl_malloc (( C_nnz * sizeof(float)), MEM_LINE_SIZE );
+  *C_JA = (MKL_INT*) mkl_malloc (( C_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *C_IA = (MKL_INT*) mkl_malloc (( max_row + 1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  printf("going to convert back to CSR\n");
+  mkl_scsrcsc(job, &C_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
+  check_errors(status_convert_csr);
+  printf("C csc -> csr ok?\n");
+  *C_number_rows = max_row ;
+  *C_number_columns = C_ncols;
+  *C_NNZ = C_nnz;
+}
+
 
 
