@@ -1,3 +1,37 @@
+/* ---------------------------------------------------------------------------
+ **    Filename: olap.h
+ **
+ **     License: This file is part of OLAP PROJECT.
+ **
+ **              OLAP PROJECT is free software: you can redistribute it
+ **              and/or modify it under the terms of the GNU General Public
+ **              License as published by the Free Software Foundation,
+ **              either version 3 of the License, or (at your option)
+ **              any later version.
+ **
+ **              OLAP is distributed in the hope that it will be useful,
+ **              but WITHOUT ANY WARRANTY; without even the implied warranty of
+ **              MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ **              GNU General Public License for more details.
+ **
+ **              You should have received a copy of the GNU General Public
+ **              License along with OLAP.
+ **              If not, see <http://www.gnu.org/licenses/>.
+ **
+ ** Description: The proposed file focus on a typed linear algebra approach,
+ **              encoding OLAP functionality solely in terms of Linear Algebra
+ **              operations, represented in the CSR and BSR format, and
+ **              recurring to Intel MKL and GLIB libraries.
+ **
+ **     Authors: Filipe Oliveira <a57816@alunos.uminho.pt>
+ **          and Sérgio Caldas   <a57779@alunos.uminho.pt>
+ **
+ ** University of Minho, High Performance Computing Dpt. , April 2016
+ ** -------------------------------------------------------------------------*/
+
+#ifndef _olap_h
+#define _olap_h
+
 #include <stdio.h>
 #include <glib.h>
 #include <stdlib.h>
@@ -18,11 +52,9 @@
 #define GREATER 3
 #define GREATER_EQ 4
 
-////////////////////////////////////////// AUX ////////////////////////////////////////// AUX ////////////////////////////////////////// AUX //////////////////////////////////////////
-
-////////////////////////////////////////// AUX ////////////////////////////////////////// AUX ////////////////////////////////////////// AUX //////////////////////////////////////////
-
-////////////////////////////////////////// AUX ////////////////////////////////////////// AUX ////////////////////////////////////////// AUX //////////////////////////////////////////
+////////////////////////////////////////// AUX //////////////////////////////////////////
+////////////////////////////////////////// AUX //////////////////////////////////////////
+////////////////////////////////////////// AUX //////////////////////////////////////////
 
 //starts at position 1 
 char* getfield(char* line, int num, char* return_string ){
@@ -200,6 +232,9 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
   MKL_INT* aux_coo_rows;
   aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
 
+  float* aux_coo_values;
+  aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
+
   FILE* stream = fopen(table_name, "r");
   char line[1024];
   MKL_INT number_rows = - 1;
@@ -213,33 +248,23 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
     char* tmp_field = strdup(line);
     field = getfield(tmp_field, tbl_column, field);
 
-    MKL_INT zero_value = 0;
-    if (opp_code == LESS ){
-
-    }
-    else {
-      if (opp_code == LESS_EQ ){
-
-      }
-      else {
-        if (opp_code == GREATER ){
-
-        }
-        else {
-          if (opp_code == GREATER_EQ ){
-
-          }
-        }
-      }
-    }
     MKL_INT quark_field;
+    MKL_INT quark_zeroed = 0;
 
-    if ( zero_value == 1 ){
-      quark_field = 0;
+    MKL_INT returned_strcmp = strcmp( field , comparation_key );
+    if (
+        ( opp_code == LESS  && returned_strcmp >= 0 )
+        ||
+        ( opp_code == LESS_EQ  && returned_strcmp > 0 )
+        ||
+        ( opp_code == GREATER  && returned_strcmp <= 0 )
+        ||
+        ( opp_code == GREATER_EQ  && returned_strcmp < 0 )
+       ){
+      quark_zeroed = 1;
     }
-    else {
-      quark_field = g_quark_from_string (field);
-    }
+
+    quark_field = g_quark_from_string (field);
 
     if (quark_field > 1 && element_number == 0 ){
       padding_quark = quark_field - 1;
@@ -249,6 +274,14 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
     if ( element_number >= current_values_size ){
       current_values_size *= GROWTH_FACTOR;
       aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+      aux_coo_values = (float*)  realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
+    }
+
+    if ( quark_zeroed == 1 ){
+      aux_coo_values[element_number]=  0 ;
+    }
+    else {
+      aux_coo_values[element_number]=  1 ;
     }
 
     /* normal coo property */
@@ -258,9 +291,7 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
       number_rows =  quark_field;
     }
     free(tmp_field);
-
   }
-
 
   MKL_INT NNZ = element_number;
   number_columns = element_number;
@@ -275,11 +306,13 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
   coo_columns =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   for (int pos = 0; pos < NNZ; pos++) {
-    coo_values[pos] = 1.0;
+    coo_values[pos] = aux_coo_values[pos];
     coo_columns[pos] = pos;
     coo_rows[pos] = aux_coo_rows[pos];
   }
-  free(aux_coo_rows);
+  printf("here\n");
+  //free(aux_coo_rows);
+  // free(aux_coo_values);
 
   /////////////////////////////////
   //
@@ -313,11 +346,9 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
   *nnz = NNZ;
 }
 
-////////////////////////////////////////// OPPS ////////////////////////////////////////// OPPS ////////////////////////////////////////// OPPS //////////////////////////////////////////
-
-////////////////////////////////////////// OPPS ////////////////////////////////////////// OPPS ////////////////////////////////////////// OPPS //////////////////////////////////////////
-
-////////////////////////////////////////// OPPS ////////////////////////////////////////// OPPS ////////////////////////////////////////// OPPS //////////////////////////////////////////
+////////////////////////////////////////// OPS //////////////////////////////////////////
+////////////////////////////////////////// OPS //////////////////////////////////////////
+////////////////////////////////////////// OPS //////////////////////////////////////////
 
 /////////////////////////////////
 /////////////////////////////////
@@ -666,4 +697,6 @@ void csr_kron(
   *C_number_columns = C_ncols;
   *C_NNZ = C_nnz;
 }
+
+#endif
 
