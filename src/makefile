@@ -10,8 +10,11 @@ CFLAGS= -g -debug  -I${MKLROOT}/include -Iinclude -Ilib/glib-2.0 -Ilib/glib-2.0/
 test: olap.o 
 	$(CC) $(INCLUDE) $(CFLAGS) olap.c -o olap 
 
-all: test 
+querie1: querie1.o
+	$(CC) $(INCLUDE) $(CFLAGS) querie1.c -o querie1 
+
+all: test querie1
 
 .PHONY: clean
 clean:
-	rm  *.o && rm olap
+	rm  *.o && rm olap && rm querie1
