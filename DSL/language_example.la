@@ -2,12 +2,11 @@ BEGIN
 bitmap returnFlag, lineStatus, shipdate_gt, shipdate_lt;
 matrix quantity;
 
-returnFlag = tbl_read('lineitem.tbl', 8);
-lineStatus = tbl_read('lineitem.tbl', 9);
-quantity = tbl_read('lineitem.tbl', 4);
-shipdate_gt = tbl_filter('lineitem.tbl', 10, >=, '1998-08-28' );
-shipdate_lt = tbl_filter('lineitem.tbl', 10, <=, '1998-12-01' );
-
+returnFlag = tbl_read('lineitem.tbl', 9);
+lineStatus = tbl_read('lineitem.tbl', 10);
+quantity = tbl_read('lineitem.tbl', 5;
+shipdate_gt = tbl_filter('lineitem.tbl', 11, >=, '1998-08-28' );
+shipdate_lt = tbl_filter('lineitem.tbl', 11, <=, '1998-12-01' );
 
 bitmap projection, selection;
 matrix aggregiation, intermediate_result, final_result;

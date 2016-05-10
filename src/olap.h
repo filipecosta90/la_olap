@@ -453,9 +453,9 @@ void csr_kron(
   MKL_INT* C_IA1;
   MKL_INT C_nnz = A_NNZ * B_NNZ;
   MKL_INT C_ncols = A_number_columns * B_number_columns;
-  C_csc_values = (float*) mkl_malloc (( C_nnz * sizeof(float)), MEM_LINE_SIZE );
-  C_JA1 = (MKL_INT*) mkl_malloc (( C_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  C_IA1 = (MKL_INT*) mkl_malloc (( C_ncols +1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_csc_values = (float*) mkl_malloc (( C_nnz+1 * sizeof(float)), MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) mkl_malloc (( C_nnz+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) mkl_malloc (( C_ncols +2 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   MKL_INT at_column = 0;
   MKL_INT at_column_A = 0;
@@ -503,21 +503,29 @@ void csr_kron(
 
   // job[5] - job indicator.
   // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
-  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  // If job[5]≠0,  all output arrays acsr, ja, and ia are filled in for the output storage. 
   job[5] = 1;
-  sparse_status_t status_convert_csr;
 
+  sparse_status_t status_convert_csr;
+  printf("%d -- %d\n", C_nnz, max_row);
   *C_csr_values = (float*) mkl_malloc (( C_nnz * sizeof(float)), MEM_LINE_SIZE );
   *C_JA = (MKL_INT*) mkl_malloc (( C_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  *C_IA = (MKL_INT*) mkl_malloc (( max_row + 1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *C_IA = (MKL_INT*) mkl_malloc (( C_nnz + 1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
   printf("going to convert back to CSR\n");
+  C_IA1[at_column] = 0;
+  C_csc_values[at_column] = 0;
+  row_pos=35;
+  C_JA1[at_column] = row_pos;
+  at_column++;
+  C_nnz = 37;
+  C_IA1[at_column] = C_nnz;
+
+
   mkl_scsrcsc(job, &C_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
-  check_errors(status_convert_csr);
   printf("C csc -> csr ok?\n");
+  check_errors(status_convert_csr);
   *C_number_rows = max_row ;
   *C_number_columns = C_ncols;
   *C_NNZ = C_nnz;
 }
-
-
 
