@@ -104,6 +104,40 @@ int main( int argc, char* argv[]){
   //read shipdate lt
   tbl_read_filter( "__tbl/lineitem.tbl" , 11, LESS_EQ , "1998-12-01", &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns , &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA);
 
+  float* selection_csr_values = NULL;
+  MKL_INT* selection_JA;
+  MKL_INT* selection_IA;
+  MKL_INT selection_rows;
+  MKL_INT selection_columns;
+  MKL_INT selection_nnz;
+
+  float* projection_csr_values = NULL;
+  MKL_INT* projection_JA;
+  MKL_INT* projection_IA;
+  MKL_INT projection_rows;
+  MKL_INT projection_columns;
+  MKL_INT projection_nnz;
+
+  float* aggregation_csr_values = NULL;
+  MKL_INT* aggregation_JA;
+  MKL_INT* aggregation_IA;
+  MKL_INT aggregation_rows;
+  MKL_INT aggregation_columns;
+  MKL_INT aggregation_nnz;
+
+  float* intermediate_csr_values = NULL;
+  MKL_INT* intermediate_JA;
+  MKL_INT* intermediate_IA;
+  MKL_INT intermediate_rows;
+  MKL_INT intermediate_columns;
+  MKL_INT intermediate_nnz;
+
+  float* final_csr_values = NULL;
+  MKL_INT* final_JA;
+  MKL_INT* final_IA;
+  MKL_INT final_rows;
+  MKL_INT final_columns;
+  MKL_INT final_nnz;
 
   // compute C = A krao B
   /*  csr_kron( 

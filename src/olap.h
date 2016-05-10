@@ -52,12 +52,12 @@
 #define GREATER 3
 #define GREATER_EQ 4
 
-////////////////////////////////////////// AUX //////////////////////////////////////////
-////////////////////////////////////////// AUX //////////////////////////////////////////
-////////////////////////////////////////// AUX //////////////////////////////////////////
+////////////////////////////////////// AUX /////////////////////////////////////
+////////////////////////////////////// AUX /////////////////////////////////////
+////////////////////////////////////// AUX /////////////////////////////////////
 
 //starts at position 1 
-char* getfield(char* line, int num, char* return_string ){
+char* getfield( char* line, int num, char* return_string ){
   return_string = strtok(line, "|\n");
   int pos = 1;
   for ( ; pos < num; pos++ ){
@@ -66,7 +66,11 @@ char* getfield(char* line, int num, char* return_string ){
   return return_string;
 }
 
-void print_csc(float* csc_values, MKL_INT* JA1, MKL_INT* IA1, MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns ){
+void print_csc(
+    float* csc_values, MKL_INT* JA1, MKL_INT* IA1, 
+    MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns 
+    ){
+
   printf("N NONZ: %d\t", NNZ);
   printf("N ROWS: %d\t", number_rows);
   printf("N COLS: %d\n", number_columns);
@@ -87,7 +91,11 @@ void print_csc(float* csc_values, MKL_INT* JA1, MKL_INT* IA1, MKL_INT NNZ, MKL_I
   printf("\n");
 }
 
-void print_csr(float* csr_values, MKL_INT* JA, MKL_INT* IA, MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns ){
+void print_csr( 
+    float* csr_values, MKL_INT* JA, MKL_INT* IA, 
+    MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns 
+    ){
+
   printf("N NONZ: %d\t", NNZ);
   printf("N ROWS: %d\t", number_rows);
   printf("N COLS: %d\n", number_columns);
@@ -132,7 +140,12 @@ void check_errors( sparse_status_t stat ){
   }
 }
 
-void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA){
+void tbl_read( 
+    char* table_name, MKL_INT tbl_column, 
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns, 
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    ){
+
   MKL_INT current_values_size = ARRAY_SIZE;
   //define COO sparse-matrix M
   MKL_INT* aux_coo_rows;
@@ -145,8 +158,7 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   MKL_INT element_number = 1;
   MKL_INT job[8];
   MKL_INT padding_quark = 0;
-  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number )
-  {
+  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     char* tmp_field = strdup(line);
     field = getfield(tmp_field, tbl_column, field);
@@ -192,21 +204,28 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   free(aux_coo_rows);
 
   /////////////////////////////////
-  //
   //   CONVERT FROM COO TO CSR
-  //
-  ////////////////////////////////
+  /////////////////////////////////
 
-  job[0]=  2; // if job[0]=2, the matrix in the coordinate format is converted to the CSR
+
+  // if job[0]=2, the matrix in the coordinate format is converted to the CSR
   // format, and the column indices in CSR representation are sorted in the
   // increasing order within each row.
-  job[1]= 0; // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  job[2]= 0; // If job[2]=0, zero-based indexing for the matrix in coordinate format is
-  //used;
+  job[0]= 2; 
+
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  job[1]= 0; 
+
+  // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
+  job[2]= 0;
+
   job[3]= 0;
-  job[4]= NNZ;// job[4]=nzmax - maximum number of the non-zero elements allowed if
+  // job[4]=nzmax - maximum number of the non-zero elements allowed if
   // job[0]=0.
-  job[5]= 0;   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+  job[4]= NNZ;
+
+  // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+  job[5]= 0;
 
   *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
   *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
@@ -223,11 +242,14 @@ void tbl_read( char* table_name, MKL_INT tbl_column, MKL_INT* nnz, MKL_INT* rows
   *nnz = NNZ;
 }
 
-void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key,
-    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+void tbl_read_filter( 
+    char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , 
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     ){
-  //assert( opp_code == LESS || opp_code == LESS_EQ || opp_code == GREATER || opp_code == GREATER_EQ );
+
   MKL_INT current_values_size = ARRAY_SIZE;
+
   //define COO sparse-matrix M
   MKL_INT* aux_coo_rows;
   aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
@@ -238,13 +260,15 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
   FILE* stream = fopen(table_name, "r");
   char line[1024];
   MKL_INT number_rows = - 1;
-  MKL_INT number_columns = -1 ;
+  MKL_INT number_columns = -1;
   MKL_INT element_number = 1;
   MKL_INT job[8];
   MKL_INT padding_quark = 0;
+
+  // read the input file
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
 
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     char* tmp_field = strdup(line);
     field = getfield(tmp_field, tbl_column, field);
 
@@ -315,21 +339,27 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
   // free(aux_coo_values);
 
   /////////////////////////////////
-  //
   //   CONVERT FROM COO TO CSR
-  //
-  ////////////////////////////////
+  /////////////////////////////////
 
-  job[0]=  2; // if job[0]=2, the matrix in the coordinate format is converted to the CSR
+  // if job[0]=2, the matrix in the coordinate format is converted to the CSR
   // format, and the column indices in CSR representation are sorted in the
   // increasing order within each row.
-  job[1]= 0; // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  job[2]= 0; // If job[2]=0, zero-based indexing for the matrix in coordinate format is
-  //used;
+  job[0]=  2;
+
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  job[1]= 0; 
+
+  // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
+  job[2]= 0; 
+
   job[3]= 0;
-  job[4]= NNZ;// job[4]=nzmax - maximum number of the non-zero elements allowed if
-  // job[0]=0.
-  job[5]= 0;   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+
+  // job[4]=nzmax - maximum number of the non-zero elements allowed if job[0]=0.
+  job[4]= NNZ;
+
+  // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+  job[5]= 0;   
 
   *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
   *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
@@ -346,9 +376,9 @@ void tbl_read_filter( char* table_name, MKL_INT tbl_column, int opp_code, char* 
   *nnz = NNZ;
 }
 
-////////////////////////////////////////// OPS //////////////////////////////////////////
-////////////////////////////////////////// OPS //////////////////////////////////////////
-////////////////////////////////////////// OPS //////////////////////////////////////////
+///////////////////////////////////// OPS /////////////////////////////////////
+///////////////////////////////////// OPS /////////////////////////////////////
+///////////////////////////////////// OPS /////////////////////////////////////
 
 /////////////////////////////////
 /////////////////////////////////
@@ -365,6 +395,7 @@ void csr_hadamard(
     float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT *C_NNZ
     ){
+
   MKL_INT NNZ; 
   if (A_NNZ > B_NNZ ){
     NNZ = A_NNZ;
@@ -372,6 +403,7 @@ void csr_hadamard(
   else {
     NNZ = B_NNZ;
   }
+
   *C_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
   *C_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc ((number_rows+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
@@ -434,28 +466,37 @@ void csr_hadamard(
 //   COMPUTE KHATRI-RAO
 //
 /////////////////////////////////
-void csr_krao( 
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns  
+void csr_krao(
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, 
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , 
+    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, 
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns  
     ){
 
   MKL_INT job[8];
+
   /////////////////////////////////////
-  //
-  //   CONVERT A and B from CSR to CSC
-  //
+  // PREPARE FOR OPERATION
   /////////////////////////////////////
+  //////////////////////////////////////////
+  ///////   CONVERT A and B from CSR to CSC
+  //////////////////////////////////////////
+
   // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
   job[0] = 0;
+
   // job[1]
-  job[1] = 0;
   // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
   // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job[1] = 0;
+
   // job[2]
   // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
   // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
   job[2] = 0;
+
   // job[5] - job indicator.
   // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
   // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
@@ -484,11 +525,11 @@ void csr_krao(
   printf("A csr -> csc ok?\n");
   check_errors(status_convert_csc);
   print_csc(B_csc_values, B_JA1, B_IA1, B_NNZ, B_number_rows, B_number_columns );
+
   /////////////////////////////////
-  //
   //   COMPUTE KRAO
-  //
-  ////////////////////////////////
+  /////////////////////////////////
+
   float* C_csc_values = NULL;
   MKL_INT* C_JA1;
   MKL_INT* C_IA1;
@@ -514,10 +555,9 @@ void csr_krao(
   ++max_row;
   C_IA1[at_column] = A_NNZ;
   print_csc(C_csc_values, C_JA1, C_IA1, A_NNZ, max_row, A_number_columns );
+
   /////////////////////////////////
-  //
   //   CONVERT C from CSC to CSR
-  //
   ////////////////////////////////
 
   // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
@@ -568,12 +608,14 @@ void csr_kron(
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
 
+  /////////////////////////////////////
+  // PREPARE FOR OPERATION
+  /////////////////////////////////////
+  //////////////////////////////////////////
+  ///////   CONVERT A and B from CSR to CSC
+  //////////////////////////////////////////
+
   MKL_INT job[8];
-  /////////////////////////////////////
-  //
-  //   CONVERT A and B from CSR to CSC
-  //
-  /////////////////////////////////////
   // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
   job[0] = 0;
   // job[1]
@@ -600,7 +642,6 @@ void csr_kron(
   printf("A csr -> csc ok?\n");
   check_errors(status_convert_csc);
 
-  print_csc(A_csc_values, A_JA1, A_IA1, A_NNZ, A_number_rows, A_number_columns );
   float* B_csc_values = NULL;
   MKL_INT* B_JA1;
   MKL_INT* B_IA1;
@@ -611,12 +652,10 @@ void csr_kron(
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
   printf("B csr -> csc ok?\n");
   check_errors(status_convert_csc);
-  print_csc(B_csc_values, B_JA1, B_IA1, B_NNZ, B_number_rows, B_number_columns );
+
   /////////////////////////////////
-  //
   //   COMPUTE KRON
-  //
-  ////////////////////////////////
+  /////////////////////////////////
   float* C_csc_values = NULL;
   MKL_INT* C_JA1;
   MKL_INT* C_IA1;
@@ -631,7 +670,6 @@ void csr_kron(
   MKL_INT at_column_B = 0;
   MKL_INT max_row = 0;
   MKL_INT row_pos = 0;
-
 
   for ( ; at_column_A < A_number_columns; ++at_column_A ){
     at_column_B = 0;
@@ -649,13 +687,10 @@ void csr_kron(
   at_column++;
   ++max_row;
   C_IA1[at_column] = C_nnz;
-  print_csc(C_csc_values, C_JA1, C_IA1, C_nnz, max_row,   C_ncols );
-  printf("printed\n");
+
   /////////////////////////////////
-  //
   //   CONVERT C from CSC to CSR
-  //
-  ////////////////////////////////
+  /////////////////////////////////
 
   // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
   job[0] = 1;

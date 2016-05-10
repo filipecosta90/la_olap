@@ -17,4 +17,4 @@ all: test querie1
 
 .PHONY: clean
 clean:
-	rm  *.o && rm olap && rm querie1
+	rm  *.o && rm querie1 && rm olap
