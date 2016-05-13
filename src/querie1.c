@@ -66,6 +66,7 @@ int main( int argc, char* argv[]){
   MKL_INT quantity_rows;
   MKL_INT quantity_columns;
   MKL_INT quantity_nnz;
+  sparse_matrix_t  quantity_matrix;
 
   //conversion status from csr arrays into mkl sparse_matrix_t 
   sparse_status_t status_to_csr;
@@ -79,6 +80,14 @@ int main( int argc, char* argv[]){
   //read quantity
   tbl_read( "__tbl/lineitem.tbl" , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
 
+  //        convert via sparseBLAS API to Handle containing internal data for 
+  //        subsequent Inspector-executor Sparse BLAS operations.
+  status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
+      quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
+  printf("selection convert? :");
+  check_errors(status_to_csr);
+
+
   float* selection_csr_values = NULL;
   MKL_INT* selection_JA;
   MKL_INT* selection_IA;
@@ -87,13 +96,12 @@ int main( int argc, char* argv[]){
   MKL_INT selection_nnz;
   sparse_matrix_t  selection_matrix;
 
-  //read shipdate gt
+  //read shipdate gt and lt into selection matrix
   tbl_read_filter_and( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01", &selection_nnz, &selection_rows, &selection_columns , &selection_csr_values, &selection_JA, &selection_IA);
 
   //        convert via sparseBLAS API to Handle containing internal data for 
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
-  printf("%d x %d\n", selection_rows, selection_columns);
   printf("selection convert? :");
   check_errors(status_to_csr);
 
@@ -103,6 +111,7 @@ int main( int argc, char* argv[]){
   MKL_INT projection_rows;
   MKL_INT projection_columns;
   MKL_INT projection_nnz;
+  sparse_matrix_t  projection_matrix;
 
   float* aggregation_csr_values = NULL;
   MKL_INT* aggregation_JA;
@@ -135,5 +144,21 @@ int main( int argc, char* argv[]){
       &projection_nnz, &projection_rows, &projection_columns  
       );
 
+  status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
+  printf("projection convert? :");
+  check_errors(status_to_csr);
+
+  float* bang_vector;
+  float* aggregation_vector;
+  bang_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
+  aggregation_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
+
+  sparse_status_t aggregation_result;
+  struct matrix_descr descrA;
+  descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
+
+  aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
+
   return 0;
 }
+

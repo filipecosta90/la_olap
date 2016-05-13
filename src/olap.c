@@ -197,6 +197,13 @@ void tbl_read(
     coo_columns[pos] = pos;
     coo_rows[pos] = aux_coo_rows[pos];
   }
+    
+    coo_values[NNZ] = 0.0;
+    coo_columns[NNZ] = NNZ;
+    coo_rows[NNZ] = NNZ;
+    printf("padded %d x %d to %d x %d \n",number_rows, number_columns, NNZ, NNZ);
+    number_rows = NNZ;
+    NNZ++;
 
 //  free(aux_coo_rows);
 
@@ -321,15 +328,23 @@ void tbl_read_filter(
   MKL_INT* coo_rows;
   MKL_INT* coo_columns;
 
-  coo_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-  coo_rows =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  coo_columns =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
+  coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   for (int pos = 0; pos < NNZ; pos++) {
     coo_values[pos] = aux_coo_values[pos];
     coo_columns[pos] = pos;
     coo_rows[pos] = aux_coo_rows[pos];
   }
+    
+    coo_values[NNZ] = 0.0;
+    coo_columns[NNZ] = NNZ;
+    coo_rows[NNZ] = NNZ;
+    printf("padded %d x %d to %d x %d \n",number_rows, number_columns, NNZ, NNZ);
+    number_rows = NNZ;
+    NNZ++;
+    
   // free(aux_coo_values);
 
   /////////////////////////////////
@@ -466,15 +481,23 @@ void tbl_read_filter_and(
   MKL_INT* coo_rows;
   MKL_INT* coo_columns;
 
-  coo_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-  coo_rows =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  coo_columns =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
+  coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   for (int pos = 0; pos < NNZ; pos++) {
     coo_values[pos] = aux_coo_values[pos];
     coo_columns[pos] = pos;
     coo_rows[pos] = aux_coo_rows[pos];
   }
+    
+    coo_values[NNZ] = 0.0;
+    coo_columns[NNZ] = NNZ;
+    coo_rows[NNZ] = NNZ;
+    printf("padded %d x %d to %d x %d \n",number_rows, number_columns, NNZ, NNZ);
+    number_rows = NNZ;
+    NNZ++;
+    
   // free(aux_coo_values);
 
   /////////////////////////////////
