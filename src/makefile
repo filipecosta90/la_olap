@@ -4,7 +4,7 @@ LIBLDIR=
 #include
 INCLUDE=  
 #flags
-LIBS = -lm -lmkl_intel -lmkl_core -lmkl_sequential -lpthread -ldl -vec-report7
+LIBS = -lm -lmkl_intel -lmkl_core -lmkl_sequential -lpthread -ldl  -vec-report7
 CFLAGS= -O3 -std=c99 -Ilib/glib-2.0/include -lglib-2.0 -I${MKLROOT}/include -Iinclude -Ilib/glib-2.0  
 
 querie1: olap.o querie1.o

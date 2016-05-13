@@ -700,9 +700,9 @@ void tbl_write(
 //
 /////////////////////////////////
 void csr_hadamard(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT number_rows,
-    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT *C_NNZ
+    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA, MKL_INT A_NNZ, MKL_INT number_rows,
+    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA , MKL_INT B_NNZ,
+    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA, MKL_INT *C_NNZ
     ){
 
   MKL_INT NNZ;
@@ -719,7 +719,12 @@ void csr_hadamard(
 
   MKL_INT c_pos = 0;
   MKL_INT at_row = 0;
-  for ( ; at_row < number_rows; ++at_row){
+
+  //__assume_aligned(C_JA1, MEM_LINE_SIZE);
+
+#pragma simd
+#pragma vector aligned
+  for ( at_row = 0 ; at_row < number_rows; ++at_row){
     // insert start of line int C_IA
     (*C_IA)[at_row] = c_pos;
     //pivot positions
@@ -733,12 +738,17 @@ void csr_hadamard(
     MKL_INT B_line_sizeof = column_B_limit - column_B_pivot;
 
     if (A_line_sizeof < B_line_sizeof){
-      for ( ; column_A_pivot < column_A_limit  ; ++column_A_pivot ){
+#pragma simd
+#pragma vector aligned
+      for ( column_A_pivot = A_IA[at_row] ; column_A_pivot < column_A_limit  ; ++column_A_pivot ){
         for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit ; ++column_B_pivot){
         }
         if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
           //insert into C
-          (*C_csr_values)[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
+          float value = A_csr_values[c_pos];
+          value *= B_csr_values[c_pos];
+          (*C_csr_values)[c_pos] = value;
+
           (*C_JA)[c_pos]=column_A_pivot;
           ++c_pos;
           ++column_B_pivot;
@@ -747,12 +757,16 @@ void csr_hadamard(
       }
     }
     else {
-      for ( ; column_B_pivot < column_B_limit  ; ++column_B_pivot){
+#pragma simd
+#pragma vector aligned
+      for ( column_B_pivot = B_IA[at_row] ; column_B_pivot < column_B_limit  ; ++column_B_pivot){
         for ( ; B_JA[column_A_pivot] <  A_JA[column_B_pivot] && column_A_pivot < column_A_limit; ++column_A_pivot ){
         }
         if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
           //insert into C
-          (*C_csr_values)[c_pos] = A_csr_values[c_pos] * B_csr_values[c_pos];
+          float value = A_csr_values[c_pos];
+          value *= B_csr_values[c_pos];
+          (*C_csr_values)[c_pos] = value;
           (*C_JA)[c_pos]=column_B_pivot;
           ++column_A_pivot;
           ++c_pos;
@@ -771,11 +785,11 @@ void csr_hadamard(
 //
 /////////////////////////////////
 void csr_krao(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
+    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA ,
+    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA ,
     MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
+    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
 
@@ -849,8 +863,9 @@ void csr_krao(
   __assume_aligned(B_JA1, MEM_LINE_SIZE);
   __assume_aligned(A_JA1, MEM_LINE_SIZE);
   __assume_aligned(C_JA1, MEM_LINE_SIZE);
-  
-  #pragma simd
+
+#pragma simd
+#pragma vector aligned
   for ( at_column = 0; at_column < end_column; ++at_column){
     // insert start of column int C_IA1
     MKL_INT ia = A_IA1[at_column];
@@ -861,7 +876,7 @@ void csr_krao(
     MKL_INT row_pos = B_JA1[at_column];
     row_pos  += ( A_JA1[at_column] * scalar_B );
     C_JA1[at_column] = row_pos;
-    
+
     if (max_row < row_pos){
       max_row = row_pos;
     }
@@ -909,9 +924,9 @@ void csr_krao(
 /////////////////////////////////
 
 void csr_kron(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA, MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA , MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+    float**restrict C_csr_values, MKL_INT**restrict C_JA, MKL_INT**restrict C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
 
   /////////////////////////////////////
@@ -968,25 +983,40 @@ void csr_kron(
   C_JA1 = (MKL_INT*) mkl_malloc (( (C_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   C_IA1 = (MKL_INT*) mkl_malloc (( (C_ncols +2) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-  MKL_INT at_column = 0;
-  MKL_INT at_column_A = 0;
-  MKL_INT at_column_B = 0;
-  MKL_INT max_row = 0;
-  MKL_INT row_pos = 0;
 
-    __assume_aligned(A_IA1, MEM_LINE_SIZE);
-    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
-    __assume_aligned(A_JA1, MEM_LINE_SIZE);
-    
-  #pragma simd
-  for ( at_column_A = 0 ; at_column_A < A_number_columns; ++at_column_A ){
-    at_column_B = 0;
-    #pragma simd
-    for ( at_column_B = 0; at_column_B < B_number_columns; ++at_column_B ){
-      at_column = A_IA1[at_column_A] * B_number_columns + B_IA1[at_column_B];
+  MKL_INT at_column_A = 0;
+  MKL_INT at_column = 0;
+  MKL_INT max_row = 0;
+
+
+  MKL_INT end_column_A = A_number_columns;
+  MKL_INT end_column_B = B_number_columns;
+  MKL_INT scalar_B = B_number_rows;
+
+
+  __assume_aligned(A_IA1, MEM_LINE_SIZE);
+  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(A_JA1, MEM_LINE_SIZE);
+
+#pragma simd
+#pragma vector aligned
+  for ( at_column_A = 0 ; at_column_A < end_column_A; ++at_column_A ){
+    MKL_INT at_column_B = 0;
+    __assume_aligned(B_IA1, MEM_LINE_SIZE);
+    __assume_aligned(B_JA1, MEM_LINE_SIZE);
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+#pragma simd
+#pragma vector aligned
+    for ( at_column_B = 0; at_column_B < end_column_B; ++at_column_B ){
+      at_column = A_IA1[at_column_A] * scalar_B;
+      at_column+= B_IA1[at_column_B];
       C_IA1[at_column] = at_column;
-      C_csc_values[at_column] = A_csc_values[at_column_A] * B_csc_values[at_column_B];
-      row_pos  = ( A_JA1[at_column_A] * B_number_rows ) + B_JA1[at_column_B];
+      float value = A_csc_values[at_column_A];
+      value*= B_csc_values[at_column_B];
+      C_csc_values[at_column] = value;
+      MKL_INT row_pos = 0;
+      row_pos  = ( A_JA1[at_column_A] * scalar_B );
+      row_pos+= B_JA1[at_column_B];
       C_JA1[at_column] = row_pos;
       if (max_row < row_pos){
         max_row = row_pos;
@@ -1022,14 +1052,7 @@ void csr_kron(
   sparse_status_t status_convert_csr;
   *C_csr_values = (float*) mkl_malloc (( C_nnz * sizeof(float)), MEM_LINE_SIZE );
   *C_JA = (MKL_INT*) mkl_malloc (( C_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  *C_IA = (MKL_INT*) mkl_malloc (( C_nnz + 1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  C_IA1[at_column] = 0;
-  C_csc_values[at_column] = 0;
-  row_pos=35;
-  C_JA1[at_column] = row_pos;
-  at_column++;
-  C_nnz = 37;
-  C_IA1[at_column] = C_nnz;
+  *C_IA = (MKL_INT*) mkl_malloc (( (C_nnz + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   mkl_scsrcsc(job, &C_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
 
