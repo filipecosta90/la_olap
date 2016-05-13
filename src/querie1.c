@@ -40,6 +40,30 @@
 #include "mkl_types.h"
 #include "mkl.h"
 #include "olap.h"
+#include <sys/time.h>
+
+#define TIME_RESOLUTION 1000000 // time measuring resolution (us)
+
+timeval t;
+long long unsigned initial_time, final_time, total_duration;
+
+void start (void) {
+  gettimeofday(&t, NULL);
+  initial_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
+}
+
+void stop ( void ) {
+  gettimeofday(&t, NULL);
+  final_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
+  total_duration =  final_time - initial_time;
+}
+
+void writeResults (int number_threads , int rows, int columns ,  char * node_name ) {
+  ofstream file ("timing/timings.dat" , ios::out | ios::app );
+
+  file << number_threads << " , " << hist_duration << " , " << accum_duration << " , "<< transform_duration << " , " << total_duration << " , " << rows <<" x "<<  columns  <<" , " << node_name << endl;
+  file.close();
+}
 
 int main( int argc, char* argv[]){
   mkl_verbose(1);
@@ -99,7 +123,9 @@ int main( int argc, char* argv[]){
   //read shipdate gt and lt into selection matrix
   tbl_read_filter_and( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01", &selection_nnz, &selection_rows, &selection_columns , &selection_csr_values, &selection_JA, &selection_IA);
 
-  //        convert via sparseBLAS API to Handle containing internal data for 
+  start();
+
+  //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
   printf("selection convert? :");
@@ -131,6 +157,7 @@ int main( int argc, char* argv[]){
   float* final_csr_values = NULL;
   MKL_INT* final_JA;
   MKL_INT* final_IA;
+  MKL_INT* final_IA_END;
   MKL_INT final_rows;
   MKL_INT final_columns;
   MKL_INT final_nnz;
@@ -180,11 +207,19 @@ int main( int argc, char* argv[]){
 
   final_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
       intermediate_matrix,
-      quantity_matrix, 
-      & final_matrix);
+      quantity_matrix,
+      &final_matrix);
+  stop();
+  writeResults( 0 , rows, columns , node_name );
+
+
   printf("final result? :");
   check_errors(final_result);
+  sparse_index_base_t    indexing; 
+  mkl_sparse_s_export_csr ( final_matrix, &indexing, &final_rows, &final_columns, &final_IA, &final_IA_END, &final_JA, &final_csr_values);
 
+  tbl_write("final_result.tbl", projection_nnz, final_rows, final_columns, final_csr_values, final_JA, final_IA );
   return 0;
+
 }
 
