@@ -235,7 +235,6 @@ void tbl_read(
 
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-  check_errors(status_coo_csr);
   mkl_free(coo_values);
   mkl_free(coo_rows);
   mkl_free(coo_columns);
@@ -325,7 +324,6 @@ void tbl_read_measure(
 
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-  check_errors(status_coo_csr);
   mkl_free(coo_values);
   mkl_free(coo_rows);
   mkl_free(coo_columns);
@@ -464,10 +462,9 @@ void tbl_read_filter(
 
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-  check_errors(status_coo_csr);
-  //  mkl_free(coo_values);
-  //  mkl_free(coo_rows);
-  //  mkl_free(coo_columns);
+  mkl_free(coo_values);
+  mkl_free(coo_rows);
+  mkl_free(coo_columns);
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
@@ -616,10 +613,9 @@ void tbl_read_filter_and(
 
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-  check_errors(status_coo_csr);
-  //  mkl_free(coo_values);
-  //  mkl_free(coo_rows);
-  //  mkl_free(coo_columns);
+  mkl_free(coo_values);
+  mkl_free(coo_rows);
+  mkl_free(coo_columns);
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
@@ -666,8 +662,6 @@ void tbl_write(
   A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   A_IA1 = (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
-  printf("A csr -> csc ok?\n");
-  check_errors(status_convert_csc);
 
   FILE* stream = fopen(filename, "w");
   char* string;
@@ -819,8 +813,6 @@ void csr_krao(
   A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   A_IA1 = (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
-  printf("A csr -> csc ok?\n");
-  check_errors(status_convert_csc);
 
   float* B_csc_values = NULL;
   MKL_INT* B_JA1;
@@ -830,8 +822,6 @@ void csr_krao(
   B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   B_IA1 = (MKL_INT*) mkl_malloc (( (B_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
-  printf("A csr -> csc ok?\n");
-  check_errors(status_convert_csc);
 
   /////////////////////////////////
   //   COMPUTE KRAO
@@ -889,8 +879,7 @@ void csr_krao(
   *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc (( (max_row + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
-  check_errors(status_convert_csr);
-  printf("C csc -> csr ok?\n");
+
   *C_number_rows = max_row ;
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
@@ -939,8 +928,6 @@ void csr_kron(
   A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   A_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
-  printf("A csr -> csc ok?\n");
-  check_errors(status_convert_csc);
 
   float* B_csc_values = NULL;
   MKL_INT* B_JA1;
@@ -950,8 +937,7 @@ void csr_kron(
   B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   B_IA1 = (MKL_INT*) mkl_malloc (( (B_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
-  printf("B csr -> csc ok?\n");
-  check_errors(status_convert_csc);
+
 
   /////////////////////////////////
   //   COMPUTE KRON
@@ -1011,11 +997,9 @@ void csr_kron(
   job[5] = 1;
 
   sparse_status_t status_convert_csr;
-  printf("%d -- %d\n", C_nnz, max_row);
   *C_csr_values = (float*) mkl_malloc (( C_nnz * sizeof(float)), MEM_LINE_SIZE );
   *C_JA = (MKL_INT*) mkl_malloc (( C_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc (( C_nnz + 1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  printf("going to convert back to CSR\n");
   C_IA1[at_column] = 0;
   C_csc_values[at_column] = 0;
   row_pos=35;
@@ -1024,14 +1008,11 @@ void csr_kron(
   C_nnz = 37;
   C_IA1[at_column] = C_nnz;
 
-
   mkl_scsrcsc(job, &C_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
-  printf("C csc -> csr ok?\n");
-  check_errors(status_convert_csr);
+
   *C_number_rows = max_row ;
   *C_number_columns = C_ncols;
   *C_NNZ = C_nnz;
 }
 
 #endif
-

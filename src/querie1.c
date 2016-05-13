@@ -40,29 +40,16 @@
 #include "mkl_types.h"
 #include "mkl.h"
 #include "olap.h"
-#include <sys/time.h>
+#include "timer.h"
 
-#define TIME_RESOLUTION 1000000 // time measuring resolution (us)
 
-timeval t;
-long long unsigned initial_time, final_time, total_duration;
+double global_time_start, global_time_stop, total_time;
 
-void start (void) {
-  gettimeofday(&t, NULL);
-  initial_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
-}
-
-void stop ( void ) {
-  gettimeofday(&t, NULL);
-  final_time = t.tv_sec * TIME_RESOLUTION + t.tv_usec;
-  total_duration =  final_time - initial_time;
-}
-
-void writeResults (int number_threads , int rows, int columns ,  char * node_name ) {
-  ofstream file ("timing/timings.dat" , ios::out | ios::app );
-
-  file << number_threads << " , " << hist_duration << " , " << accum_duration << " , "<< transform_duration << " , " << total_duration << " , " << rows <<" x "<<  columns  <<" , " << node_name << endl;
-  file.close();
+void writeResults ( ) {
+  total_time = global_time_stop - global_time_start;
+  FILE* stream = fopen("timing/timings.dat", "w+");
+  fprintf(stream, "%f\n", total_time);
+  fclose(stream);
 }
 
 int main( int argc, char* argv[]){
@@ -108,9 +95,6 @@ int main( int argc, char* argv[]){
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
       quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
-  printf("quantity convert? :");
-  check_errors(status_to_csr);
-
 
   float* selection_csr_values = NULL;
   MKL_INT* selection_JA;
@@ -120,16 +104,26 @@ int main( int argc, char* argv[]){
   MKL_INT selection_nnz;
   sparse_matrix_t  selection_matrix;
 
+  //read shipdate_gt
+  tbl_read_filter( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28", 
+      &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
+
+  //read shipdate_lt
+  tbl_read_filter( "__tbl/lineitem.tbl" , 11, LESS_EQ , "1998-12-01", 
+      &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
+
+
   //read shipdate gt and lt into selection matrix
   tbl_read_filter_and( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01", &selection_nnz, &selection_rows, &selection_columns , &selection_csr_values, &selection_JA, &selection_IA);
 
-  start();
+  ////////////////////////
+  // START TIME MEASUREMENT
+  ////////////////////////
+  GET_TIME(global_time_start);
 
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
-  printf("selection convert? :");
-  check_errors(status_to_csr);
 
   float* projection_csr_values = NULL;
   MKL_INT* projection_JA;
@@ -162,7 +156,10 @@ int main( int argc, char* argv[]){
   MKL_INT final_columns;
   MKL_INT final_nnz;
   sparse_matrix_t  final_matrix;
-
+  
+  // compute selection = shipdate_gt * shipdate_lt 
+  
+  
   // compute projection = returnFlag krao lineStatus
   csr_krao(
       returnFlag_csr_values, returnFlag_JA, returnFlag_IA, 
@@ -173,10 +170,7 @@ int main( int argc, char* argv[]){
       &projection_nnz, &projection_rows, &projection_columns  
       );
 
-  printf("krao size: %d %d\n", projection_rows, projection_columns);
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
-  printf("projection convert? :");
-  check_errors(status_to_csr);
 
   // compute aggregation = quantity * bang
   float* bang_vector;
@@ -189,8 +183,6 @@ int main( int argc, char* argv[]){
   descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
 
   aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
-  printf("aggregation result? :");
-  check_errors(aggregation_result);
 
   // compute intermediate_result = projection * selection
   sparse_status_t intermediate_result;
@@ -198,9 +190,7 @@ int main( int argc, char* argv[]){
   intermediate_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
       projection_matrix,
       selection_matrix, 
-      & intermediate_matrix);
-  printf("intermediate result? :");
-  check_errors(intermediate_result);
+      &intermediate_matrix);
 
   // compute final_result = intermediate_result * aggregation
   sparse_status_t final_result;
@@ -209,16 +199,16 @@ int main( int argc, char* argv[]){
       intermediate_matrix,
       quantity_matrix,
       &final_matrix);
-  stop();
-  writeResults( 0 , rows, columns , node_name );
 
+  ////////////////////////
+  // STOP TIME MEASUREMENT
+  ////////////////////////
+  GET_TIME(global_time_stop);
+  writeResults( );
 
-  printf("final result? :");
-  check_errors(final_result);
-  sparse_index_base_t    indexing; 
+  sparse_index_base_t    indexing;
   mkl_sparse_s_export_csr ( final_matrix, &indexing, &final_rows, &final_columns, &final_IA, &final_IA_END, &final_JA, &final_csr_values);
 
-  tbl_write("final_result.tbl", projection_nnz, final_rows, final_columns, final_csr_values, final_JA, final_IA );
   return 0;
 
 }
