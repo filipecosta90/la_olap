@@ -68,6 +68,12 @@ void tbl_read(
     float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     );
 
+void tbl_read_measure(
+              char* table_name, MKL_INT tbl_column,
+              MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
+              float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+              );
+
 void tbl_read_filter( 
     char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , 

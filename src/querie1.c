@@ -78,7 +78,7 @@ int main( int argc, char* argv[]){
   tbl_read( "__tbl/lineitem.tbl" , 10, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
 
   //read quantity
-  tbl_read( "__tbl/lineitem.tbl" , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
+  tbl_read_measure( "__tbl/lineitem.tbl" , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
 
   //        convert via sparseBLAS API to Handle containing internal data for 
   //        subsequent Inspector-executor Sparse BLAS operations.
@@ -174,17 +174,6 @@ int main( int argc, char* argv[]){
   check_errors(intermediate_result);
 
   // compute final_result = intermediate_result * aggregation
-  float* _vector;
-  bang_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
-  aggregation_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
-
-  sparse_status_t aggregation_result;
-  struct matrix_descr descrA;
-  descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
-
-  aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
-  printf("aggregation result? :");
-  check_errors(aggregation_result);
 
   return 0;
 }
