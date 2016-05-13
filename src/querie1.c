@@ -84,7 +84,7 @@ int main( int argc, char* argv[]){
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
       quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
-  printf("selection convert? :");
+  printf("quantity convert? :");
   check_errors(status_to_csr);
 
 
@@ -126,6 +126,7 @@ int main( int argc, char* argv[]){
   MKL_INT intermediate_rows;
   MKL_INT intermediate_columns;
   MKL_INT intermediate_nnz;
+  sparse_matrix_t  intermediate_matrix;
 
   float* final_csr_values = NULL;
   MKL_INT* final_JA;
@@ -134,7 +135,7 @@ int main( int argc, char* argv[]){
   MKL_INT final_columns;
   MKL_INT final_nnz;
 
-  // compute prjection = returnFlag krao lineStatus
+  // compute projection = returnFlag krao lineStatus
   csr_krao(
       returnFlag_csr_values, returnFlag_JA, returnFlag_IA, 
       returnFlag_nnz, returnFlag_rows, returnFlag_columns,
@@ -148,6 +149,7 @@ int main( int argc, char* argv[]){
   printf("projection convert? :");
   check_errors(status_to_csr);
 
+  // compute aggregation = quantity * bang
   float* bang_vector;
   float* aggregation_vector;
   bang_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
@@ -158,6 +160,31 @@ int main( int argc, char* argv[]){
   descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
 
   aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
+  printf("aggregation result? :");
+  check_errors(aggregation_result);
+
+  // compute intermediate_result = projection * selection
+  sparse_status_t intermediate_result;
+
+  intermediate_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE , 
+      projection_matrix,
+      selection_matrix, 
+      & intermediate_matrix);
+  printf("intermediate result? :");
+  check_errors(intermediate_result);
+
+  // compute final_result = intermediate_result * aggregation
+  float* _vector;
+  bang_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
+  aggregation_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
+
+  sparse_status_t aggregation_result;
+  struct matrix_descr descrA;
+  descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
+
+  aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
+  printf("aggregation result? :");
+  check_errors(aggregation_result);
 
   return 0;
 }
