@@ -134,6 +134,7 @@ int main( int argc, char* argv[]){
   MKL_INT final_rows;
   MKL_INT final_columns;
   MKL_INT final_nnz;
+  sparse_matrix_t  final_matrix;
 
   // compute projection = returnFlag krao lineStatus
   csr_krao(
@@ -145,6 +146,7 @@ int main( int argc, char* argv[]){
       &projection_nnz, &projection_rows, &projection_columns  
       );
 
+  printf("krao size: %d %d\n", projection_rows, projection_columns);
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
   printf("projection convert? :");
   check_errors(status_to_csr);
@@ -166,7 +168,7 @@ int main( int argc, char* argv[]){
   // compute intermediate_result = projection * selection
   sparse_status_t intermediate_result;
 
-  intermediate_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE , 
+  intermediate_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
       projection_matrix,
       selection_matrix, 
       & intermediate_matrix);
@@ -174,6 +176,14 @@ int main( int argc, char* argv[]){
   check_errors(intermediate_result);
 
   // compute final_result = intermediate_result * aggregation
+  sparse_status_t final_result;
+
+  final_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
+      intermediate_matrix,
+      quantity_matrix, 
+      & final_matrix);
+  printf("final result? :");
+  check_errors(final_result);
 
   return 0;
 }
