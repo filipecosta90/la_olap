@@ -334,8 +334,6 @@ void tbl_read_filter(
     coo_columns[pos] = pos;
     coo_rows[pos] = aux_coo_rows[pos];
   }
-  printf("here\n");
-  //free(aux_coo_rows);
   // free(aux_coo_values);
 
   /////////////////////////////////

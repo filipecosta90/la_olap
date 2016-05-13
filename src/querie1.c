@@ -80,6 +80,7 @@ int main( int argc, char* argv[]){
   MKL_INT shipdate_gt_rows;
   MKL_INT shipdate_gt_columns;
   MKL_INT shipdate_gt_nnz;
+  sparse_matrix_t  shipdate_gt_matrix;
 
   float* shipdate_lt_csr_values = NULL;
   MKL_INT* shipdate_lt_JA;
@@ -87,7 +88,10 @@ int main( int argc, char* argv[]){
   MKL_INT shipdate_lt_rows;
   MKL_INT shipdate_lt_columns;
   MKL_INT shipdate_lt_nnz;
+  sparse_matrix_t  shipdate_lt_matrix;
 
+  //conversion status from csr arrays into mkl sparse_matrix_t 
+  sparse_status_t status_to_csr;
 
   //read return flag
   tbl_read( "__tbl/lineitem.tbl" , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns , &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
@@ -100,9 +104,14 @@ int main( int argc, char* argv[]){
 
   //read shipdate gt
   tbl_read_filter( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28", &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns , &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA);
-
+  //        convert via sparseBLAS API 
+  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_gt_matrix , SPARSE_INDEX_BASE_ZERO, shipdate_gt_rows, shipdate_gt_columns, shipdate_gt_IA, shipdate_gt_IA+1, shipdate_gt_JA, shipdate_gt_csr_values );
+  check_errors(status_to_csr);
   //read shipdate lt
   tbl_read_filter( "__tbl/lineitem.tbl" , 11, LESS_EQ , "1998-12-01", &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns , &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA);
+  //        convert via sparseBLAS API 
+  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_lt_matrix , SPARSE_INDEX_BASE_ZERO, shipdate_lt_rows, shipdate_lt_columns, shipdate_lt_IA, shipdate_lt_IA+1, shipdate_lt_JA, shipdate_lt_csr_values );
+  check_errors(status_to_csr);
 
   float* selection_csr_values = NULL;
   MKL_INT* selection_JA;
@@ -110,6 +119,7 @@ int main( int argc, char* argv[]){
   MKL_INT selection_rows;
   MKL_INT selection_columns;
   MKL_INT selection_nnz;
+  sparse_matrix_t  selection_matrix;
 
   float* projection_csr_values = NULL;
   MKL_INT* projection_JA;
@@ -138,6 +148,11 @@ int main( int argc, char* argv[]){
   MKL_INT final_rows;
   MKL_INT final_columns;
   MKL_INT final_nnz;
+
+  sparse_status_t status_selection_mm;
+
+  status_selection_mm =  mkl_sparse_spmm (SPARSE_OPERATION_NON_TRANSPOSE, shipdate_gt_matrix, shipdate_lt_matrix, &selection_matrix);
+  check_errors(status_selection_mm);
 
   // compute C = A krao B
   /*  csr_kron( 
