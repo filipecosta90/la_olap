@@ -778,6 +778,7 @@ void csr_krao(
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
+
   MKL_INT job[8];
 
   /////////////////////////////////////
@@ -836,15 +837,31 @@ void csr_krao(
   C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   MKL_INT at_column = 0;
+  MKL_INT end_column = A_number_columns;
+  MKL_INT scalar_B = B_number_rows;
   MKL_INT max_row = 0;
-  MKL_INT row_pos = 0;
 
-  for ( ; at_column < A_number_columns; ++at_column){
+  __assume_aligned(C_IA1, MEM_LINE_SIZE);
+  __assume_aligned(A_IA1, MEM_LINE_SIZE);
+  __assume_aligned(C_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(B_JA1, MEM_LINE_SIZE);
+  __assume_aligned(A_JA1, MEM_LINE_SIZE);
+  __assume_aligned(C_JA1, MEM_LINE_SIZE);
+  
+  #pragma simd
+  for ( at_column = 0; at_column < end_column; ++at_column){
     // insert start of column int C_IA1
-    C_IA1[at_column] = A_IA1[at_column];
-    C_csc_values[at_column] = A_csc_values[at_column] * B_csc_values[at_column];
-    row_pos  = ( A_JA1[at_column] * B_number_rows ) + B_JA1[at_column];
+    MKL_INT ia = A_IA1[at_column];
+    C_IA1[at_column] = ia;
+    float c_value = B_csc_values[at_column];
+    c_value *= A_csc_values[at_column];
+    C_csc_values[at_column] = c_value;
+    MKL_INT row_pos = B_JA1[at_column];
+    row_pos  += ( A_JA1[at_column] * scalar_B );
     C_JA1[at_column] = row_pos;
+    
     if (max_row < row_pos){
       max_row = row_pos;
     }
@@ -957,9 +974,15 @@ void csr_kron(
   MKL_INT max_row = 0;
   MKL_INT row_pos = 0;
 
-  for ( ; at_column_A < A_number_columns; ++at_column_A ){
+    __assume_aligned(A_IA1, MEM_LINE_SIZE);
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_JA1, MEM_LINE_SIZE);
+    
+  #pragma simd
+  for ( at_column_A = 0 ; at_column_A < A_number_columns; ++at_column_A ){
     at_column_B = 0;
-    for ( ; at_column_B < B_number_columns; ++at_column_B ){
+    #pragma simd
+    for ( at_column_B = 0; at_column_B < B_number_columns; ++at_column_B ){
       at_column = A_IA1[at_column_A] * B_number_columns + B_IA1[at_column_B];
       C_IA1[at_column] = at_column;
       C_csc_values[at_column] = A_csc_values[at_column_A] * B_csc_values[at_column_B];
