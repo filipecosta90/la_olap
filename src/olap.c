@@ -705,78 +705,128 @@ void csr_hadamard(
     float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA, MKL_INT *C_NNZ
     ){
 
-  MKL_INT NNZ;
-  if (A_NNZ > B_NNZ ){
-    NNZ = A_NNZ;
-  }
-  else {
-    NNZ = B_NNZ;
-  }
-
-  *C_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-  *C_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  *C_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
-  MKL_INT c_pos = 0;
-  MKL_INT at_row = 0;
-
-  //__assume_aligned(C_JA1, MEM_LINE_SIZE);
-
+    MKL_INT job[8];
+    
+    /////////////////////////////////////
+    // PREPARE FOR OPERATION
+    /////////////////////////////////////
+    //////////////////////////////////////////
+    ///////   CONVERT A and B from CSR to CSC
+    //////////////////////////////////////////
+    
+    // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+    job[0] = 0;
+    
+    // job[1]
+    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+    job[1] = 0;
+    
+    // job[2]
+    // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+    // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+    job[2] = 0;
+    
+    // job[5] - job indicator.
+    // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+    // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+    job[5] = 1;
+    sparse_status_t status_convert_csc;
+    float* A_csc_values = NULL;
+    MKL_INT* A_JA1;
+    MKL_INT* A_IA1;
+    
+    A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
+    A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+    A_IA1 = (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+    
+    float* B_csc_values = NULL;
+    MKL_INT* B_JA1;
+    MKL_INT* B_IA1;
+    
+    B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    B_IA1 = (MKL_INT*) mkl_malloc (( (B_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+    
+    /////////////////////////////////
+    //   COMPUTE HADAMARD
+    /////////////////////////////////
+    
+    float* C_csc_values = NULL;
+    MKL_INT* C_JA1;
+    MKL_INT* C_IA1;
+    
+    C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    
+    MKL_INT at_column = 0;
+    MKL_INT end_column = A_number_columns;
+    MKL_INT scalar_B = B_number_rows;
+    MKL_INT max_row = 0;
+    
+    __assume_aligned(C_IA1, MEM_LINE_SIZE);
+    __assume_aligned(A_IA1, MEM_LINE_SIZE);
+    __assume_aligned(C_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_JA1, MEM_LINE_SIZE);
+    __assume_aligned(A_JA1, MEM_LINE_SIZE);
+    __assume_aligned(C_JA1, MEM_LINE_SIZE);
+    
 #pragma simd
 #pragma vector aligned
-  for ( at_row = 0 ; at_row < number_rows; ++at_row){
-    // insert start of line int C_IA
-    (*C_IA)[at_row] = c_pos;
-    //pivot positions
-    MKL_INT column_A_pivot = A_IA[at_row];
-    MKL_INT column_B_pivot = B_IA[at_row];
-    //limit positions
-    MKL_INT column_A_limit = A_IA[at_row+1];
-    MKL_INT column_B_limit = B_IA[at_row+1];
-
-    MKL_INT A_line_sizeof = column_A_limit - column_A_pivot;
-    MKL_INT B_line_sizeof = column_B_limit - column_B_pivot;
-
-    if (A_line_sizeof < B_line_sizeof){
-#pragma simd
-#pragma vector aligned
-      for ( column_A_pivot = A_IA[at_row] ; column_A_pivot < column_A_limit  ; ++column_A_pivot ){
-        for ( ; A_JA[column_A_pivot] < B_JA[column_B_pivot] && column_B_pivot < column_B_limit ; ++column_B_pivot){
+    for ( at_column = 0; at_column < end_column; ++at_column){
+        // insert start of column int C_IA1
+        MKL_INT ia = A_IA1[at_column];
+        C_IA1[at_column] = ia;
+        float c_value = B_csc_values[at_column];
+        c_value *= A_csc_values[at_column];
+        C_csc_values[at_column] = c_value;
+        MKL_INT row_pos = B_JA1[at_column];
+        row_pos  += ( A_JA1[at_column] * scalar_B );
+        C_JA1[at_column] = row_pos;
+        
+        if (max_row < row_pos){
+            max_row = row_pos;
         }
-        if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
-          //insert into C
-          float value = A_csr_values[c_pos];
-          value *= B_csr_values[c_pos];
-          (*C_csr_values)[c_pos] = value;
-
-          (*C_JA)[c_pos]=column_A_pivot;
-          ++c_pos;
-          ++column_B_pivot;
-        }
-
-      }
     }
-    else {
-#pragma simd
-#pragma vector aligned
-      for ( column_B_pivot = B_IA[at_row] ; column_B_pivot < column_B_limit  ; ++column_B_pivot){
-        for ( ; B_JA[column_A_pivot] <  A_JA[column_B_pivot] && column_A_pivot < column_A_limit; ++column_A_pivot ){
-        }
-        if ( A_JA[column_A_pivot] == B_JA[column_B_pivot] ){
-          //insert into C
-          float value = A_csr_values[c_pos];
-          value *= B_csr_values[c_pos];
-          (*C_csr_values)[c_pos] = value;
-          (*C_JA)[c_pos]=column_B_pivot;
-          ++column_A_pivot;
-          ++c_pos;
-        }
-      }
-    }
-  }
-  //insert the final C_JA position
-  (*C_IA)[at_row]=c_pos;
-  *C_NNZ = c_pos;
+    ++max_row;
+    C_IA1[at_column] = A_NNZ;
+    
+    /////////////////////////////////
+    //   CONVERT C from CSC to CSR
+    ////////////////////////////////
+    
+    // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
+    job[0] = 1;
+    
+    // job[1]
+    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+    job[1] = 0;
+    
+    // job[2]
+    // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+    // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+    job[2] = 0;
+    
+    // job[5] - job indicator.
+    // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+    // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+    job[5] = 1;
+    sparse_status_t status_convert_csr;
+    
+    *C_csr_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    *C_IA = (MKL_INT*) mkl_malloc (( (max_row + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
+    
+    *C_number_rows = max_row ;
+    *C_number_columns = A_number_columns;
+    *C_NNZ = A_NNZ;
 }
 
 /////////////////////////////////
