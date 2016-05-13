@@ -47,7 +47,7 @@ double global_time_start, global_time_stop, total_time;
 
 void writeResults ( ) {
   total_time = global_time_stop - global_time_start;
-  FILE* stream = fopen("timing/timings.dat", "w+");
+  FILE* stream = fopen("timing/timings.dat", "a+");
   fprintf(stream, "%f\n", total_time);
   fclose(stream);
 }
@@ -79,22 +79,21 @@ int main( int argc, char* argv[]){
   MKL_INT quantity_nnz;
   sparse_matrix_t  quantity_matrix;
 
-  //conversion status from csr arrays into mkl sparse_matrix_t 
-  sparse_status_t status_to_csr;
+  float* shipdate_gt_csr_values = NULL;
+  MKL_INT* shipdate_gt_JA;
+  MKL_INT* shipdate_gt_IA;
+  MKL_INT shipdate_gt_rows;
+  MKL_INT shipdate_gt_columns;
+  MKL_INT shipdate_gt_nnz;
+  sparse_matrix_t  shipdate_gt_matrix;
 
-  //read return flag
-  tbl_read( "__tbl/lineitem.tbl" , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns , &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
-
-  //read line status
-  tbl_read( "__tbl/lineitem.tbl" , 10, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
-
-  //read quantity
-  tbl_read_measure( "__tbl/lineitem.tbl" , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
-
-  //        convert via sparseBLAS API to Handle containing internal data for 
-  //        subsequent Inspector-executor Sparse BLAS operations.
-  status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
-      quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
+  float* shipdate_lt_csr_values = NULL;
+  MKL_INT* shipdate_lt_JA;
+  MKL_INT* shipdate_lt_IA;
+  MKL_INT shipdate_lt_rows;
+  MKL_INT shipdate_lt_columns;
+  MKL_INT shipdate_lt_nnz;
+  sparse_matrix_t  shipdate_lt_matrix;
 
   float* selection_csr_values = NULL;
   MKL_INT* selection_JA;
@@ -103,27 +102,6 @@ int main( int argc, char* argv[]){
   MKL_INT selection_columns;
   MKL_INT selection_nnz;
   sparse_matrix_t  selection_matrix;
-
-  //read shipdate_gt
-  tbl_read_filter( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28", 
-      &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
-
-  //read shipdate_lt
-  tbl_read_filter( "__tbl/lineitem.tbl" , 11, LESS_EQ , "1998-12-01", 
-      &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
-
-
-  //read shipdate gt and lt into selection matrix
-  tbl_read_filter_and( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01", &selection_nnz, &selection_rows, &selection_columns , &selection_csr_values, &selection_JA, &selection_IA);
-
-  ////////////////////////
-  // START TIME MEASUREMENT
-  ////////////////////////
-  GET_TIME(global_time_start);
-
-  //        convert via sparseBLAS API to Handle containing internal data for
-  //        subsequent Inspector-executor Sparse BLAS operations.
-  status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
 
   float* projection_csr_values = NULL;
   MKL_INT* projection_JA;
@@ -156,10 +134,56 @@ int main( int argc, char* argv[]){
   MKL_INT final_columns;
   MKL_INT final_nnz;
   sparse_matrix_t  final_matrix;
-  
+
+  //conversion status from csr arrays into mkl sparse_matrix_t 
+  sparse_status_t status_to_csr;
+
+  //read return flag
+  tbl_read( "__tbl/lineitem.tbl" , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns , &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
+
+  //read line status
+  tbl_read( "__tbl/lineitem.tbl" , 10, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
+
+  //read quantity
+  tbl_read_measure( "__tbl/lineitem.tbl" , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
+
+  //        convert via sparseBLAS API to Handle containing internal data for 
+  //        subsequent Inspector-executor Sparse BLAS operations.
+  status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
+      quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
+
+  //read shipdate gt
+  tbl_read_filter( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28",
+      &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns , &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA);
+
+  //        convert via sparseBLAS API to Handle containing internal data for
+  //        subsequent Inspector-executor Sparse BLAS operations.
+  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_gt_matrix , SPARSE_INDEX_BASE_ZERO,
+      shipdate_gt_rows, shipdate_gt_columns, shipdate_gt_IA, shipdate_gt_IA+1, shipdate_gt_JA, shipdate_gt_csr_values );
+
+
+  //read shipdate lt
+  tbl_read_filter( "__tbl/lineitem.tbl" , 11, LESS_EQ , "1998-12-01",
+      &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns , &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA);
+
+  //        convert via sparseBLAS API to Handle containing internal data for
+  //        subsequent Inspector-executor Sparse BLAS operations.
+  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_lt_matrix , SPARSE_INDEX_BASE_ZERO,
+      shipdate_lt_rows, shipdate_lt_columns, shipdate_lt_IA, shipdate_lt_IA+1, shipdate_lt_JA, shipdate_lt_csr_values );
+
+  ////////////////////////
+  // START TIME MEASUREMENT
+  ////////////////////////
+  GET_TIME(global_time_start);
+
   // compute selection = shipdate_gt * shipdate_lt 
-  
-  
+  sparse_status_t selection_result;
+
+  selection_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE,
+      shipdate_gt_matrix,
+      shipdate_lt_matrix,
+      &selection_matrix);
+
   // compute projection = returnFlag krao lineStatus
   csr_krao(
       returnFlag_csr_values, returnFlag_JA, returnFlag_IA, 

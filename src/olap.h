@@ -29,8 +29,8 @@
  ** University of Minho, High Performance Computing Dpt. , April 2016
  ** -------------------------------------------------------------------------*/
 
-//Cache-Lines size is (typically) 64 bytes
-#define MEM_LINE_SIZE 64
+//Cache-Lines size is (typically) 32 bytes
+#define MEM_LINE_SIZE 32
 #define ARRAY_SIZE MEM_LINE_SIZE / sizeof (MKL_INT)
 #define GROWTH_FACTOR 2
 #define MAX_FIELD_SIZE 128
