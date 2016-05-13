@@ -89,7 +89,7 @@ int main( int argc, char* argv[]){
 
   //read shipdate gt
   tbl_read_filter_and( "__tbl/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01", &selection_nnz, &selection_rows, &selection_columns , &selection_csr_values, &selection_JA, &selection_IA);
-  
+
   //        convert via sparseBLAS API to Handle containing internal data for 
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
@@ -125,15 +125,15 @@ int main( int argc, char* argv[]){
   MKL_INT final_columns;
   MKL_INT final_nnz;
 
-  /*status_selection_mm =  mkl_sparse_spmm (SPARSE_OPERATION_TRANSPOSE, shipdate_gt_matrix, shipdate_lt_matrix, &selection_matrix);
-  check_errors(status_selection_mm);
-*/
-  // compute C = A krao B
-  /*  csr_kron( 
-      A_csr_values, A_JA, A_IA, A_nnz, A_rows, A_columns, 
-      B_csr_values, B_JA, B_IA, B_nnz, A_rows, B_columns, 
-      &C_csr_values, &C_JA, &C_IA, &C_nnz, &C_rows, &C_columns 
+  // compute prjection = returnFlag krao lineStatus
+  csr_krao(
+      returnFlag_csr_values, returnFlag_JA, returnFlag_IA, 
+      returnFlag_nnz, returnFlag_rows, returnFlag_columns,
+      lineStatus_csr_values, lineStatus_JA, lineStatus_IA ,
+      lineStatus_nnz, lineStatus_rows, lineStatus_columns,
+      &projection_csr_values, &projection_JA, &projection_IA, 
+      &projection_nnz, &projection_rows, &projection_columns  
       );
-      */  
+
   return 0;
 }

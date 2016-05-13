@@ -183,21 +183,31 @@ void tbl_read(
   MKL_INT* coo_rows;
   MKL_INT* coo_columns;
 
-  coo_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-  coo_rows =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  coo_columns =  (MKL_INT*) mkl_malloc ((NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_values = (float*) mkl_malloc ((NNZ+1 * sizeof(float)), MEM_LINE_SIZE );
+  coo_rows =  (MKL_INT*) mkl_malloc ((NNZ+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_columns =  (MKL_INT*) mkl_malloc ((NNZ+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
+  printf("padding from  %d %d to %d %d \n", number_rows, number_columns, number_columns+1, number_columns+1);
   for (int pos = 0; pos < NNZ; pos++) {
     coo_values[pos] = 1.0;
     coo_columns[pos] = pos;
     coo_rows[pos] = aux_coo_rows[pos];
   }
-  free(aux_coo_rows);
+
+  //paddmatrix
+  printf("padding\n");
+  coo_values[NNZ]=0.0;
+  coo_columns[NNZ]=NNZ;
+  coo_rows[NNZ]=NNZ;
+  
+  NNZ++;
+  number_columns=NNZ;
+  number_rows=NNZ;
+//  free(aux_coo_rows);
 
   /////////////////////////////////
   //   CONVERT FROM COO TO CSR
   /////////////////////////////////
-
 
   // if job[0]=2, the matrix in the coordinate format is converted to the CSR
   // format, and the column indices in CSR representation are sorted in the
@@ -608,7 +618,7 @@ void csr_krao(
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
-
+  printf("inside krao\n");
   MKL_INT job[8];
 
   /////////////////////////////////////
@@ -643,11 +653,11 @@ void csr_krao(
   A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
   A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   A_IA1 = (MKL_INT*) mkl_malloc ((A_number_columns+1 * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  printf("allocated mem!\n");
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
   printf("A csr -> csc ok?\n");
   check_errors(status_convert_csc);
 
-  print_csc(A_csc_values, A_JA1, A_IA1, A_NNZ, A_number_rows, A_number_columns );
   float* B_csc_values = NULL;
   MKL_INT* B_JA1;
   MKL_INT* B_IA1;
@@ -658,7 +668,6 @@ void csr_krao(
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
   printf("A csr -> csc ok?\n");
   check_errors(status_convert_csc);
-  print_csc(B_csc_values, B_JA1, B_IA1, B_NNZ, B_number_rows, B_number_columns );
 
   /////////////////////////////////
   //   COMPUTE KRAO
@@ -688,7 +697,6 @@ void csr_krao(
   }
   ++max_row;
   C_IA1[at_column] = A_NNZ;
-  print_csc(C_csc_values, C_JA1, C_IA1, A_NNZ, max_row, A_number_columns );
 
   /////////////////////////////////
   //   CONVERT C from CSC to CSR
