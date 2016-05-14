@@ -60,6 +60,18 @@ void print_csr(
     MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns 
     );
 
+void convert_and_write_to_csv (
+    char* filename,
+    float* csr_values, MKL_INT* JA, MKL_INT* IA,
+    MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns
+    );
+
+void read_from_csv (
+    char* filename,
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns
+    );
+
 void check_errors( sparse_status_t stat );
 
 void tbl_read( 
@@ -101,13 +113,13 @@ void tbl_write(
 //
 /////////////////////////////////
 void csr_hadamard(
-                  float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
-                  MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-                  float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA,
-                  MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-                  float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
-                  MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
-                  );
+    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA,
+    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    );
 
 /////////////////////////////////
 //

@@ -57,6 +57,13 @@ int main( int argc, char* argv[]){
 
   //define CSR sparse-matrix M
 
+  float* returnFlag_csr_values1 = NULL;
+  MKL_INT* returnFlag_JA1;
+  MKL_INT* returnFlag_IA1;
+  MKL_INT returnFlag_rows1;
+  MKL_INT returnFlag_columns1;
+  MKL_INT returnFlag_nnz1;
+
   float* returnFlag_csr_values = NULL;
   MKL_INT* returnFlag_JA;
   MKL_INT* returnFlag_IA;
@@ -139,8 +146,10 @@ int main( int argc, char* argv[]){
   sparse_status_t status_to_csr;
 
   //read return flag
-  tbl_read( "__tbl/lineitem.tbl" , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns , &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
-
+  tbl_read( "__tbl/lineitem.tbl" , 9, &returnFlag_nnz1, &returnFlag_rows1, &returnFlag_columns1 , &returnFlag_csr_values1, &returnFlag_JA1, &returnFlag_IA1);
+  convert_and_write_to_csv("__quark_csv/return_flag.csv", returnFlag_csr_values1, returnFlag_JA1, returnFlag_IA1, returnFlag_nnz1, returnFlag_rows1, returnFlag_columns1);
+  read_from_csv("__quark_csv/return_flag.csv", &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns);
+  
   //read line status
   tbl_read( "__tbl/lineitem.tbl" , 10, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
 

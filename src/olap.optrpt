@@ -55,20 +55,44 @@ LOOP BEGIN at olap.c(105,3)
 LOOP END
 ===========================================================================
 
+Begin optimization report for: convert_and_write_to_csv(char *, float *, int *, int *, int, int, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at olap.c(161,5)
+   remark #15523: loop was not vectorized: loop control variable pos was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+===========================================================================
+
+Begin optimization report for: read_from_csv(char *, float **, int **, int **, int *, int *, int *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at olap.c(196,36)
+   remark #15523: loop was not vectorized: loop control variable element_number was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+
+LOOP BEGIN at olap.c(234,3)
+   remark #15523: loop was not vectorized: loop control variable pos was found, but loop iteration count cannot be computed before executing the loop
+LOOP END
+===========================================================================
+
 Begin optimization report for: tbl_read(char *, int, int *, int *, int *, float **, int **, int **)
 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(153,30)
+LOOP BEGIN at olap.c(330,30)
    remark #15523: loop was not vectorized: loop control variable element_number was found, but loop iteration count cannot be computed before executing the loop
 
-   LOOP BEGIN at olap.c(55,3) inlined into olap.c(156,13)
+   LOOP BEGIN at olap.c(55,3) inlined into olap.c(333,13)
       remark #15527: loop was not vectorized: function call to strtok(char *, const char *) cannot be vectorized   [ olap.c(56,21) ]
    LOOP END
 LOOP END
 
-LOOP BEGIN at olap.c(195,3)
+LOOP BEGIN at olap.c(374,3)
    remark #15523: loop was not vectorized: loop control variable pos was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 ===========================================================================
@@ -78,10 +102,10 @@ Begin optimization report for: tbl_read_measure(char *, int, int *, int *, int *
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(274,30)
+LOOP BEGIN at olap.c(453,30)
    remark #15523: loop was not vectorized: loop control variable element_number was found, but loop iteration count cannot be computed before executing the loop
 
-   LOOP BEGIN at olap.c(55,3) inlined into olap.c(277,13)
+   LOOP BEGIN at olap.c(55,3) inlined into olap.c(456,13)
       remark #15527: loop was not vectorized: function call to strtok(char *, const char *) cannot be vectorized   [ olap.c(56,21) ]
    LOOP END
 LOOP END
@@ -92,15 +116,15 @@ Begin optimization report for: tbl_read_filter(char *, int, int, char *, int *, 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(359,30)
+LOOP BEGIN at olap.c(540,30)
    remark #15523: loop was not vectorized: loop control variable element_number was found, but loop iteration count cannot be computed before executing the loop
 
-   LOOP BEGIN at olap.c(55,3) inlined into olap.c(363,13)
+   LOOP BEGIN at olap.c(55,3) inlined into olap.c(544,13)
       remark #15527: loop was not vectorized: function call to strtok(char *, const char *) cannot be vectorized   [ olap.c(56,21) ]
    LOOP END
 LOOP END
 
-LOOP BEGIN at olap.c(422,3)
+LOOP BEGIN at olap.c(604,3)
    remark #15523: loop was not vectorized: loop control variable pos was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 ===========================================================================
@@ -110,15 +134,15 @@ Begin optimization report for: tbl_read_filter_and(char *, int, int, char *, int
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(497,30)
+LOOP BEGIN at olap.c(679,30)
    remark #15541: outer loop was not auto-vectorized: consider using SIMD directive
 
-   LOOP BEGIN at olap.c(55,3) inlined into olap.c(501,13)
+   LOOP BEGIN at olap.c(55,3) inlined into olap.c(683,13)
       remark #15527: loop was not vectorized: function call to strtok(char *, const char *) cannot be vectorized   [ olap.c(56,21) ]
    LOOP END
 LOOP END
 
-LOOP BEGIN at olap.c(573,3)
+LOOP BEGIN at olap.c(756,3)
    remark #15523: loop was not vectorized: loop control variable pos was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 ===========================================================================
@@ -128,13 +152,13 @@ Begin optimization report for: tbl_write(char *, int, int, int, float *, int *, 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(678,3)
+LOOP BEGIN at olap.c(861,3)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at olap.c(678,3)
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(679,5) ]
-   remark #15389: vectorization support: reference A_IA1 has unaligned access   [ olap.c(680,5) ]
+LOOP BEGIN at olap.c(861,3)
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(862,5) ]
+   remark #15389: vectorization support: reference A_IA1 has unaligned access   [ olap.c(863,5) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 1.714
@@ -149,7 +173,7 @@ LOOP BEGIN at olap.c(678,3)
    remark #15488: --- end vector loop cost summary ---
 LOOP END
 
-LOOP BEGIN at olap.c(678,3)
+LOOP BEGIN at olap.c(861,3)
 <Remainder loop for vectorization>
 LOOP END
 ===========================================================================
@@ -159,14 +183,14 @@ Begin optimization report for: csr_hadamard(float *__restrict__, int *__restrict
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(791,3)
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(793,19) ]
-   remark #15388: vectorization support: reference B_IA1 has aligned access   [ olap.c(794,19) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(797,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(797,5) ]
-   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(798,5) ]
-   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(799,5) ]
-   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(804,5) ]
+LOOP BEGIN at olap.c(974,3)
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(976,19) ]
+   remark #15388: vectorization support: reference B_IA1 has aligned access   [ olap.c(977,19) ]
+   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(980,5) ]
+   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(980,5) ]
+   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(981,5) ]
+   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(982,5) ]
+   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(987,5) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.212
    remark #15301: SIMD LOOP WAS VECTORIZED
@@ -185,15 +209,15 @@ Begin optimization report for: csr_krao(float *, int *, int *, int, int, int, fl
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(936,3)
-   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(939,5) ]
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(939,5) ]
-   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(942,5) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(942,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(942,5) ]
-   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(945,5) ]
-   remark #15388: vectorization support: reference B_JA1 has aligned access   [ olap.c(945,5) ]
-   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(945,5) ]
+LOOP BEGIN at olap.c(1119,3)
+   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(1122,5) ]
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(1122,5) ]
+   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(1125,5) ]
+   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(1125,5) ]
+   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(1125,5) ]
+   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(1128,5) ]
+   remark #15388: vectorization support: reference B_JA1 has aligned access   [ olap.c(1128,5) ]
+   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(1128,5) ]
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 2
    remark #15309: vectorization support: normalized vectorization overhead 0.158
@@ -213,13 +237,13 @@ Begin optimization report for: csr_kron(float *, int *, int *, int, int, int, fl
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(1073,3)
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(1091,7) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(1095,7) ]
-   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(1099,7) ]
-   remark #15329: vectorization support: scatter was emulated for the variable C_IA1:  indirect access    [ olap.c(1092,7) ]
-   remark #15329: vectorization support: scatter was emulated for the variable C_csc_values:  indirect access    [ olap.c(1095,7) ]
-   remark #15329: vectorization support: scatter was emulated for the variable C_JA1:  indirect access    [ olap.c(1099,7) ]
+LOOP BEGIN at olap.c(1256,3)
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(1274,7) ]
+   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(1278,7) ]
+   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(1282,7) ]
+   remark #15329: vectorization support: scatter was emulated for the variable C_IA1:  indirect access    [ olap.c(1275,7) ]
+   remark #15329: vectorization support: scatter was emulated for the variable C_csc_values:  indirect access    [ olap.c(1278,7) ]
+   remark #15329: vectorization support: scatter was emulated for the variable C_JA1:  indirect access    [ olap.c(1282,7) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.093
    remark #15301: SIMD LOOP WAS VECTORIZED
@@ -231,7 +255,7 @@ LOOP BEGIN at olap.c(1073,3)
    remark #15478: estimated potential speedup: 0.890 
    remark #15488: --- end vector loop cost summary ---
 
-   LOOP BEGIN at olap.c(1089,5)
+   LOOP BEGIN at olap.c(1272,5)
       remark #25460: No loop optimizations reported
    LOOP END
 LOOP END
