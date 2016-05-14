@@ -108,7 +108,7 @@ void print_csr(
   printf("\n");
 }
 
-void convert_and_write_to_csv (
+void convert_and_write_to_mx (
     char* filename,
     float* csr_values, MKL_INT* JA, MKL_INT* IA,
     MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns
