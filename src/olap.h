@@ -101,10 +101,13 @@ void tbl_write(
 //
 /////////////////////////////////
 void csr_hadamard(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, MKL_INT A_NNZ, MKL_INT number_rows, 
-    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , MKL_INT B_NNZ,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, MKL_INT *C_NNZ
-    );
+                  float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
+                  MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+                  float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA,
+                  MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+                  float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+                  MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+                  );
 
 /////////////////////////////////
 //
