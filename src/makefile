@@ -5,13 +5,14 @@ LIBLDIR=
 INCLUDE=  
 #flags
 LIBS = -lm -lmkl_intel -lmkl_core -lmkl_sequential -lpthread -ldl  -vec-report7
-CFLAGS= -O3 -std=c99 -Ilib/glib-2.0/include -lglib-2.0 -I${MKLROOT}/include -Iinclude -Ilib/glib-2.0  
+CFLAGS = -O3 -std=c99 -I${MKLROOT}/include -Iinclude 
 
-querie1: olap.o querie1.o
-	$(CC) $(INCLUDE) $(CFLAGS) olap.c querie1.c $(LIBS) -o querie1  
+search: olap_search.o querie1_search.o
+	$(CC) $(INCLUDE) $(CFLAGS) olap_search.c querie1_search.c $(LIBS) -o querie1_search
 
-all: querie1
+
+all: search
 
 .PHONY: clean
 clean:
-	rm  *.o && rm querie1 && rm -r querie1.dSYM
+	rm  *.o && rm querie1_search && rm -r querie1_search.dSYM

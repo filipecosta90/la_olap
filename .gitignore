@@ -1,3 +1,4 @@
+*.mx
 *.out
 .DS_Store
 *.o
