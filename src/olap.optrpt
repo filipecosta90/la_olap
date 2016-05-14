@@ -159,14 +159,14 @@ Begin optimization report for: csr_hadamard(float *__restrict__, int *__restrict
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(783,3)
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(785,19) ]
-   remark #15388: vectorization support: reference B_IA1 has aligned access   [ olap.c(786,19) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(789,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(789,5) ]
-   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(790,5) ]
-   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(791,5) ]
-   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(796,5) ]
+LOOP BEGIN at olap.c(791,3)
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(793,19) ]
+   remark #15388: vectorization support: reference B_IA1 has aligned access   [ olap.c(794,19) ]
+   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(797,5) ]
+   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(797,5) ]
+   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(798,5) ]
+   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(799,5) ]
+   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(804,5) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.212
    remark #15301: SIMD LOOP WAS VECTORIZED
@@ -178,10 +178,6 @@ LOOP BEGIN at olap.c(783,3)
    remark #15478: estimated potential speedup: 5.430 
    remark #15488: --- end vector loop cost summary ---
 LOOP END
-
-LOOP BEGIN at olap.c(783,3)
-<Remainder loop for vectorization>
-LOOP END
 ===========================================================================
 
 Begin optimization report for: csr_krao(float *, int *, int *, int, int, int, float *, int *, int *, int, int, int, float **, int **, int **, int *, int *, int *)
@@ -189,15 +185,15 @@ Begin optimization report for: csr_krao(float *, int *, int *, int, int, int, fl
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(919,3)
-   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(922,5) ]
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(922,5) ]
-   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(925,5) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(925,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(925,5) ]
-   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(928,5) ]
-   remark #15388: vectorization support: reference B_JA1 has aligned access   [ olap.c(928,5) ]
-   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(928,5) ]
+LOOP BEGIN at olap.c(936,3)
+   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(939,5) ]
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(939,5) ]
+   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(942,5) ]
+   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(942,5) ]
+   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(942,5) ]
+   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(945,5) ]
+   remark #15388: vectorization support: reference B_JA1 has aligned access   [ olap.c(945,5) ]
+   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(945,5) ]
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 2
    remark #15309: vectorization support: normalized vectorization overhead 0.158
@@ -210,25 +206,6 @@ LOOP BEGIN at olap.c(919,3)
    remark #15478: estimated potential speedup: 5.870 
    remark #15488: --- end vector loop cost summary ---
 LOOP END
-
-LOOP BEGIN at olap.c(919,3)
-<Remainder loop for vectorization>
-   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(922,5) ]
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(922,5) ]
-   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(925,5) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(925,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(925,5) ]
-   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(928,5) ]
-   remark #15388: vectorization support: reference B_JA1 has aligned access   [ olap.c(928,5) ]
-   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(928,5) ]
-   remark #15305: vectorization support: vector length 4
-   remark #15309: vectorization support: normalized vectorization overhead 0.457
-   remark #15301: REMAINDER LOOP WAS VECTORIZED
-LOOP END
-
-LOOP BEGIN at olap.c(919,3)
-<Remainder loop for vectorization>
-LOOP END
 ===========================================================================
 
 Begin optimization report for: csr_kron(float *, int *, int *, int, int, int, float *, int *, int *, int, int, int, float **, int **, int **, int *, int *, int *)
@@ -236,13 +213,13 @@ Begin optimization report for: csr_kron(float *, int *, int *, int, int, int, fl
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap.c(1048,3)
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(1057,7) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(1061,7) ]
-   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(1065,7) ]
-   remark #15329: vectorization support: scatter was emulated for the variable C_IA1:  indirect access    [ olap.c(1058,7) ]
-   remark #15329: vectorization support: scatter was emulated for the variable C_csc_values:  indirect access    [ olap.c(1061,7) ]
-   remark #15329: vectorization support: scatter was emulated for the variable C_JA1:  indirect access    [ olap.c(1065,7) ]
+LOOP BEGIN at olap.c(1073,3)
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(1091,7) ]
+   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(1095,7) ]
+   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(1099,7) ]
+   remark #15329: vectorization support: scatter was emulated for the variable C_IA1:  indirect access    [ olap.c(1092,7) ]
+   remark #15329: vectorization support: scatter was emulated for the variable C_csc_values:  indirect access    [ olap.c(1095,7) ]
+   remark #15329: vectorization support: scatter was emulated for the variable C_JA1:  indirect access    [ olap.c(1099,7) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.093
    remark #15301: SIMD LOOP WAS VECTORIZED
@@ -254,15 +231,7 @@ LOOP BEGIN at olap.c(1048,3)
    remark #15478: estimated potential speedup: 0.890 
    remark #15488: --- end vector loop cost summary ---
 
-   LOOP BEGIN at olap.c(1055,5)
-      remark #25460: No loop optimizations reported
-   LOOP END
-LOOP END
-
-LOOP BEGIN at olap.c(1048,3)
-<Remainder loop for vectorization>
-
-   LOOP BEGIN at olap.c(1055,5)
+   LOOP BEGIN at olap.c(1089,5)
       remark #25460: No loop optimizations reported
    LOOP END
 LOOP END

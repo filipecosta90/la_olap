@@ -778,6 +778,14 @@ void csr_hadamard(
   __assume_aligned(A_JA1, MEM_LINE_SIZE);
   __assume_aligned(C_JA1, MEM_LINE_SIZE);
 
+  // The compiler has to know that (lower-bnd-of-i-loop + at_column) 
+  // is a multiple of 16. 
+  // If lower-bnd is 0 (for each thread that executes this loop), 
+  // then the information needed is that n1 is a multiple of 16. 
+  // One way of doing this is to add a clause of the form 
+  __assume(at_column%16==0);
+  __assume(end_column%16==0);
+
 #pragma simd
 #pragma vector aligned
   for ( at_column = 0; at_column < end_column; ++at_column){
@@ -914,6 +922,15 @@ void csr_krao(
   __assume_aligned(A_JA1, MEM_LINE_SIZE);
   __assume_aligned(C_JA1, MEM_LINE_SIZE);
 
+  // The compiler has to know that (lower-bnd-of-i-loop + at_column) 
+  // is a multiple of 16. 
+  // If lower-bnd is 0 (for each thread that executes this loop), 
+  // then the information needed is that n1 is a multiple of 16. 
+  // One way of doing this is to add a clause of the form 
+  __assume(at_column%16==0);
+  __assume(end_column%16==0);
+
+
 #pragma simd
 #pragma vector aligned
   for ( at_column = 0; at_column < end_column; ++at_column){
@@ -1026,9 +1043,9 @@ void csr_kron(
   MKL_INT C_nnz = A_NNZ * B_NNZ;
   MKL_INT C_ncols = A_number_columns * B_number_columns;
   MKL_INT C_nrows = A_number_rows * B_number_rows;
-  C_csc_values = (float*) mkl_malloc (( (C_nnz+1) * sizeof(float)), MEM_LINE_SIZE );
-  C_JA1 = (MKL_INT*) mkl_malloc (( (C_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  C_IA1 = (MKL_INT*) mkl_malloc (( (C_ncols +2) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_csc_values = (float*) mkl_malloc (( (C_nnz) * sizeof(float)), MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) mkl_malloc (( (C_nnz) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) mkl_malloc (( (C_ncols +1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
 
   MKL_INT at_column_A = 0;
@@ -1043,6 +1060,14 @@ void csr_kron(
   __assume_aligned(A_csc_values, MEM_LINE_SIZE);
   __assume_aligned(A_JA1, MEM_LINE_SIZE);
 
+  // The compiler has to know that (lower-bnd-of-i-loop + at_column_B) 
+  // is a multiple of 16. 
+  // If lower-bnd is 0 (for each thread that executes this loop), 
+  // then the information needed is that n1 is a multiple of 16. 
+  // One way of doing this is to add a clause of the form 
+  __assume(at_column_A%16==0);
+  __assume(end_column_A%16==0);
+
 #pragma simd
 #pragma vector aligned
   for ( at_column_A = 0 ; at_column_A < end_column_A; ++at_column_A ){
@@ -1050,6 +1075,15 @@ void csr_kron(
     __assume_aligned(B_IA1, MEM_LINE_SIZE);
     __assume_aligned(B_JA1, MEM_LINE_SIZE);
     __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+
+  // The compiler has to know that (lower-bnd-of-i-loop + at_column_B) 
+  // is a multiple of 16. 
+  // If lower-bnd is 0 (for each thread that executes this loop), 
+  // then the information needed is that n1 is a multiple of 16. 
+  // One way of doing this is to add a clause of the form 
+  __assume(at_column_A%16==0);
+  __assume(at_column_B%16==0);
+  __assume(end_column_B%16==0);
 #pragma simd
 #pragma vector aligned
     for ( at_column_B = 0; at_column_B < end_column_B; ++at_column_B ){
@@ -1061,7 +1095,7 @@ void csr_kron(
       C_csc_values[at_column] = value;
       MKL_INT row_pos = 0;
       row_pos  = ( A_JA1[at_column_A] * scalar_B );
-      row_pos+= B_JA1[at_column_B];
+      row_pos += B_JA1[at_column_B];
       C_JA1[at_column] = row_pos;
     }
   }
