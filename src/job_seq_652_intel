@@ -28,8 +28,7 @@
 #          Specify the number of nodes requested and the
 #          number of processors per node. 
 
-#PBS -l nodes=1: :ppn=40
-
+#PBS -l nodes=compute-652-1:ppn=40
 echo "Loading Parallel Studio XE 2016 Compilers ..."
 module purge
 cd /share/apps/intel/parallel_studio_xe_2016.0.047/compilers_and_libraries_2016/linux/bin
@@ -43,35 +42,12 @@ echo "Ready now for running make!"
 cd 
 cd CPD_PI_OLAP/src
 
+sample_size=50
 
-
-module purge
-
-read -r node_info<$PBS_NODEFILE
-
-echo "Allocated computing node: $node_info"
-
-
-
-max_ppn=1
-sample_size=5
-
-for (( ppn = 1; ppn <= max_ppn; ++ppn )) 
-do
-echo "Running $sample_size * ppn: $ppn nodes"
 for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 do
-for execc in *.x
-do
-	echo "running $execc"
-        /home/a57816/ESC_NAS/NPB3.3.1/dstat -tvfnml --output "$execc"_"$seq_num"_"$node_info".csv >> /dev/null &
-	echo ".. going to run $execc (dstat $!)"
-	./$execc > DSTAT_"$execc"_"$seq_num"_"$node_info".txt
-	sleep 5
-	kill $!
+	./querie1_search 
 	echo "$! killed"
-done
-done
 done
 
 echo "Done..."
