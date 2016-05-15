@@ -47,7 +47,6 @@ sample_size=50
 for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 do
 	./querie1_search 
-	echo "$! killed"
 done
 
 echo "Done..."
