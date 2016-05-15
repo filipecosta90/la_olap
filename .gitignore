@@ -1,6 +1,15 @@
+querie1_data
+querie1_osx
+querie1_search
 *.mx
 *.out
 .DS_Store
 *.o
 *.csv
+src/__tbl_1/**
+src/__tbl_2/**
+src/__tbl_4/**
+src/__tbl_8/**
+src/__tbl_16/**
+src/__tbl_32/**
 *.tbl
