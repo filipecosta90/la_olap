@@ -131,56 +131,63 @@ int main( int argc, char* argv[]){
   sparse_status_t status_to_csr;
 
   //read return flag
-
+/*
 
   printf("reading return flag\n");
-  tbl_read( "__tbl_8/lineitem.tbl" , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns, &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
+  tbl_read( "__tbl_16/lineitem.tbl" , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns, &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
   printf("generating return flag\n");
-  convert_and_write_to_mx("__quark_mx_8/return_flag_8.mx", returnFlag_csr_values, returnFlag_JA, returnFlag_IA, returnFlag_nnz, returnFlag_rows, returnFlag_columns);
+  convert_and_write_to_mx("__quark_mx_16/return_flag_16.mx", returnFlag_csr_values, returnFlag_JA, returnFlag_IA, returnFlag_nnz, returnFlag_rows, returnFlag_columns);
   mkl_free(returnFlag_csr_values);
   mkl_free(returnFlag_JA);
   mkl_free(returnFlag_IA);
 
   //read quantity
+  printf("reading quantity\n");
+  tbl_read_measure( "__tbl_16/lineitem.tbl" , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
   printf("generating quantity\n");
-
-  tbl_read_measure( "__tbl_8/lineitem.tbl" , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
-  convert_and_write_to_mx("__quark_mx_8/quantity_8.mx", quantity_csr_values, quantity_JA, quantity_IA, quantity_nnz, quantity_rows, quantity_columns);
+  convert_and_write_to_mx("__quark_mx_16/quantity_16.mx", quantity_csr_values, quantity_JA, quantity_IA, quantity_nnz, quantity_rows, quantity_columns);
   mkl_free(quantity_csr_values);
   mkl_free(quantity_JA);
   mkl_free(quantity_IA);
 
+
+
   //read line status
 
   printf("reading line status\n");
-  tbl_read( "__tbl_8/lineitem.tbl" , 10, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
+  tbl_read( "__tbl_16/lineitem.tbl" , 10, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
   printf("generating line status\n");
-  convert_and_write_to_mx("__quark_mx_8/line_status_8.mx", lineStatus_csr_values, lineStatus_JA, lineStatus_IA, lineStatus_nnz, lineStatus_rows, lineStatus_columns);
+  convert_and_write_to_mx("__quark_mx_16/line_status_16.mx", lineStatus_csr_values, lineStatus_JA, lineStatus_IA, lineStatus_nnz, lineStatus_rows, lineStatus_columns);
   mkl_free(lineStatus_csr_values);
   mkl_free(lineStatus_JA);
   mkl_free(lineStatus_IA);
 
 
-  //read shipdate gt
-  printf("generating shipdate gt\n");
 
-  tbl_read_filter( "__tbl_8/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28",
+  //read shipdate gt
+    printf("reading shipdate gt\n");
+  tbl_read_filter( "__tbl_16/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28",
       &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns , &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA);
-  convert_and_write_to_mx("__quark_mx_8/shipdate_gt_8.mx", shipdate_gt_csr_values, shipdate_gt_JA, shipdate_gt_IA, shipdate_gt_nnz, shipdate_gt_rows, shipdate_gt_columns);
+    printf("generating shipdate gt\n");
+    convert_and_write_to_mx("__quark_mx_16/shipdate_gt_16.mx", shipdate_gt_csr_values, shipdate_gt_JA, shipdate_gt_IA, shipdate_gt_nnz, shipdate_gt_rows, shipdate_gt_columns);
   mkl_free(shipdate_gt_csr_values);
   mkl_free(shipdate_gt_JA);
   mkl_free(shipdate_gt_IA);
 
-  //read shipdate lt
-  printf("generating shipdate lt\n");
+ 
+ 
+ */
 
-  tbl_read_filter( "__tbl_8/lineitem.tbl" , 11, LESS_EQ , "1998-12-01",
+  //read shipdate lt
+ printf("reading shipdate lt\n");
+  tbl_read_filter( "__tbl_16/lineitem.tbl" , 11, LESS_EQ , "1998-12-01",
       &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns , &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA);
-  convert_and_write_to_mx("__quark_mx_8/shipdate_lt_8.mx", shipdate_lt_csr_values, shipdate_lt_JA, shipdate_lt_IA, shipdate_lt_nnz, shipdate_lt_rows, shipdate_lt_columns);
+ printf("generating shipdate lt\n");
+ convert_and_write_to_mx("__quark_mx_16/shipdate_lt_16.mx", shipdate_lt_csr_values, shipdate_lt_JA, shipdate_lt_IA, shipdate_lt_nnz, shipdate_lt_rows, shipdate_lt_columns);
   mkl_free(shipdate_lt_csr_values);
   mkl_free(shipdate_lt_JA);
   mkl_free(shipdate_lt_IA);
-  return 0;
+    return 0;
 
 }
 
