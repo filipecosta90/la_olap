@@ -73,10 +73,10 @@ l = legend('431 - gcc 4.9.0 -O3','641 - gcc 4.9.0 -O3' , '652 - gcc 4.9.0 -O3', 
 
 
 set(l,'FontSize',12);
-ylabel('Tempo (segundos)');
+ylabel('Time in seconds');
 
-xlabel('Num. Threads OpenMP');
-t = title({'Rela\c{c}\~ao entre Tempo Total em segundos para o kernel OMP - CG','Classe de dados C para compilador gcc 4.9.0 com flags de compila\c{c}\~ao -O3'},'interpreter','latex')
+xlabel('TPC-H scale factor');
+t = title({'TPC-H benchmark simplified querie-1 time for solution analysis','for different scale factors, between Linear Algebra approach vs Relational Algebra approach'},'interpreter','latex')
 
 set(t,'FontSize',24);
 set(gca,'fontsize',12);
