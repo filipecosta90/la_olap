@@ -1,0 +1,12 @@
+server starting
+Started POSTGRES
+SET
+Timing is on.
+ l_returnflag | l_linestatus |    sum     
+--------------+--------------+------------
+ N            | O            | 4896098.00
+(1 row)
+
+Time: 1644.915 ms
+Timing is off.
+Done...
