@@ -1,0 +1,29 @@
+===========================================================================
+
+Begin optimization report for: csr_krao(float *, int *, int *, int, int, int, float *, int *, int *, int, int, int, float **, int **, int **, int *, int *, int *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at olap.c(1110,3)
+   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap.c(1113,5) ]
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap.c(1113,5) ]
+   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap.c(1116,5) ]
+   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap.c(1116,5) ]
+   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap.c(1116,5) ]
+   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap.c(1119,5) ]
+   remark #15388: vectorization support: reference B_JA1 has aligned access   [ olap.c(1119,5) ]
+   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap.c(1119,5) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.158
+   remark #15301: SIMD LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 5 
+   remark #15449: unmasked aligned unit stride stores: 3 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 30 
+   remark #15477: vector loop cost: 4.750 
+   remark #15478: estimated potential speedup: 5.870 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+===========================================================================
