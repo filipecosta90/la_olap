@@ -1,0 +1,49 @@
+## FICHEIRO MODELO PBS CRIADO PARA A DISCIPLINA DE CPD::ESC
+## GRUPO : FILIPE OLIVEIRA and SERGIO CALDAS
+## FEV/2016
+
+#!/bin/bash
+
+#          Remarks: A line beginning with # is a comment.
+#          A line beginning with #PBS is a PBS directive.
+#          PBS directives must come first; any directives
+#          after the first executable statement are ignored.
+
+#PBS -N SQL_8G_PAR
+#PBS -l walltime=01:00:00
+#PBS -q mei
+
+#          PBS can send informative email messages to you about the
+#          status of your job.  Specify a string which consists of
+#          either the single character "n" (no mail), or one or more
+#          of the characters "a" (send mail when job is aborted),
+#          "b" (send mail when job begins), and "e" (send mail when
+#          job terminates).  The default is "a" if not specified.
+#          You should also specify the email address to which the
+#          message should be send via the -M option.
+
+#PBS -m abe
+#PBS -M a57816@alunos.uminho.pt
+#PBS -M a57779@alunos.uminho.pt
+
+#          Specify the number of nodes requested and the
+#          number of processors per node. 
+
+#PBS -l nodes=compute-652-1:ppn=40
+
+/home/a57816/postgres/bin/pg_ctl -D /home/a57816/postgres/data/ -l logfile start
+
+sleep 15;
+echo "Started POSTGRES"
+
+sample_size=50 
+
+for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
+do
+~/postgres/bin/psql -U a57816 postgres -f /home/a57816/CPD_PI_OLAP/queries/par/querie8_parallel_20.sql
+done
+
+/home/a57816/postgres/bin/pg_ctl -D /home/a57816/postgres/data/ -l logfile stop
+
+echo "Done..."
+
