@@ -504,7 +504,7 @@ void csr_krao(
 	/////////////////////////////////
 
 	float* C_csc_values = NULL;
-	MKL_INT* C_JA1;
+__declspec(align(MEM_LINE_SIZE)) 	MKL_INT* C_JA1;
 	MKL_INT* C_IA1;
 
 	C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
@@ -524,24 +524,11 @@ void csr_krao(
 	__assume_aligned(A_JA1, MEM_LINE_SIZE);
 	__assume_aligned(C_JA1, MEM_LINE_SIZE);
 
-	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
-		// insert start of column int C_IA1
-		C_IA1[at_column] = A_IA1[at_column];
-	}
+		C_IA1[0:end_column] = A_IA1[0:end_column];
 	C_IA1[A_number_columns] = A_NNZ;
-//	mkl_free(A_IA1);
-	
-	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
-		C_csc_values[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
-	}
-//	mkl_free(A_csc_values);
-//	mkl_free(B_csc_values);
+		C_csc_values[0:end_column] =  B_csc_values[0:end_column] *  A_csc_values[0:end_column];
 
-	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
-		C_JA1[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
-	}
-//	mkl_free(A_JA1);
-//	mkl_free(B_JA1);
+		C_JA1[0:end_column] = B_JA1[0:end_column] + ( A_JA1[0:end_column] * scalar_B );
 
 
 	/////////////////////////////////
