@@ -498,7 +498,7 @@ void csr_krao(
 	B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
 	B_IA1 = (MKL_INT*) mkl_malloc (( (B_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 	mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
-
+//	mkl_free(B_IA1);
 	/////////////////////////////////
 	//   COMPUTE KRAO
 	/////////////////////////////////
@@ -511,7 +511,7 @@ void csr_krao(
 	C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
 	C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-	MKL_INT end_column = A_number_columns % 4;
+	MKL_INT end_column = A_number_columns;
 	MKL_INT scalar_B = B_number_rows;
 
 	// n=16 for SSE, n=32 for AV
@@ -527,25 +527,22 @@ void csr_krao(
 	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
 		// insert start of column int C_IA1
 		C_IA1[at_column] = A_IA1[at_column];
-		C_IA1[at_column+1] = A_IA1[at_column+1];
-		C_IA1[at_column+2] = A_IA1[at_column+2];
-		C_IA1[at_column+3] = A_IA1[at_column+3];
 	}
-
+	C_IA1[A_number_columns] = A_NNZ;
+//	mkl_free(A_IA1);
+	
 	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
 		C_csc_values[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
-		C_csc_values[at_column+1] =  B_csc_values[at_column+1] *  A_csc_values[at_column+1];
-		C_csc_values[at_column+2] =  B_csc_values[at_column+2] *  A_csc_values[at_column+2];
-		C_csc_values[at_column+3] =  B_csc_values[at_column+3] *  A_csc_values[at_column+3];
 	}
+//	mkl_free(A_csc_values);
+//	mkl_free(B_csc_values);
 
 	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
 		C_JA1[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
-		C_JA1[at_column+1] = B_JA1[at_column+1] + ( A_JA1[at_column+1] * scalar_B );
-		C_JA1[at_column+2] = B_JA1[at_column+2] + ( A_JA1[at_column+2] * scalar_B );
-		C_JA1[at_column+3] = B_JA1[at_column+3] + ( A_JA1[at_column+3] * scalar_B );
 	}
-	C_IA1[A_number_columns] = A_NNZ;
+//	mkl_free(A_JA1);
+//	mkl_free(B_JA1);
+
 
 	/////////////////////////////////
 	//   CONVERT C from CSC to CSR
@@ -575,6 +572,10 @@ void csr_krao(
 	*C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
 	*C_IA = (MKL_INT*) mkl_malloc (( ( final_number_rows + 1 ) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 	mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
+
+//	mkl_free(C_IA1);
+//	mkl_free(C_JA1);
+//	mkl_free(C_csc_values);
 
 	*C_number_rows = final_number_rows;
 	*C_number_columns = A_number_columns;
