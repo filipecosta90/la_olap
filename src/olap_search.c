@@ -511,7 +511,7 @@ void csr_krao(
 	C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
 	C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-	MKL_INT end_column = A_number_columns;
+	MKL_INT end_column = A_number_columns % 4;
 	MKL_INT scalar_B = B_number_rows;
 
 	// n=16 for SSE, n=32 for AV
@@ -524,28 +524,28 @@ void csr_krao(
 	__assume_aligned(A_JA1, MEM_LINE_SIZE);
 	__assume_aligned(C_JA1, MEM_LINE_SIZE);
 
-#pragma vector always aligned
-#pragma ivdep
-#pragma simd vectorlength(4)
 	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
 		// insert start of column int C_IA1
 		C_IA1[at_column] = A_IA1[at_column];
+		C_IA1[at_column+1] = A_IA1[at_column+1];
+		C_IA1[at_column+2] = A_IA1[at_column+2];
+		C_IA1[at_column+3] = A_IA1[at_column+3];
 	}
 
-#pragma vector always aligned
-#pragma ivdep
-#pragma simd vectorlength(4)
 	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
 		C_csc_values[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
+		C_csc_values[at_column+1] =  B_csc_values[at_column+1] *  A_csc_values[at_column+1];
+		C_csc_values[at_column+2] =  B_csc_values[at_column+2] *  A_csc_values[at_column+2];
+		C_csc_values[at_column+3] =  B_csc_values[at_column+3] *  A_csc_values[at_column+3];
 	}
 
-#pragma vector always aligned
-#pragma ivdep
-#pragma simd vectorlength(4)
 	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
 		C_JA1[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
+		C_JA1[at_column+1] = B_JA1[at_column+1] + ( A_JA1[at_column+1] * scalar_B );
+		C_JA1[at_column+2] = B_JA1[at_column+2] + ( A_JA1[at_column+2] * scalar_B );
+		C_JA1[at_column+3] = B_JA1[at_column+3] + ( A_JA1[at_column+3] * scalar_B );
 	}
-	C_IA1[end_column] = A_NNZ;
+	C_IA1[A_number_columns] = A_NNZ;
 
 	/////////////////////////////////
 	//   CONVERT C from CSC to CSR

@@ -10,7 +10,7 @@
 #          after the first executable statement are ignored.
 
 #PBS -N OLAP_VEC_1G
-#PBS -l walltime=00:05:00
+#PBS -l walltime=00:09:00
 #PBS -q mei
 
 #          PBS can send informative email messages to you about the
@@ -43,7 +43,7 @@ echo "Ready now for running make!"
 cd 
 cd CPD_PI_OLAP/src
 
-sample_size=20
+sample_size=10
 
 for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 do
