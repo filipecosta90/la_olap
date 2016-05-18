@@ -648,8 +648,8 @@ __declspec(vector)
     C_JA1 = (MKL_INT*) mkl_malloc (( (C_nnz) * sizeof(MKL_INT)), MEM_LINE_SIZE );
     C_IA1 = (MKL_INT*) mkl_malloc (( (C_ncols +1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-
     MKL_INT at_column = 0;
+    MKL_INT end_column = 0;
     MKL_INT row_pos = 0;
 
     MKL_INT end_column_A = A_number_columns;
@@ -671,11 +671,9 @@ __declspec(vector)
 #pragma simd vectorlength(8)
     for ( MKL_INT at_column_A = 0, at_column = 0 ; at_column_A < end_column_A; ++at_column_A, ++at_column ){
       end_column = at_column + B_number_columns;
-      C_IA1[at_column:end_column] = ( )A_IA1[at_column_A] * scalar_B ) + B_IA1[at_column:end_column];
-
+      C_IA1[at_column:end_column] = ( A_IA1[at_column_A] * scalar_B ) + B_IA1[at_column:end_column];
       C_csc_values[at_column:end_column] =  B_csc_values[at_column:end_column] *  A_csc_values[at_column:end_column];
       C_JA1[at_column:end_column] = B_JA1[at_column:end_column] + ( A_JA1[at_column:end_column] * scalar_B );
-
     }
     C_IA1[at_column] = C_nnz;
 

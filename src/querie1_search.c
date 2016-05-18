@@ -45,8 +45,8 @@ double global_time_start, global_time_stop, total_time;
 
 void writeResults ( ) {
   total_time = global_time_stop - global_time_start;
-  FILE* stream = fopen("timing/timings_vec_1.dat", "a+");
-  fprintf(stream, "1,%f\n", total_time);
+  FILE* stream = fopen("timing/timings_no_vec_32.dat", "a+");
+  fprintf(stream, "32,%f\n", total_time);
   fclose(stream);
 }
 
@@ -139,13 +139,13 @@ int main( int argc, char* argv[]){
   sparse_status_t status_to_csr;
 
   //read return flag
-  read_from_mx("__quark_mx_1/return_flag_1.mx", &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns);
+  read_from_mx("__quark_mx_32/return_flag_32.mx", &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns);
 
   //read line status
-  read_from_mx("__quark_mx_1/line_status_1.mx", &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns);
+  read_from_mx("__quark_mx_32/line_status_32.mx", &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns);
 
   //read quantity
-  read_from_mx("__quark_mx_1/quantity_1.mx", &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
+  read_from_mx("__quark_mx_32/quantity_32.mx", &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
 
   //        convert via sparseBLAS API to Handle containing internal data for 
   //        subsequent Inspector-executor Sparse BLAS operations.
@@ -153,8 +153,7 @@ int main( int argc, char* argv[]){
       quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
 
   //read shipdate gt
-  read_from_mx("__quark_mx_1/shipdate_gt_1.mx", &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA, &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns);
-
+  read_from_mx("__quark_mx_32/shipdate_gt_32.mx", &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA, &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns);
 
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
@@ -162,7 +161,7 @@ int main( int argc, char* argv[]){
       shipdate_gt_rows, shipdate_gt_columns, shipdate_gt_IA, shipdate_gt_IA+1, shipdate_gt_JA, shipdate_gt_csr_values );
 
   //read shipdate lt
-  read_from_mx("__quark_mx_1/shipdate_lt_1.mx", &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA, &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns);
+  read_from_mx("__quark_mx_32/shipdate_lt_32.mx", &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA, &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns);
 
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
