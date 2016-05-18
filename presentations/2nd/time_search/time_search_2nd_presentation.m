@@ -24,14 +24,12 @@ color9 = orange/255;
 FigHandle = figure;
   set(FigHandle, 'Position', [0, 0, 640, 480]);
 cd ('../../../src');
-dataset_1 = csvread('timing/timings_search_1.dat');
-dataset_2 = csvread('timing/timings_search_2.dat');
-dataset_4 = csvread('timing/timings_search_4.dat');
-dataset_8 = csvread('timing/timings_search_8.dat');
-dataset_16 = csvread('timing/timings_search_16.dat');
-dataset_32 = csvread('timing/timings_search_32.dat');
-
-
+dataset_1 = csvread('timing/timings_vec_1.dat');
+dataset_2 = csvread('timing/timings_vec_2.dat');
+dataset_4 = csvread('timing/timings_vec_4.dat');
+dataset_8 = csvread('timing/timings_vec_8.dat');
+dataset_16 = csvread('timing/timings_vec_16.dat');
+dataset_32 = csvread('timing/timings_vec_32.dat');
 
 time_1 = dataset_1 ( :, 2); 
 percntiles_1 = prctile(time_1,[5 95]); %5th and 95th percentile
@@ -162,13 +160,66 @@ outlierIndex_pgres_par_32 = par_pgres_32 < percntiles_pgres_par_32(1) | par_pgre
 par_pgres_32(outlierIndex_pgres_par_32) = [];
 best_time_pgres_par_32 = min( par_pgres_32 );
 
+novec_1 =  csvread('timing/timings_no_vec_1.dat') ;
+novec_1 =  novec_1( :, 2);
+novec_2 = csvread('timing/timings_no_vec_2.dat');
+novec_2 =  novec_2( :, 2);
+novec_4 = csvread('timing/timings_no_vec_4.dat');
+novec_4 =  novec_4( :, 2);
+novec_8 = csvread('timing/timings_no_vec_8.dat');
+novec_8 =  novec_8( :, 2);
+novec_16 = csvread('timing/timings_no_vec_16.dat');
+novec_16 =  novec_16( :, 2);
+novec_32 = csvread('timing/timings_no_vec_32.dat');
+novec_32 =  novec_32( :, 2);
+
+
+percntiles_novec_1 = prctile(novec_1,[5 95]); %5th and 95th percentile
+outlierIndex_novec_1 = novec_1 < percntiles_novec_1(1) | novec_1 > percntiles_novec_1(2);
+%remove outlier values
+novec_1(outlierIndex_novec_1) = [];
+best_time_novec_1 = min( novec_1 );
+
+percntiles_novec_2 = prctile(novec_2,[5 95]); %5th and 95th percentile
+outlierIndex_novec_2 = novec_2 < percntiles_novec_2(1) | novec_2 > percntiles_novec_2(2);
+%remove outlier values
+novec_2(outlierIndex_novec_2) = [];
+best_time_novec_2 = min( novec_2 );
+
+percntiles_novec_4 = prctile(novec_4,[5 95]); %5th and 95th percentile
+outlierIndex_novec_4 = novec_4 < percntiles_novec_4(1) | novec_4 > percntiles_novec_4(2);
+%remove outlier values
+novec_4(outlierIndex_novec_4) = [];
+best_time_novec_4 = min( novec_4 );
+
+percntiles_novec_8 = prctile(novec_8,[5 95]); %5th and 95th percentile
+outlierIndex_novec_8 = novec_8 < percntiles_novec_8(1) | novec_8 > percntiles_novec_8(2);
+%remove outlier values
+novec_8(outlierIndex_novec_8) = [];
+best_time_novec_8 = min( novec_8 );
+
+percntiles_novec_16 = prctile(novec_16,[5 95]); %5th and 95th percentile
+outlierIndex_novec_16 = novec_16 < percntiles_novec_16(1) | novec_16 > percntiles_novec_16(2);
+%remove outlier values
+novec_16(outlierIndex_novec_16) = [];
+best_time_novec_16 = min( novec_16 );
+
+percntiles_novec_32 = prctile(novec_32,[5 95]); %5th and 95th percentile
+outlierIndex_novec_32 = novec_32 < percntiles_novec_32(1) | novec_32 > percntiles_novec_32(2);
+%remove outlier values
+novec_32(outlierIndex_novec_32) = [];
+best_time_novec_32 = min( novec_32 );
 
 
 dataset = [1 2 4 8 16 32];
+dataset_novec = [1 2 4 8 16 32];
+
 dataset_pgres_seq = [1 2 4 8 16 32];
 dataset_pgres_par = [1 2 4 8 16 32];
 
 time_olap = [ best_time_1 best_time_2 best_time_4 best_time_8 best_time_16 best_time_32 ];
+time_olap_novec = [ best_time_novec_1 best_time_novec_2 best_time_novec_4 best_time_novec_8 best_time_novec_16 best_time_novec_32];
+
 time_pgres_seq = [ best_time_pgres_1 best_time_pgres_2 best_time_pgres_4 best_time_pgres_8 best_time_pgres_16 best_time_pgres_32  ];
 time_pgres_par = [ best_time_pgres_par_1 best_time_pgres_par_2 best_time_pgres_par_4 best_time_pgres_par_8 best_time_pgres_par_16 best_time_pgres_par_32  ];
 
@@ -176,6 +227,10 @@ time_pgres_par = [ best_time_pgres_par_1 best_time_pgres_par_2 best_time_pgres_p
 
 loglog(dataset,time_olap,'s--','Color', color0,'MarkerSize', 12);
 hold on;
+
+loglog(dataset_novec,time_olap_novec,'s--','Color', color9,'MarkerSize', 12);
+hold on;
+
 
 loglog(dataset_pgres_seq,time_pgres_seq,'d--','Color', color2,'MarkerSize', 12);
 hold on;
@@ -188,6 +243,7 @@ A = [ 1 best_time_1 ; 2 best_time_2 ; 4 best_time_4 ; 8 best_time_8 ; 16 best_ti
 str = num2str([ best_time_1 ; best_time_2 ; best_time_4 ; best_time_8  ; best_time_16 ; best_time_32 ]);
 text(A(:,1)*1.10, A(:,2)*1.00,str);
 
+
 B = [ 1 best_time_pgres_1 ; 2 best_time_pgres_2 ; 4 best_time_pgres_4 ; 8 best_time_pgres_8  ; 16 best_time_pgres_16  ; 32 best_time_pgres_32  ];
 str1 = num2str([ best_time_pgres_1 ; best_time_pgres_2 ; best_time_pgres_4 ; best_time_pgres_8 ; best_time_pgres_16 ; best_time_pgres_32 ]);
 text(B(:,1)*1.10, B(:,2)*1.00,str1);
@@ -197,24 +253,18 @@ str2 = num2str([ best_time_pgres_par_1 ; best_time_pgres_par_2 ; best_time_pgres
 text(C(:,1)*1.10, C(:,2)*1.10,str2);
 
 
-%loglog(threads_cg_c_641_93,tempo_cg_c_641_93,'r+--','Color', cores(2,:),'MarkerSize', 12);
-%hold on;
-
-%%%%%
-
-
 grid on;
 set(gca, 'YTick', [1 2 4 8 16 32 64 128 ]);
 
 set(gca, 'XTick', [1 2 4 8 16 32 ]);
 xlim([1,32]) ;
-ylim([0,128]) ;
+ylim([0,164]) ;
 
 
 set(gca,'YTickLabel',num2str(get(gca,'YTick').'));
 
 
-l = legend('Sequential Linear Algebra Approach','Sequential PostgreSQL', 'Parallel PostgreSQL (max\_parallel\_degree = 20)' );
+l = legend('Vectorized Sequential Linear Algebra Approach', 'Non Vectorized Sequential Linear Algebra Approach', 'Sequential PostgreSQL', 'Parallel PostgreSQL (max\_parallel\_degree = 20)' );
 
 
   
@@ -226,7 +276,7 @@ set(l,'FontSize',12);
 ylabel('Time in seconds');
 
 xlabel('TPC-H scale factor');
-t = title({'TPC-H benchmark simplified querie-1 time for solution analysis','for different scale factors, between Linear Algebra approach vs Relational Algebra approach'},'interpreter','latex')
+t = title({'TPC-H benchmark simplified querie-1 time for solution analysis','for different scale factors, between Linear Algebra approach vs Relational Algebra approach,', 'performing a K-Best (K=3,N=50) time measurement technique'},'interpreter','latex')
 
 set(t,'FontSize',24);
 set(gca,'fontsize',12);
