@@ -169,11 +169,11 @@ void read_from_mx (
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns
     ){
 
-  MKL_INT current_values_size = ARRAY_SIZE;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT current_values_size = ARRAY_SIZE;
   //define COO sparse-matrix M
-  MKL_INT* aux_coo_rows;
-  MKL_INT* aux_coo_columns;
-  float* aux_coo_values;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT* aux_coo_rows;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT* aux_coo_columns;
+  __declspec(align(MEM_LINE_SIZE)) float* aux_coo_values;
 
   aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
   aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
@@ -181,12 +181,12 @@ void read_from_mx (
 
 
   FILE* stream = fopen(filename, "r");
-  MKL_INT number_rows = - 1;
-  MKL_INT number_columns = -1 ;
-  MKL_INT element_number = 1;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT number_rows = - 1;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT number_columns = -1 ;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT element_number = 1;
   MKL_INT job[8];
-  MKL_INT row;
-  MKL_INT column;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT row;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT column;
   float value;
   char line[1024];
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
@@ -211,9 +211,9 @@ void read_from_mx (
   number_columns = element_number;
 
   //define COO sparse-matrix M
-  float* coo_values;
-  MKL_INT* coo_rows;
-  MKL_INT* coo_columns;
+  __declspec(align(MEM_LINE_SIZE)) float* coo_values;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT* coo_rows;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* coo_columns;
 
   coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
   coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
@@ -308,274 +308,277 @@ void check_errors( sparse_status_t stat ){
 //   COMPUTE HADAMARD
 //
 /////////////////////////////////
-void csr_hadamard(
-    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA,
-    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
-    ){
+__declspec(vector)
+  void csr_hadamard(
+      float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
+      MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+      float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA,
+      MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+      float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+      MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+      ){
 
-  MKL_INT job[8];
+    MKL_INT job[8];
 
-  /////////////////////////////////////
-  // PREPARE FOR OPERATION
-  /////////////////////////////////////
-  //////////////////////////////////////////
-  ///////   CONVERT A and B from CSR to CSC
-  //////////////////////////////////////////
+    /////////////////////////////////////
+    // PREPARE FOR OPERATION
+    /////////////////////////////////////
+    //////////////////////////////////////////
+    ///////   CONVERT A and B from CSR to CSC
+    //////////////////////////////////////////
 
-  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
-  job[0] = 0;
+    // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+    job[0] = 0;
 
-  // job[1]
-  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
-  job[1] = 0;
+    // job[1]
+    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+    job[1] = 0;
 
-  // job[2]
-  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
-  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
-  job[2] = 0;
+    // job[2]
+    // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+    // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+    job[2] = 0;
 
-  // job[5] - job indicator.
-  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
-  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
-  job[5] = 1;
-  sparse_status_t status_convert_csc;
-  __declspec(align(MEM_LINE_SIZE))	float* A_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
+    // job[5] - job indicator.
+    // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+    // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+    job[5] = 1;
+    sparse_status_t status_convert_csc;
+    __declspec(align(MEM_LINE_SIZE))	float* A_csc_values = NULL;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
 
-  A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
-  A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
-  A_IA1 = (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+    A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
+    A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+    A_IA1 = (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
 
-  __declspec(align(MEM_LINE_SIZE))	float* B_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_JA1;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_IA1;
+    __declspec(align(MEM_LINE_SIZE))	float* B_csc_values = NULL;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_JA1;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_IA1;
 
-  B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
-  B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  B_IA1 = (MKL_INT*) mkl_malloc (( (B_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+    B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    B_IA1 = (MKL_INT*) mkl_malloc (( (B_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
 
-  /////////////////////////////////
-  //   COMPUTE HADAMARD
-  /////////////////////////////////
+    /////////////////////////////////
+    //   COMPUTE HADAMARD
+    /////////////////////////////////
 
-  __declspec(align(MEM_LINE_SIZE))	float* C_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_JA1;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
+    __declspec(align(MEM_LINE_SIZE))	float* C_csc_values = NULL;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_JA1;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
 
-  C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
-  C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT at_column = 0;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT at_column = 0;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
 
-  __assume_aligned(C_IA1, MEM_LINE_SIZE);
-  __assume_aligned(A_IA1, MEM_LINE_SIZE);
-  __assume_aligned(C_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(B_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(B_JA1, MEM_LINE_SIZE);
-  __assume_aligned(A_JA1, MEM_LINE_SIZE);
-  __assume_aligned(C_JA1, MEM_LINE_SIZE);
+    __assume_aligned(C_IA1, MEM_LINE_SIZE);
+    __assume_aligned(A_IA1, MEM_LINE_SIZE);
+    __assume_aligned(C_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_JA1, MEM_LINE_SIZE);
+    __assume_aligned(A_JA1, MEM_LINE_SIZE);
+    __assume_aligned(C_JA1, MEM_LINE_SIZE);
 
-  for ( at_column = 0; at_column < end_column; ++at_column){
-    // insert start of column int C_IA1
-    MKL_INT iaa = A_IA1[at_column];
-    MKL_INT iab = B_IA1[at_column];
+    for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
+      // insert start of column int C_IA1
+      MKL_INT iaa = A_IA1[at_column];
+      MKL_INT iab = B_IA1[at_column];
 
-    float c_value = B_csc_values[at_column];
-    c_value *= A_csc_values[at_column];
-    C_JA1[at_column] = at_column;
-    C_IA1[at_column] = iaa;
+      float c_value = B_csc_values[at_column];
+      c_value *= A_csc_values[at_column];
+      C_JA1[at_column] = at_column;
+      C_IA1[at_column] = iaa;
 
-    if (iaa != iab ){
-      c_value = 0;
+      if (iaa != iab ){
+        c_value = 0;
+      }
+      C_csc_values[at_column] = c_value;
     }
-    C_csc_values[at_column] = c_value;
+
+    C_IA1[A_number_columns] = A_NNZ;
+
+    /////////////////////////////////
+    //   CONVERT C from CSC to CSR
+    ////////////////////////////////
+
+    // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
+    job[0] = 1;
+
+    // job[1]
+    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+    job[1] = 0;
+
+    // job[2]
+    // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+    // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+    job[2] = 0;
+
+    // job[5] - job indicator.
+    // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+    // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+    job[5] = 1;
+    sparse_status_t status_convert_csr;
+
+    *C_csr_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    *C_IA = (MKL_INT*) mkl_malloc (( (A_number_rows + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
+
+    *C_number_rows = A_number_rows ;
+    *C_number_columns = A_number_columns;
+    *C_NNZ = A_NNZ;
   }
-  C_IA1[at_column] = A_NNZ;
-
-  /////////////////////////////////
-  //   CONVERT C from CSC to CSR
-  ////////////////////////////////
-
-  // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
-  job[0] = 1;
-
-  // job[1]
-  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
-  job[1] = 0;
-
-  // job[2]
-  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
-  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
-  job[2] = 0;
-
-  // job[5] - job indicator.
-  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
-  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
-  job[5] = 1;
-  sparse_status_t status_convert_csr;
-
-  *C_csr_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
-  *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  *C_IA = (MKL_INT*) mkl_malloc (( (A_number_rows + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
-
-  *C_number_rows = A_number_rows ;
-  *C_number_columns = A_number_columns;
-  *C_NNZ = A_NNZ;
-}
 
 /////////////////////////////////
 //
 //   COMPUTE KHATRI-RAO
 //
 /////////////////////////////////
-void csr_krao(
-    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA ,
-    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
-    ){
+__declspec(vector)
+  void csr_krao(
+      float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
+      MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+      float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA ,
+      MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+      float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+      MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+      ){
 
-  /////////////////////////////////////
-  // PREPARE FOR OPERATION
-  /////////////////////////////////////
+    /////////////////////////////////////
+    // PREPARE FOR OPERATION
+    /////////////////////////////////////
 
-  //////////////////////////////////////////
-  ///////   CONVERT A and B from CSR to CSC
-  //////////////////////////////////////////
+    //////////////////////////////////////////
+    ///////   CONVERT A and B from CSR to CSC
+    //////////////////////////////////////////
 
-  MKL_INT job[8];
-  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
-  job[0] = 0;
+    MKL_INT job[8];
+    // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+    job[0] = 0;
 
-  // job[1]
-  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
-  job[1] = 0;
+    // job[1]
+    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+    job[1] = 0;
 
-  // job[2]
-  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
-  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
-  job[2] = 0;
+    // job[2]
+    // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+    // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+    job[2] = 0;
 
-  // job[5] - job indicator.
-  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
-  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
-  job[5] = 1;
-  sparse_status_t status_convert_csc;
+    // job[5] - job indicator.
+    // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+    // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+    job[5] = 1;
+    sparse_status_t status_convert_csc;
 
-  /////////////////////////////////
-  //   DECLARE MATRICES
-  /////////////////////////////////
+    /////////////////////////////////
+    //   DECLARE MATRICES
+    /////////////////////////////////
 
-  __declspec(align(MEM_LINE_SIZE))	float* A_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
+    __declspec(align(MEM_LINE_SIZE))	float* A_csc_values = NULL;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
 
-  __declspec(align(MEM_LINE_SIZE))	float* B_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_JA1;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_IA1;
+    __declspec(align(MEM_LINE_SIZE))	float* B_csc_values = NULL;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_JA1;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_IA1;
 
-  __declspec(align(MEM_LINE_SIZE))	float* C_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE)) 	MKL_INT* C_JA1;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
+    __declspec(align(MEM_LINE_SIZE))	float* C_csc_values = NULL;
+    __declspec(align(MEM_LINE_SIZE)) 	MKL_INT* C_JA1;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
 
-  /////////////////////////////////
-  //   ALLOCATE MEMORY
-  /////////////////////////////////
+    /////////////////////////////////
+    //   ALLOCATE MEMORY
+    /////////////////////////////////
 
-  A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
-  A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
-  A_IA1 = (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+    A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
+    A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+    A_IA1 = (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
 
-  B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
-  B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  B_IA1 = (MKL_INT*) mkl_malloc (( (B_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
+    B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    B_IA1 = (MKL_INT*) mkl_malloc (( (B_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
 
-  C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
-  C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-  /////////////////////////////////
-  //   COMPUTE KRAO
-  /////////////////////////////////
+    /////////////////////////////////
+    //   COMPUTE KRAO
+    /////////////////////////////////
 
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
+    __declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
 
-  // n=16 for SSE, n=32 for AV
-  __assume_aligned(C_IA1, MEM_LINE_SIZE);
-  __assume_aligned(A_IA1, MEM_LINE_SIZE);
-  __assume_aligned(C_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(B_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(B_JA1, MEM_LINE_SIZE);
-  __assume_aligned(A_JA1, MEM_LINE_SIZE);
-  __assume_aligned(C_JA1, MEM_LINE_SIZE);
+    // n=16 for SSE, n=32 for AV
+    __assume_aligned(C_IA1, MEM_LINE_SIZE);
+    __assume_aligned(A_IA1, MEM_LINE_SIZE);
+    __assume_aligned(C_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_JA1, MEM_LINE_SIZE);
+    __assume_aligned(A_JA1, MEM_LINE_SIZE);
+    __assume_aligned(C_JA1, MEM_LINE_SIZE);
 
-  /////////////////////////////////
-  //   COMPUTE KRAO
-  /////////////////////////////////
+    /////////////////////////////////
+    //   COMPUTE KRAO
+    /////////////////////////////////
 
-  C_IA1[0:end_column] = A_IA1[0:end_column];
-  C_IA1[A_number_columns] = A_NNZ;
-  C_csc_values[0:end_column] =  B_csc_values[0:end_column] *  A_csc_values[0:end_column];
-  C_JA1[0:end_column] = B_JA1[0:end_column] + ( A_JA1[0:end_column] * scalar_B );
+    C_IA1[0:end_column] = A_IA1[0:end_column];
+    C_IA1[A_number_columns] = A_NNZ;
+    C_csc_values[0:end_column] =  B_csc_values[0:end_column] *  A_csc_values[0:end_column];
+    C_JA1[0:end_column] = B_JA1[0:end_column] + ( A_JA1[0:end_column] * scalar_B );
 
-  /////////////////////////////////
-  //   CONVERT C from CSC to CSR
-  ////////////////////////////////
+    /////////////////////////////////
+    //   CONVERT C from CSC to CSR
+    ////////////////////////////////
 
-  // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
-  job[0] = 1;
+    // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
+    job[0] = 1;
 
-  // job[1]
-  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
-  job[1] = 0;
+    // job[1]
+    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+    job[1] = 0;
 
-  // job[2]
-  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
-  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
-  job[2] = 0;
+    // job[2]
+    // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+    // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+    job[2] = 0;
 
-  // job[5] - job indicator.
-  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
-  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
-  job[5] = 1;
-  sparse_status_t status_convert_csr;
-  MKL_INT final_number_rows = A_number_rows + B_number_rows;
+    // job[5] - job indicator.
+    // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+    // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+    job[5] = 1;
+    sparse_status_t status_convert_csr;
+    MKL_INT final_number_rows = A_number_rows + B_number_rows;
 
-  /////////////////////////////////
-  //   ALLOCATE MEMORY
-  /////////////////////////////////
+    /////////////////////////////////
+    //   ALLOCATE MEMORY
+    /////////////////////////////////
 
-  *C_csr_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
-  *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  *C_IA = (MKL_INT*) mkl_malloc (( ( final_number_rows + 1 ) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
+    *C_csr_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    *C_IA = (MKL_INT*) mkl_malloc (( ( final_number_rows + 1 ) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
 
-  *C_number_rows = final_number_rows;
-  *C_number_columns = A_number_columns;
-  *C_NNZ = A_NNZ;
-}
+    *C_number_rows = final_number_rows;
+    *C_number_columns = A_number_columns;
+    *C_NNZ = A_NNZ;
+  }
 
 /////////////////////////////////
 //
@@ -583,129 +586,132 @@ void csr_krao(
 //
 /////////////////////////////////
 
-void csr_kron(
-    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA, MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA , MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float**restrict C_csr_values, MKL_INT**restrict C_JA, MKL_INT**restrict C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
-    ){
+__declspec(vector)
+  void csr_kron(
+      float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA, MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+      float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA , MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+      float**restrict C_csr_values, MKL_INT**restrict C_JA, MKL_INT**restrict C_IA, MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+      ){
 
-  /////////////////////////////////////
-  // PREPARE FOR OPERATION
-  /////////////////////////////////////
-  //////////////////////////////////////////
-  ///////   CONVERT A and B from CSR to CSC
-  //////////////////////////////////////////
+    /////////////////////////////////////
+    // PREPARE FOR OPERATION
+    /////////////////////////////////////
+    //////////////////////////////////////////
+    ///////   CONVERT A and B from CSR to CSC
+    //////////////////////////////////////////
 
-  MKL_INT job[8];
-  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
-  job[0] = 0;
-  // job[1]
-  job[1] = 0;
-  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
-  // job[2]
-  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
-  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
-  job[2] = 0;
-  // job[5] - job indicator.
-  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
-  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
-  job[5] = 1;
-  sparse_status_t status_convert_csc;
-  float* A_csc_values = NULL;
-  MKL_INT* A_JA1;
-  MKL_INT* A_IA1;
+    MKL_INT job[8];
+    // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+    job[0] = 0;
+    // job[1]
+    job[1] = 0;
+    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+    // job[2]
+    // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+    // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+    job[2] = 0;
+    // job[5] - job indicator.
+    // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+    // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+    job[5] = 1;
+    sparse_status_t status_convert_csc;
+    float* A_csc_values = NULL;
+    MKL_INT* A_JA1;
+    MKL_INT* A_IA1;
 
-  A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
-  A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
-  A_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+    A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
+    A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+    A_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
 
-  float* B_csc_values = NULL;
-  MKL_INT* B_JA1;
-  MKL_INT* B_IA1;
+    float* B_csc_values = NULL;
+    MKL_INT* B_JA1;
+    MKL_INT* B_IA1;
 
-  B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
-  B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  B_IA1 = (MKL_INT*) mkl_malloc (( (B_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
-
-
-  /////////////////////////////////
-  //   COMPUTE KRON
-  /////////////////////////////////
-  float* C_csc_values = NULL;
-  MKL_INT* C_JA1;
-  MKL_INT* C_IA1;
-  MKL_INT C_nnz = A_NNZ * B_NNZ;
-  MKL_INT C_ncols = A_number_columns * B_number_columns;
-  MKL_INT C_nrows = A_number_rows * B_number_rows;
-  C_csc_values = (float*) mkl_malloc (( (C_nnz) * sizeof(float)), MEM_LINE_SIZE );
-  C_JA1 = (MKL_INT*) mkl_malloc (( (C_nnz) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  C_IA1 = (MKL_INT*) mkl_malloc (( (C_ncols +1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    B_csc_values = (float*) mkl_malloc (( B_NNZ * sizeof(float)), MEM_LINE_SIZE );
+    B_JA1 = (MKL_INT*) mkl_malloc (( B_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    B_IA1 = (MKL_INT*) mkl_malloc (( (B_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &status_convert_csc);
 
 
-  MKL_INT at_column = 0;
-  MKL_INT row_pos = 0;
+    /////////////////////////////////
+    //   COMPUTE KRON
+    /////////////////////////////////
+    float* C_csc_values = NULL;
+    MKL_INT* C_JA1;
+    MKL_INT* C_IA1;
+    MKL_INT C_nnz = A_NNZ * B_NNZ;
+    MKL_INT C_ncols = A_number_columns * B_number_columns;
+    MKL_INT C_nrows = A_number_rows * B_number_rows;
+    C_csc_values = (float*) mkl_malloc (( (C_nnz) * sizeof(float)), MEM_LINE_SIZE );
+    C_JA1 = (MKL_INT*) mkl_malloc (( (C_nnz) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    C_IA1 = (MKL_INT*) mkl_malloc (( (C_ncols +1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
-  MKL_INT end_column_A = A_number_columns;
-  MKL_INT end_column_B = B_number_columns;
-  MKL_INT scalar_B = B_number_rows;
-  float value;
-  // n=16 for SSE, n=32 for AV
-  __assume_aligned(C_IA1, MEM_LINE_SIZE);
-  __assume_aligned(A_IA1, MEM_LINE_SIZE);
-  __assume_aligned(C_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(B_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
-  __assume_aligned(B_JA1, MEM_LINE_SIZE);
-  __assume_aligned(A_JA1, MEM_LINE_SIZE);
-  __assume_aligned(C_JA1, MEM_LINE_SIZE);
+
+    MKL_INT at_column = 0;
+    MKL_INT row_pos = 0;
+
+    MKL_INT end_column_A = A_number_columns;
+    MKL_INT end_column_B = B_number_columns;
+    MKL_INT scalar_B = B_number_rows;
+    float value;
+    // n=16 for SSE, n=32 for AV
+    __assume_aligned(C_IA1, MEM_LINE_SIZE);
+    __assume_aligned(A_IA1, MEM_LINE_SIZE);
+    __assume_aligned(C_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_JA1, MEM_LINE_SIZE);
+    __assume_aligned(A_JA1, MEM_LINE_SIZE);
+    __assume_aligned(C_JA1, MEM_LINE_SIZE);
 
 #pragma vector always aligned
 #pragma ivdep
-#pragma simd vectorlength(4)
-  for ( MKL_INT at_column_A = 0 ; at_column_A < end_column_A; ++at_column_A ){
-    for ( MKL_INT at_column_B = 0; at_column_B < end_column_B; ++at_column_B ){
-      C_IA1[at_column] = B_IA1[at_column_B] + A_IA1[at_column_A] * scalar_B;
-      C_csc_values[at_column] = A_csc_values[at_column_A] * B_csc_values[at_column_B] ;
-      C_JA1[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
+#pragma simd vectorlength(8)
+    for ( MKL_INT at_column_A = 0, at_column = 0 ; at_column_A < end_column_A; ++at_column_A, ++at_column ){
+      end_column = at_column + B_number_columns;
+      C_IA1[at_column:end_column] = ( )A_IA1[at_column_A] * scalar_B ) + B_IA1[at_column:end_column];
+
+      C_csc_values[at_column:end_column] =  B_csc_values[at_column:end_column] *  A_csc_values[at_column:end_column];
+      C_JA1[at_column:end_column] = B_JA1[at_column:end_column] + ( A_JA1[at_column:end_column] * scalar_B );
+
     }
+    C_IA1[at_column] = C_nnz;
+
+
+    /////////////////////////////////
+    //   CONVERT C from CSC to CSR
+    /////////////////////////////////
+
+    // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
+    job[0] = 1;
+
+    // job[1]
+    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+    // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+    job[1] = 0;
+
+    // job[2]
+    // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+    // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+    job[2] = 0;
+
+    // job[5] - job indicator.
+    // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+    // If job[5]≠0,  all output arrays acsr, ja, and ia are filled in for the output storage. 
+    job[5] = 1;
+
+    sparse_status_t status_convert_csr;
+    *C_csr_values = (float*) mkl_malloc (( C_nnz * sizeof(float)), MEM_LINE_SIZE );
+    *C_JA = (MKL_INT*) mkl_malloc (( C_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
+    *C_IA = (MKL_INT*) mkl_malloc (( (C_nnz + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+    mkl_scsrcsc(job, &C_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
+
+    *C_number_rows = C_nrows ;
+    *C_number_columns = C_ncols;
+    *C_NNZ = C_nnz;
   }
-  C_IA1[end_column_A] = C_nnz;
-
-  /////////////////////////////////
-  //   CONVERT C from CSC to CSR
-  /////////////////////////////////
-
-  // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
-  job[0] = 1;
-
-  // job[1]
-  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
-  job[1] = 0;
-
-  // job[2]
-  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
-  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
-  job[2] = 0;
-
-  // job[5] - job indicator.
-  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
-  // If job[5]≠0,  all output arrays acsr, ja, and ia are filled in for the output storage. 
-  job[5] = 1;
-
-  sparse_status_t status_convert_csr;
-  *C_csr_values = (float*) mkl_malloc (( C_nnz * sizeof(float)), MEM_LINE_SIZE );
-  *C_JA = (MKL_INT*) mkl_malloc (( C_nnz * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  *C_IA = (MKL_INT*) mkl_malloc (( (C_nnz + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
-  mkl_scsrcsc(job, &C_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
-
-  *C_number_rows = C_nrows ;
-  *C_number_columns = C_ncols;
-  *C_NNZ = C_nnz;
-}
 
 #endif
