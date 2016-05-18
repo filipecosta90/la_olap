@@ -308,7 +308,6 @@ void check_errors( sparse_status_t stat ){
 //   COMPUTE HADAMARD
 //
 /////////////////////////////////
-__declspec(vector)
   void csr_hadamard(
       float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
       MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
@@ -444,7 +443,6 @@ __declspec(vector)
 //   COMPUTE KHATRI-RAO
 //
 /////////////////////////////////
-__declspec(vector)
   void csr_krao(
       float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
       MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
@@ -586,7 +584,6 @@ __declspec(vector)
 //
 /////////////////////////////////
 
-__declspec(vector)
   void csr_kron(
       float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA, MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
       float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA , MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,

@@ -9,7 +9,7 @@ Begin optimization report for: getfield(char *, int, char *)
 
 
 LOOP BEGIN at olap_search.c(54,3)
-   remark #15540: loop was not vectorized: auto-vectorization is disabled with -no-vec flag
+   remark #15527: loop was not vectorized: function call to strtok(char *__restrict__, const char *__restrict__) cannot be vectorized   [ olap_search.c(55,21) ]
 LOOP END
 ===========================================================================
 
@@ -79,115 +79,15 @@ LOOP BEGIN at olap_search.c(226,3)
 LOOP END
 ===========================================================================
 
-Begin optimization report for: csr_hadamard..xN2vvvvvvvvvvvvvvvvvv(float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float **__restrict__, int **__restrict__, int **__restrict__, int *, int *, int *)
-
-    Report from: Vector optimizations [vec]
-
-remark #15301: FUNCTION WAS VECTORIZED   [ olap_search.c(319,8) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(352,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(353,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(354,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(361,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(362,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(363,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(374,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(375,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(376,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(432,30) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(433,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(434,24) ]
-
-LOOP BEGIN at olap_search.c(391,5)
-   remark #25460: No loop optimizations reported
-LOOP END
-===========================================================================
-
-Begin optimization report for: csr_hadamard..xM2vvvvvvvvvvvvvvvvvv(float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float **__restrict__, int **__restrict__, int **__restrict__, int *, int *, int *)
-
-    Report from: Vector optimizations [vec]
-
-remark #15301: FUNCTION WAS VECTORIZED   [ olap_search.c(319,8) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(352,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(353,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(354,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(361,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(362,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(363,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(374,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(375,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(376,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(432,30) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(433,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(434,24) ]
-
-LOOP BEGIN at olap_search.c(391,5)
-   remark #25460: No loop optimizations reported
-LOOP END
-===========================================================================
-
 Begin optimization report for: csr_hadamard(float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float **__restrict__, int **__restrict__, int **__restrict__, int *, int *, int *)
 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap_search.c(391,5)
+LOOP BEGIN at olap_search.c(390,5)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed ANTI dependence between A_IA1 line 393 and C_IA1 line 399
-   remark #15346: vector dependence: assumed FLOW dependence between C_IA1 line 399 and A_IA1 line 393
-LOOP END
-===========================================================================
-
-Begin optimization report for: csr_krao..xN2vvvvvvvvvvvvvvvvvv(float *, int *, int *, int, int, int, float *, int *, int *, int, int, int, float **, int **, int **, int *, int *, int *)
-
-    Report from: Vector optimizations [vec]
-
-remark #15301: FUNCTION WAS VECTORIZED   [ olap_search.c(455,8) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(505,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(506,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(507,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(510,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(511,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(512,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(515,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(516,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(517,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(573,30) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(574,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(575,24) ]
-
-LOOP BEGIN at olap_search.c(540,13)
-   remark #25460: No loop optimizations reported
-LOOP END
-
-LOOP BEGIN at olap_search.c(543,13)
-   remark #25460: No loop optimizations reported
-LOOP END
-===========================================================================
-
-Begin optimization report for: csr_krao..xM2vvvvvvvvvvvvvvvvvv(float *, int *, int *, int, int, int, float *, int *, int *, int, int, int, float **, int **, int **, int *, int *, int *)
-
-    Report from: Vector optimizations [vec]
-
-remark #15301: FUNCTION WAS VECTORIZED   [ olap_search.c(455,8) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(505,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(506,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(507,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(510,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(511,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(512,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(515,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(516,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(517,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(573,30) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(574,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(575,24) ]
-
-LOOP BEGIN at olap_search.c(540,13)
-   remark #25460: No loop optimizations reported
-LOOP END
-
-LOOP BEGIN at olap_search.c(543,13)
-   remark #25460: No loop optimizations reported
+   remark #15346: vector dependence: assumed ANTI dependence between A_IA1 line 392 and C_IA1 line 398
+   remark #15346: vector dependence: assumed FLOW dependence between C_IA1 line 398 and A_IA1 line 392
 LOOP END
 ===========================================================================
 
@@ -196,69 +96,33 @@ Begin optimization report for: csr_krao(float *, int *, int *, int, int, int, fl
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap_search.c(540,13)
-   remark #15540: loop was not vectorized: auto-vectorization is disabled with -no-vec flag
+LOOP BEGIN at olap_search.c(538,13)
+   remark #15388: vectorization support: reference C_IA1 has aligned access
+   remark #15388: vectorization support: reference A_IA1 has aligned access
+   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap_search.c(540,20) ]
+   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap_search.c(540,20) ]
+   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap_search.c(540,20) ]
+   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap_search.c(541,13) ]
+   remark #15388: vectorization support: reference B_JA1 has aligned access   [ olap_search.c(541,13) ]
+   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap_search.c(541,13) ]
+   remark #15305: vectorization support: vector length 8
+   remark #15309: vectorization support: normalized vectorization overhead 0.200
+   remark #15301: FUSED LOOP WAS VECTORIZED
+   remark #15448: unmasked aligned unit stride loads: 5 
+   remark #15449: unmasked aligned unit stride stores: 3 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 18 
+   remark #15477: vector loop cost: 3.120 
+   remark #15478: estimated potential speedup: 5.380 
+   remark #15488: --- end vector loop cost summary ---
 LOOP END
 
-LOOP BEGIN at olap_search.c(543,13)
+LOOP BEGIN at olap_search.c(541,13)
 LOOP END
-===========================================================================
 
-Begin optimization report for: csr_kron..xN2vvvvvvvvvvvvvvvvvv(float *, int *, int *, int, int, int, float *, int *, int *, int, int, int, float **, int **, int **, int *, int *, int *)
-
-    Report from: Vector optimizations [vec]
-
-remark #15301: FUNCTION WAS VECTORIZED   [ olap_search.c(594,8) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(623,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(624,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(625,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(632,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(633,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(634,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(647,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(648,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(649,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(704,30) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(705,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(706,24) ]
-
-LOOP BEGIN at olap_search.c(672,5)
-   remark #25460: No loop optimizations reported
-
-   LOOP BEGIN at olap_search.c(674,23)
-   LOOP END
-
-   LOOP BEGIN at olap_search.c(676,23)
-   LOOP END
-LOOP END
-===========================================================================
-
-Begin optimization report for: csr_kron..xM2vvvvvvvvvvvvvvvvvv(float *, int *, int *, int, int, int, float *, int *, int *, int, int, int, float **, int **, int **, int *, int *, int *)
-
-    Report from: Vector optimizations [vec]
-
-remark #15301: FUNCTION WAS VECTORIZED   [ olap_search.c(594,8) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(623,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(624,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(625,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(632,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(633,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(634,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(647,29) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(648,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(649,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(704,30) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(705,24) ]
-remark #15525: call to function 'MKL_malloc' is serialized   [ olap_search.c(706,24) ]
-
-LOOP BEGIN at olap_search.c(672,5)
-   remark #25460: No loop optimizations reported
-
-   LOOP BEGIN at olap_search.c(674,23)
-   LOOP END
-
-   LOOP BEGIN at olap_search.c(676,23)
-   LOOP END
+LOOP BEGIN at olap_search.c(538,13)
+<Remainder loop for vectorization>
+   remark #15313: remainder loop was not vectorized: unsupported data type
 LOOP END
 ===========================================================================
 
@@ -267,8 +131,8 @@ Begin optimization report for: csr_kron(float *, int *, int *, int, int, int, fl
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap_search.c(672,5)
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap_search.c(674,23) ]
+LOOP BEGIN at olap_search.c(669,5)
+   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap_search.c(671,23) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.041
    remark #15301: SIMD LOOP WAS VECTORIZED
@@ -281,17 +145,17 @@ LOOP BEGIN at olap_search.c(672,5)
    remark #15478: estimated potential speedup: 0.090 
    remark #15488: --- end vector loop cost summary ---
 
-   LOOP BEGIN at olap_search.c(674,23)
+   LOOP BEGIN at olap_search.c(671,23)
    LOOP END
 
-   LOOP BEGIN at olap_search.c(676,23)
+   LOOP BEGIN at olap_search.c(673,23)
    LOOP END
 LOOP END
 
-LOOP BEGIN at olap_search.c(672,5)
+LOOP BEGIN at olap_search.c(669,5)
 <Remainder loop for vectorization>
 
-   LOOP BEGIN at olap_search.c(674,23)
+   LOOP BEGIN at olap_search.c(671,23)
       remark #25460: No loop optimizations reported
    LOOP END
 LOOP END
