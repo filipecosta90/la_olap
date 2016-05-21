@@ -22,7 +22,7 @@ color9 = orange/255;
 
 
 FigHandle = figure;
-  set(FigHandle, 'Position', [0, 0, 640, 480]);
+  set(FigHandle, 'Position', [0, 0, 760, 560]);
 cd ('../../../src');
 dataset_1 = csvread('timing/timings_vec_1.dat');
 dataset_2 = csvread('timing/timings_vec_2.dat');
@@ -178,37 +178,37 @@ percntiles_novec_1 = prctile(novec_1,[5 95]); %5th and 95th percentile
 outlierIndex_novec_1 = novec_1 < percntiles_novec_1(1) | novec_1 > percntiles_novec_1(2);
 %remove outlier values
 novec_1(outlierIndex_novec_1) = [];
-best_time_novec_1 = min( novec_1 );
+best_time_novec_1 = max( novec_1 );
 
 percntiles_novec_2 = prctile(novec_2,[5 95]); %5th and 95th percentile
 outlierIndex_novec_2 = novec_2 < percntiles_novec_2(1) | novec_2 > percntiles_novec_2(2);
 %remove outlier values
 novec_2(outlierIndex_novec_2) = [];
-best_time_novec_2 = min( novec_2 );
+best_time_novec_2 = max( novec_2 );
 
 percntiles_novec_4 = prctile(novec_4,[5 95]); %5th and 95th percentile
 outlierIndex_novec_4 = novec_4 < percntiles_novec_4(1) | novec_4 > percntiles_novec_4(2);
 %remove outlier values
 novec_4(outlierIndex_novec_4) = [];
-best_time_novec_4 = min( novec_4 );
+best_time_novec_4 = max( novec_4 );
 
 percntiles_novec_8 = prctile(novec_8,[5 95]); %5th and 95th percentile
 outlierIndex_novec_8 = novec_8 < percntiles_novec_8(1) | novec_8 > percntiles_novec_8(2);
 %remove outlier values
 novec_8(outlierIndex_novec_8) = [];
-best_time_novec_8 = min( novec_8 );
+best_time_novec_8 = max( novec_8 );
 
 percntiles_novec_16 = prctile(novec_16,[5 95]); %5th and 95th percentile
 outlierIndex_novec_16 = novec_16 < percntiles_novec_16(1) | novec_16 > percntiles_novec_16(2);
 %remove outlier values
 novec_16(outlierIndex_novec_16) = [];
-best_time_novec_16 = min( novec_16 );
+best_time_novec_16 = max( novec_16 );
 
 percntiles_novec_32 = prctile(novec_32,[5 95]); %5th and 95th percentile
 outlierIndex_novec_32 = novec_32 < percntiles_novec_32(1) | novec_32 > percntiles_novec_32(2);
 %remove outlier values
 novec_32(outlierIndex_novec_32) = [];
-best_time_novec_32 = min( novec_32 );
+best_time_novec_32 = max( novec_32 );
 
 
 dataset = [1 2 4 8 16 32];
@@ -224,33 +224,36 @@ time_pgres_seq = [ best_time_pgres_1 best_time_pgres_2 best_time_pgres_4 best_ti
 time_pgres_par = [ best_time_pgres_par_1 best_time_pgres_par_2 best_time_pgres_par_4 best_time_pgres_par_8 best_time_pgres_par_16 best_time_pgres_par_32  ];
 
 
-
-loglog(dataset,time_olap,'s--','Color', color0,'MarkerSize', 12);
+loglog(dataset_novec,time_olap_novec,'s--','Color', color9, 'MarkerEdgeColor' , color9, 'MarkerSize', 14);
 hold on;
 
-loglog(dataset_novec,time_olap_novec,'s--','Color', color9,'MarkerSize', 12);
+loglog(dataset,time_olap,'s--','Color', color0,'MarkerSize', 14);
+hold on;
+
+loglog(dataset_pgres_seq,time_pgres_seq,'d--','Color', color2,'MarkerSize', 14);
+hold on;
+
+loglog(dataset_pgres_par,time_pgres_par,'d--','Color', color6,'MarkerSize', 14);
 hold on;
 
 
-loglog(dataset_pgres_seq,time_pgres_seq,'d--','Color', color2,'MarkerSize', 12);
-hold on;
 
-loglog(dataset_pgres_par,time_pgres_par,'d--','Color', color6,'MarkerSize', 12);
-hold on;
 
+B = [ 1 best_time_novec_1 ; 2 best_time_novec_2 ; 4 best_time_novec_4 ; 8 best_time_novec_8 ; 16 best_time_novec_16 ; 32 best_time_novec_32 ];
+str = num2str([ best_time_novec_1 ; best_time_novec_2 ; best_time_novec_4 ; best_time_novec_8  ; best_time_novec_16 ; best_time_novec_32 ]);
+text(B(:,1)*1.10, B(:,2)*1.10,str);
 
 A = [ 1 best_time_1 ; 2 best_time_2 ; 4 best_time_4 ; 8 best_time_8 ; 16 best_time_16 ; 32 best_time_32 ];
 str = num2str([ best_time_1 ; best_time_2 ; best_time_4 ; best_time_8  ; best_time_16 ; best_time_32 ]);
-text(A(:,1)*1.10, A(:,2)*1.00,str);
+text(A(:,1)*1.10, A(:,2)*1,str);
 
-
-B = [ 1 best_time_pgres_1 ; 2 best_time_pgres_2 ; 4 best_time_pgres_4 ; 8 best_time_pgres_8  ; 16 best_time_pgres_16  ; 32 best_time_pgres_32  ];
+C = [ 1 best_time_pgres_1 ; 2 best_time_pgres_2 ; 4 best_time_pgres_4 ; 8 best_time_pgres_8  ; 16 best_time_pgres_16  ; 32 best_time_pgres_32  ];
 str1 = num2str([ best_time_pgres_1 ; best_time_pgres_2 ; best_time_pgres_4 ; best_time_pgres_8 ; best_time_pgres_16 ; best_time_pgres_32 ]);
-text(B(:,1)*1.10, B(:,2)*1.00,str1);
+text(C(:,1)*1.10, C(:,2)*1.00,str1);
 
-C = [ 1 best_time_pgres_par_1 ; 2 best_time_pgres_par_2 ; 4 best_time_pgres_par_4 ; 8 best_time_pgres_par_8  ; 16 best_time_pgres_par_16  ; 32 best_time_pgres_par_32  ];
+D = [ 1 best_time_pgres_par_1 ; 2 best_time_pgres_par_2 ; 4 best_time_pgres_par_4 ; 8 best_time_pgres_par_8  ; 16 best_time_pgres_par_16  ; 32 best_time_pgres_par_32  ];
 str2 = num2str([ best_time_pgres_par_1 ; best_time_pgres_par_2 ; best_time_pgres_par_4 ; best_time_pgres_par_8 ; best_time_pgres_par_16 ; best_time_pgres_par_32 ]);
-text(C(:,1)*1.10, C(:,2)*1.10,str2);
+text(D(:,1)*1.10, D(:,2)*1.10,str2);
 
 
 grid on;
@@ -264,7 +267,7 @@ ylim([0,164]) ;
 set(gca,'YTickLabel',num2str(get(gca,'YTick').'));
 
 
-l = legend('Vectorized Sequential Linear Algebra Approach', 'Non Vectorized Sequential Linear Algebra Approach', 'Sequential PostgreSQL', 'Parallel PostgreSQL (max\_parallel\_degree = 20)' );
+l = legend( 'Non Vectorized Sequential Linear Algebra Approach', 'Vectorized Sequential Linear Algebra Approach','Sequential PostgreSQL', 'Parallel PostgreSQL (max\_parallel\_degree = 20)' );
 
 
   
