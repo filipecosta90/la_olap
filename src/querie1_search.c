@@ -28,7 +28,7 @@
  **     Authors: Filipe Oliveira <a57816@alunos.uminho.pt>
  **          and Sérgio Caldas   <a57779@alunos.uminho.pt>
  **
- ** University of Minho, High Performance Computing Dpt. , April 2016
+ ** University of Minho, High Performance Computing Dpt. , May 2016
  ** -------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -92,36 +92,100 @@ int main( int argc, char* argv[]){
   strcat(shipdate_lt, argv[1]);
   strcat(shipdate_lt, ".mx");
 
+  //////////////////////////////////////////
+  //        CONVERT from CSR to CSC
+  //////////////////////////////////////////
+
+  MKL_INT job_csr_csc[8];
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job_csr_csc[0] = 0;
+
+  // job[1]
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job_csr_csc[1] = 0;
+
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job_csr_csc[2] = 0;
+
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job_csr_csc[5] = 1;
+  sparse_status_t status_convert_to_csc;
+
+  /* ---------------------------------------------------------------------------
+   ** Return Flag Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE))  float* returnFlag_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_IA;
+  //CSC
+  __declspec(align(MEM_LINE_SIZE))  float* returnFlag_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_JA_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_IA_csc;
+  //COMMON
   MKL_INT returnFlag_rows;
   MKL_INT returnFlag_columns;
   MKL_INT returnFlag_nnz;
 
+  /* ---------------------------------------------------------------------------
+   ** Line Status Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE))  float* lineStatus_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_IA;
+  //CSC
+  __declspec(align(MEM_LINE_SIZE))  float* lineStatus_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_JA_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_IA_csc;
+  //COMMON
   MKL_INT lineStatus_rows;
   MKL_INT lineStatus_columns;
   MKL_INT lineStatus_nnz;
 
+  /* ---------------------------------------------------------------------------
+   ** Quantity Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE))  float* quantity_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_IA;
+  //CSC
+  __declspec(align(MEM_LINE_SIZE))  float* quantity_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_JA_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_IA_csc;
+  //COMMON
   MKL_INT quantity_rows;
   MKL_INT quantity_columns;
   MKL_INT quantity_nnz;
   sparse_matrix_t  quantity_matrix;
 
+  /* ---------------------------------------------------------------------------
+   ** Shipdate GT Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE))  float* shipdate_gt_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_IA;
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* shipdate_gt_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_JA_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_IA_csc;
+  //COMMON
   MKL_INT shipdate_gt_rows;
   MKL_INT shipdate_gt_columns;
   MKL_INT shipdate_gt_nnz;
   sparse_matrix_t  shipdate_gt_matrix;
 
+  /* ---------------------------------------------------------------------------
+   ** Shipdate LT Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE))  float* shipdate_lt_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_lt_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_lt_IA;
@@ -129,47 +193,71 @@ int main( int argc, char* argv[]){
   MKL_INT shipdate_lt_columns;
   MKL_INT shipdate_lt_nnz;
   sparse_matrix_t  shipdate_lt_matrix;
-
+  //CSC
   __declspec(align(MEM_LINE_SIZE))  float* selection_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* selection_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* selection_IA;
+  //COMMON
   MKL_INT selection_rows;
   MKL_INT selection_columns;
   MKL_INT selection_nnz;
   sparse_matrix_t  selection_matrix;
 
+  /* ---------------------------------------------------------------------------
+   ** Projection Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE))  float* projection_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_IA;
+  //COMMON
   MKL_INT projection_rows;
   MKL_INT projection_columns;
   MKL_INT projection_nnz;
   sparse_matrix_t  projection_matrix;
 
+  /* ---------------------------------------------------------------------------
+   ** Aggregation Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE)) float* aggregation_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* aggregation_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* aggregation_IA;
+  //COMMON
   MKL_INT aggregation_rows;
   MKL_INT aggregation_columns;
   MKL_INT aggregation_nnz;
 
+  /* ---------------------------------------------------------------------------
+   ** Intermediate Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE)) float* intermediate_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* intermediate_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* intermediate_IA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT intermediate_rows;
+  //COMMON
+  MKL_INT intermediate_rows;
   MKL_INT intermediate_columns;
   MKL_INT intermediate_nnz;
   sparse_matrix_t  intermediate_matrix;
 
+  /* ---------------------------------------------------------------------------
+   ** Final Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE)) float* final_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE)) MKL_INT* final_JA;
   __declspec(align(MEM_LINE_SIZE)) MKL_INT* final_IA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* final_IA_END;
+  //COMMON
   MKL_INT final_rows;
   MKL_INT final_columns;
   MKL_INT final_nnz;
   sparse_matrix_t  final_matrix;
 
+  /* ---------------------------------------------------------------------------
+   ** Vectors
+   ** -------------------------------------------------------------------------*/
   __declspec(align(MEM_LINE_SIZE))  float* bang_vector;
   __declspec(align(MEM_LINE_SIZE))  float* aggregation_vector;
 
@@ -201,10 +289,21 @@ int main( int argc, char* argv[]){
   //read shipdate lt
   read_from_mx(shipdate_lt, &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA, &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns);
 
+  // Alo
+  shipdate_lt_csc_values = (float*) mkl_malloc (( shipdate_lt_nnz * sizeof(float) ), MEM_LINE_SIZE );
+  shipdate_lt_JA_csc = (MKL_INT*) mkl_malloc (( shipdate_lt_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  shipdate_lt_IA_csc = (MKL_INT*) mkl_malloc (((shipdate_lt_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  // Convert from CSR to CSC
+  mkl_scsrcsc(job_csr_csc, &shipdate_lt_nnz, shipdate_lt_csr_values, shipdate_lt_JA, shipdate_lt_IA, shipdate_lt_csc_values, shipdate_lt_JA_csc, shipdate_lt_IA_csc, &status_convert_to_csc);
+
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &shipdate_lt_matrix , SPARSE_INDEX_BASE_ZERO,
       shipdate_lt_rows, shipdate_lt_columns, shipdate_lt_IA, shipdate_lt_IA+1, shipdate_lt_JA, shipdate_lt_csr_values );
+
+
+
   // compute selection = shipdate_gt * shipdate_lt 
   sparse_status_t selection_result;
 

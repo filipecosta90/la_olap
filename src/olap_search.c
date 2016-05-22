@@ -179,7 +179,6 @@ void read_from_mx (
   aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
   aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
 
-
   FILE* stream = fopen(filename, "r");
   __declspec(align(MEM_LINE_SIZE)) MKL_INT number_rows = - 1;
   __declspec(align(MEM_LINE_SIZE)) MKL_INT number_columns = -1 ;
