@@ -120,33 +120,33 @@ int main( int argc, char* argv[]){
    ** Return Flag Matrix
    ** -------------------------------------------------------------------------*/
   //CSR
-  __declspec(align(MEM_LINE_SIZE))  float* returnFlag_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_IA;
+  __declspec(align(MEM_LINE_SIZE))  float* return_flag_csr_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_JA;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_IA;
   //CSC
-  __declspec(align(MEM_LINE_SIZE))  float* returnFlag_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_JA_csc;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_IA_csc;
+  __declspec(align(MEM_LINE_SIZE))  float* return_flag_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_JA_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_IA_csc;
   //COMMON
-  MKL_INT returnFlag_rows;
-  MKL_INT returnFlag_columns;
-  MKL_INT returnFlag_nnz;
+  MKL_INT return_flag_rows;
+  MKL_INT return_flag_columns;
+  MKL_INT return_flag_nnz;
 
   /** ---------------------------------------------------------------------------
    ** Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //CSR
-  __declspec(align(MEM_LINE_SIZE))  float* lineStatus_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_IA;
+  __declspec(align(MEM_LINE_SIZE))  float* line_status_csr_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_JA;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_IA;
   //CSC
-  __declspec(align(MEM_LINE_SIZE))  float* lineStatus_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_JA_csc;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_IA_csc;
+  __declspec(align(MEM_LINE_SIZE))  float* line_status_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_JA_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_IA_csc;
   //COMMON
-  MKL_INT lineStatus_rows;
-  MKL_INT lineStatus_columns;
-  MKL_INT lineStatus_nnz;
+  MKL_INT line_status_rows;
+  MKL_INT line_status_columns;
+  MKL_INT line_status_nnz;
 
   /** ---------------------------------------------------------------------------
    ** Quantity Matrix
@@ -269,7 +269,7 @@ int main( int argc, char* argv[]){
    ** Populate Return Flag Matrix
    ** -------------------------------------------------------------------------*/
   //read return flag
-  read_from_mx(return_flag, &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns);
+  read_from_mx(return_flag, &return_flag_csr_values, &return_flag_JA, &return_flag_IA, &return_flag_nnz, &return_flag_rows, &return_flag_columns);
 
   // Memory Allocation
   return_flag_csc_values = (float*) mkl_malloc (( return_flag_nnz * sizeof(float) ), MEM_LINE_SIZE );
@@ -283,7 +283,7 @@ int main( int argc, char* argv[]){
    ** Populate Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //read line status
-  read_from_mx(line_status, &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns);
+  read_from_mx(line_status, &line_status_csr_values, &line_status_JA, &line_status_IA, &line_status_nnz, &line_status_rows, &line_status_columns);
 
   // Memory Allocation
   line_status_csc_values = (float*) mkl_malloc (( line_status_nnz * sizeof(float) ), MEM_LINE_SIZE );
@@ -374,12 +374,12 @@ int main( int argc, char* argv[]){
       shipdate_lt_matrix,
       &selection_matrix);
 
-  // compute projection = returnFlag krao lineStatus
+  // compute projection = return_flag krao line_status
   csr_krao(
-      returnFlag_csr_values, returnFlag_JA, returnFlag_IA, 
-      returnFlag_nnz, returnFlag_rows, returnFlag_columns,
-      lineStatus_csr_values, lineStatus_JA, lineStatus_IA ,
-      lineStatus_nnz, lineStatus_rows, lineStatus_columns,
+      return_flag_csr_values, return_flag_JA, return_flag_IA, 
+      return_flag_nnz, return_flag_rows, return_flag_columns,
+      line_status_csr_values, line_status_JA, line_status_IA ,
+      line_status_nnz, line_status_rows, line_status_columns,
       &projection_csr_values, &projection_JA, &projection_IA, 
       &projection_nnz, &projection_rows, &projection_columns  
       );
