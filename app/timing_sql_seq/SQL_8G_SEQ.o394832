@@ -1,0 +1,453 @@
+server starting
+Started POSTGRES
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 605889.157 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8843.549 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7959.006 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7962.981 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8534.335 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 9686.975 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8036.682 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8031.246 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7998.527 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7963.203 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 10148.319 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7998.717 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8038.836 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8809.774 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8349.656 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7981.023 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7964.578 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8231.037 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8025.956 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 9776.256 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8142.788 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8806.708 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7928.570 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7954.468 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 9064.653 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8204.046 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8020.358 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8556.533 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7972.018 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7989.147 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7970.883 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 10140.488 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7970.886 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 9208.561 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8209.777 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 9047.865 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 10110.078 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 10158.708 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8986.371 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8821.489 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8137.998 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 9596.679 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7981.682 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 10146.796 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8423.981 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8012.349 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 9696.371 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 8008.730 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 10031.767 ms
+Timing is off.
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 19576896.00
+(1 row)
+
+Time: 7984.401 ms
+Timing is off.
+Done...
