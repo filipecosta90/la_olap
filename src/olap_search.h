@@ -98,15 +98,23 @@ void csr_hadamard(
 //   COMPUTE KHATRI-RAO
 //
 /////////////////////////////////
-void csr_krao(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA, 
+void csr_csr_krao(
+    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA , 
+    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA ,
     MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA, 
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns  
+    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );
 
+void csc_csr_krao(
+    float *restrict A_csc_values, MKL_INT *restrict A_JA1, MKL_INT *restrict A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float *restrict B_csc_values, MKL_INT *restrict B_JA1, MKL_INT *restrict B_IA1 ,
+    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    );
 
 /////////////////////////////////
 //

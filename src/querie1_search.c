@@ -242,24 +242,12 @@ int main( int argc, char* argv[]){
   sparse_matrix_t  intermediate_matrix;
 
   /* ---------------------------------------------------------------------------
-   ** Final Matrix
-   ** -------------------------------------------------------------------------*/
-  //CSR
-  __declspec(align(MEM_LINE_SIZE)) float* final_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE)) MKL_INT* final_JA;
-  __declspec(align(MEM_LINE_SIZE)) MKL_INT* final_IA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* final_IA_END;
-  //COMMON
-  MKL_INT final_rows;
-  MKL_INT final_columns;
-  MKL_INT final_nnz;
-  sparse_matrix_t  final_matrix;
-
-  /* ---------------------------------------------------------------------------
    ** Vectors
    ** -------------------------------------------------------------------------*/
   __declspec(align(MEM_LINE_SIZE))  float* bang_vector;
   __declspec(align(MEM_LINE_SIZE))  float* aggregation_vector;
+  __declspec(align(MEM_LINE_SIZE))  float* final_vector;
+
 
   //conversion status from csr arrays into mkl sparse_matrix_t 
   sparse_status_t status_to_csr;
@@ -350,10 +338,19 @@ int main( int argc, char* argv[]){
   status_to_csr = mkl_sparse_s_create_csr ( &shipdate_lt_matrix , SPARSE_INDEX_BASE_ZERO,
       shipdate_lt_rows, shipdate_lt_columns, shipdate_lt_IA, shipdate_lt_IA+1, shipdate_lt_JA, shipdate_lt_csr_values );
 
-
-  // compute selection = shipdate_gt * shipdate_lt
-
   sparse_status_t selection_result;
+  sparse_status_t aggregation_result;
+  sparse_status_t intermediate_result;
+  sparse_status_t final_result;
+
+  struct matrix_descr descrA;
+  descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
+
+  /** ---------------------------------------------------------------------------
+   ** Populate Vectors
+   ** -------------------------------------------------------------------------*/
+  bang_vector = (float*) mkl_malloc ( (quantity_columns * sizeof(float)), MEM_LINE_SIZE );
+  aggregation_vector = (float*) mkl_malloc ( (quantity_columns * sizeof(float)), MEM_LINE_SIZE );
 
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
@@ -369,48 +366,35 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   GET_TIME(global_time_start);
 
+  // compute selection = shipdate_gt * shipdate_lt
   selection_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE,
       shipdate_gt_matrix,
       shipdate_lt_matrix,
       &selection_matrix);
 
-  // compute projection = return_flag krao line_status
-  csr_krao(
-      return_flag_csr_values, return_flag_JA, return_flag_IA, 
-      return_flag_nnz, return_flag_rows, return_flag_columns,
-      line_status_csr_values, line_status_JA, line_status_IA ,
-      line_status_nnz, line_status_rows, line_status_columns,
-      &projection_csr_values, &projection_JA, &projection_IA, 
-      &projection_nnz, &projection_rows, &projection_columns  
-      );
-
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
 
+  // compute projection = return_flag krao line_status
+  csc_csr_krao(
+      return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc,
+      return_flag_nnz, return_flag_rows, return_flag_columns,
+      line_status_csc_values, line_status_JA_csc, line_status_IA_csc ,
+      line_status_nnz, line_status_rows, line_status_columns,
+      &projection_csr_values, &projection_JA, &projection_IA,
+      &projection_nnz, &projection_rows, &projection_columns
+      );
+
   // compute aggregation = quantity * bang
-  bang_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
-  aggregation_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
-
-  sparse_status_t aggregation_result;
-  struct matrix_descr descrA;
-  descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
-
   aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
 
   // compute intermediate_result = projection * selection
-  sparse_status_t intermediate_result;
-
   intermediate_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
       projection_matrix,
       selection_matrix, 
       &intermediate_matrix);
 
   // compute final_result = intermediate_result * aggregation
-  sparse_status_t final_result;
-
-  final_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
-      intermediate_matrix,
-      quantity_matrix,
-      &final_matrix);
+  final_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, intermediate_matrix , descrA, aggregation_vector, 1.0,  final_vector);
 
   ////////////////////////
   // STOP TIME MEASUREMENT
