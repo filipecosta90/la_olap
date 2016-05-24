@@ -591,6 +591,17 @@ void csc_csr_krao(
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
 
+  __declspec(align(MEM_LINE_SIZE))	float* C_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE)) 	MKL_INT* C_JA1;
+  __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
+
+  /////////////////////////////////
+  //   ALLOCATE MEMORY
+  /////////////////////////////////
+
+  C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   /////////////////////////////////
   //   COMPUTE KRAO
@@ -613,11 +624,10 @@ void csc_csr_krao(
   //   COMPUTE KRAO
   /////////////////////////////////
 
-  *C_IA1[0:end_column] = A_IA1[0:end_column];
-  *C_IA1[A_number_columns] = A_NNZ;
-  *C_csc_values[0:end_column] =  B_csc_values[0:end_column] *  A_csc_values[0:end_column];
-  *C_JA1[0:end_column] = B_JA1[0:end_column] + ( A_JA1[0:end_column] * scalar_B );
-
+  C_IA1[0:end_column] = A_IA1[0:end_column];
+  C_IA1[A_number_columns] = A_NNZ;
+  C_csc_values[0:end_column] =  B_csc_values[0:end_column] *  A_csc_values[0:end_column];
+  C_JA1[0:end_column] = B_JA1[0:end_column] + ( A_JA1[0:end_column] * scalar_B );
 
   /////////////////////////////////
   //   CONVERT C from CSC to CSR
