@@ -68,30 +68,44 @@ int main( int argc, char* argv[]){
 	strcpy(working_dir, "__quark_mx_" );
 	strcat(working_dir, argv[1]);
 
-	strcat(return_flag, working_dir);
+	strcpy(return_flag, working_dir);
 	strcat(return_flag, "/return_flag_");
 	strcat(return_flag, argv[1]);
 	strcat(return_flag, ".mx");
 
-	strcat(line_status, working_dir);
+	strcpy(line_status, working_dir);
 	strcat(line_status, "/line_status_");
 	strcat(line_status, argv[1]);
 	strcat(line_status, ".mx");
 
-	strcat(quantity, working_dir);
+	strcpy(quantity, working_dir);
 	strcat(quantity, "/quantity_");
 	strcat(quantity, argv[1]);
 	strcat(quantity, ".mx");
 
-	strcat(shipdate_gt, working_dir);
+	strcpy(shipdate_gt, working_dir);
 	strcat(shipdate_gt, "/shipdate_gt_");
 	strcat(shipdate_gt, argv[1]);
 	strcat(shipdate_gt, ".mx");
 
-	strcat(shipdate_lt, working_dir);
+	strcpy(shipdate_lt, working_dir);
 	strcat(shipdate_lt, "/shipdate_lt_");
 	strcat(shipdate_lt, argv[1]);
 	strcat(shipdate_lt, ".mx");
+
+	printf("return_flag file: %s\n", return_flag);
+	printf("line_status file: %s\n", line_status);
+	printf("quantity file: %s\n", quantity);
+	printf("shipdate gt file: %s\n", shipdate_gt);
+	printf("shipdate lt file: %s\n", shipdate_lt);
+
+	char file_write[80];
+	strcpy(file_write, "timing/timings_");
+	strcat(file_write, argv[2]);
+	strcat(file_write, argv[1]);
+	strcat(file_write, ".dat");
+	printf("output file: %s\n", file_write);
+
 
 	//////////////////////////////////////////
 	//        CONVERT from CSR to CSC
@@ -352,6 +366,7 @@ int main( int argc, char* argv[]){
 	 ** -------------------------------------------------------------------------*/
 	bang_vector = (float*) mkl_malloc ( (quantity_columns * sizeof(float)), MEM_LINE_SIZE );
 	aggregation_vector = (float*) mkl_malloc ( (quantity_columns * sizeof(float)), MEM_LINE_SIZE );
+	final_vector = (float*) mkl_malloc ( (quantity_columns * sizeof(float)), MEM_LINE_SIZE );
 
 	/** ---------------------------------------------------------------------------
 	 ** ---------------------------------------------------------------------------
@@ -367,6 +382,7 @@ int main( int argc, char* argv[]){
 	 ** -------------------------------------------------------------------------*/
 	GET_TIME(global_time_start);
 
+	printf("computing selection\n");
 	// compute selection = shipdate_gt * shipdate_lt
 	selection_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE,
 			shipdate_gt_matrix,
@@ -374,7 +390,7 @@ int main( int argc, char* argv[]){
 			&selection_matrix);
 
 	status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
-
+	printf("computing projection\n");
 	// compute projection = return_flag krao line_status
 	csc_csr_krao(
 			return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc,
@@ -385,15 +401,18 @@ int main( int argc, char* argv[]){
 			&projection_nnz, &projection_rows, &projection_columns
 		    );
 
+	printf("computing aggregation\n");
 	// compute aggregation = quantity * bang
 	aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
 
+	printf("computing intermediate\n");
 	// compute intermediate_result = projection * selection
 	intermediate_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
 			projection_matrix,
 			selection_matrix, 
 			&intermediate_matrix);
 
+	printf("computing final\n");
 	// compute final_result = intermediate_result * aggregation
 	final_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, intermediate_matrix , descrA, aggregation_vector, 1.0,  final_vector);
 
@@ -401,6 +420,7 @@ int main( int argc, char* argv[]){
 	// STOP TIME MEASUREMENT
 	////////////////////////
 	GET_TIME(global_time_stop);
+
 	writeResults( argv[1], argv[2] );
 
 	return 0;
