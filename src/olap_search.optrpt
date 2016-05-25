@@ -200,7 +200,7 @@ Begin optimization report for: csr_kron(float *, int *, int *, int, int, int, fl
 
 
 LOOP BEGIN at olap_search.c(770,29)
-   remark #15388: vectorization support: reference at_column_A.12742 has aligned access
+   remark #15388: vectorization support: reference at_column_A.12734 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
@@ -237,7 +237,7 @@ LOOP BEGIN at olap_search.c(770,3)
 LOOP END
 
 LOOP BEGIN at olap_search.c(778,29)
-   remark #15388: vectorization support: reference at_column_A.12746 has aligned access
+   remark #15388: vectorization support: reference at_column_A.12738 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
@@ -287,7 +287,7 @@ LOOP BEGIN at olap_search.c(778,3)
 LOOP END
 
 LOOP BEGIN at olap_search.c(785,29)
-   remark #15388: vectorization support: reference at_column_A.12750 has aligned access
+   remark #15388: vectorization support: reference at_column_A.12742 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
