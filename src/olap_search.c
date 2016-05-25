@@ -623,35 +623,20 @@ void csc_csr_krao(
   /////////////////////////////////
   //   COMPUTE KRAO
   /////////////////////////////////
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT nthreads = omp_get_num_threads();
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT columns_per_worker =     A_number_columns / nthreads;
+//  __declspec(align(MEM_LINE_SIZE))	MKL_INT nthreads = omp_get_num_threads();
+ // __declspec(align(MEM_LINE_SIZE))	MKL_INT columns_per_worker =     A_number_columns / nthreads;
 
-#pragma omp parallel
-  {
-#pragma omp parallel
-    {
-#pragma vector always aligned
-#pragma ivdep
-#pragma omp for simd vectorlength(8)
       for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
         C_IA1[at_column] = A_IA1[at_column];
       }
 
-#pragma vector always aligned
-#pragma ivdep
-#pragma omp for simd vectorlength(8)
       for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
         C_csc_values[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
       }
 
-#pragma vector always aligned
-#pragma ivdep
-#pragma omp for simd vectorlength(8)
       for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
         C_JA1[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
       }
-    }
-  }
   C_IA1[A_number_columns] = A_NNZ;
 
   /////////////////////////////////
@@ -782,7 +767,6 @@ void csr_kron(
 
 #pragma vector always aligned
 #pragma ivdep
-#pragma omp parallel for simd vectorlength(8)
   for ( MKL_INT at_column_A = 0, at_column = 0 ; at_column_A < end_column_A; ++at_column_A, ++at_column ){
     end_column = at_column + B_number_columns;
     C_IA1[at_column:end_column] = ( A_IA1[at_column_A] * scalar_B ) + B_IA1[at_column:end_column];
@@ -791,7 +775,6 @@ void csr_kron(
 
 #pragma vector always aligned
 #pragma ivdep
-#pragma omp parallel for simd vectorlength(8)
   for ( MKL_INT at_column_A = 0, at_column = 0 ; at_column_A < end_column_A; ++at_column_A, ++at_column ){
     end_column = at_column + B_number_columns;
     C_csc_values[at_column:end_column] =  B_csc_values[at_column:end_column] *  A_csc_values[at_column:end_column];
@@ -799,7 +782,6 @@ void csr_kron(
 
 #pragma vector always aligned
 #pragma ivdep
-#pragma omp parallel for simd vectorlength(8)
   for ( MKL_INT at_column_A = 0, at_column = 0 ; at_column_A < end_column_A; ++at_column_A, ++at_column ){
     end_column = at_column + B_number_columns;
     C_JA1[at_column:end_column] = B_JA1[at_column:end_column] + ( A_JA1[at_column:end_column] * scalar_B );
