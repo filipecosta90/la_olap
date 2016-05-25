@@ -154,7 +154,6 @@ void csr_mx_selection_and(
     float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    &selection_nnz, &selection_rows, &selection_columns ,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );
