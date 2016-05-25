@@ -167,42 +167,21 @@ int main( int argc, char* argv[]){
   sparse_matrix_t  quantity_matrix;
 
   /** ---------------------------------------------------------------------------
-   ** Shipdate GT Matrix
+   ** Shipdate Matrix
    ** -------------------------------------------------------------------------*/
   //CSR
-  __declspec(align(MEM_LINE_SIZE))  float* shipdate_gt_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_IA;
+  __declspec(align(MEM_LINE_SIZE))  float* shipdate_csr_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_JA;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_IA;
   //CSR
-  __declspec(align(MEM_LINE_SIZE))  float* shipdate_gt_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_JA_csc;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_IA_csc;
+  __declspec(align(MEM_LINE_SIZE))  float* shipdate_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_JA_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_IA_csc;
   //COMMON
-  MKL_INT shipdate_gt_rows;
-  MKL_INT shipdate_gt_columns;
-  MKL_INT shipdate_gt_nnz;
-  sparse_matrix_t  shipdate_gt_matrix;
-
-  /** ---------------------------------------------------------------------------
-   ** Shipdate LT Matrix
-   ** -------------------------------------------------------------------------*/
-  //CSR
-  __declspec(align(MEM_LINE_SIZE))  float* shipdate_lt_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_lt_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_lt_IA;
-  MKL_INT shipdate_lt_rows;
-  MKL_INT shipdate_lt_columns;
-  MKL_INT shipdate_lt_nnz;
-  sparse_matrix_t  shipdate_lt_matrix;
-  //CSC
-  __declspec(align(MEM_LINE_SIZE))  float* shipdate_lt_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_lt_JA_csc;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_lt_IA_csc;
-  //COMMON
-  MKL_INT selection_rows;
-  MKL_INT selection_columns;
-  MKL_INT selection_nnz;
-  sparse_matrix_t  selection_matrix;
+  MKL_INT shipdate_rows;
+  MKL_INT shipdate_columns;
+  MKL_INT shipdate_nnz;
+  sparse_matrix_t  shipdate_matrix;
 
   /* ---------------------------------------------------------------------------
    ** Projection Matrix
@@ -253,12 +232,13 @@ int main( int argc, char* argv[]){
   //conversion status from csr arrays into mkl sparse_matrix_t 
   sparse_status_t status_to_csr;
 
-
   /** ---------------------------------------------------------------------------
    ** Populate Return Flag Matrix
    ** -------------------------------------------------------------------------*/
   //read return flag
-  read_from_mx(return_flag, &return_flag_csr_values, &return_flag_JA, &return_flag_IA, &return_flag_nnz, &return_flag_rows, &return_flag_columns);
+  tbl_read( table , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns, &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
+
+  //read_from_mx(return_flag, &return_flag_csr_values, &return_flag_JA, &return_flag_IA, &return_flag_nnz, &return_flag_rows, &return_flag_columns);
 
   // Memory Allocation
   return_flag_csc_values = (float*) mkl_malloc (( return_flag_nnz * sizeof(float) ), MEM_LINE_SIZE );
@@ -272,7 +252,9 @@ int main( int argc, char* argv[]){
    ** Populate Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //read line status
-  read_from_mx(line_status, &line_status_csr_values, &line_status_JA, &line_status_IA, &line_status_nnz, &line_status_rows, &line_status_columns);
+  tbl_read( table , 10, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
+
+  // read_from_mx(line_status, &line_status_csr_values, &line_status_JA, &line_status_IA, &line_status_nnz, &line_status_rows, &line_status_columns);
 
   // Memory Allocation
   line_status_csc_values = (float*) mkl_malloc (( line_status_nnz * sizeof(float) ), MEM_LINE_SIZE );
@@ -286,7 +268,8 @@ int main( int argc, char* argv[]){
    ** Populate Quantity Matrix
    ** -------------------------------------------------------------------------*/
   //read quantity
-  read_from_mx(quantity, &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
+  tbl_read_measure( table , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
+  // read_from_mx(quantity, &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
 
   // Memory Allocation
   quantity_csc_values = (float*) mkl_malloc (( quantity_nnz * sizeof(float) ), MEM_LINE_SIZE );
@@ -302,43 +285,29 @@ int main( int argc, char* argv[]){
       quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
 
   /** ---------------------------------------------------------------------------
-   ** Populate Shipdate GT Matrix
+   ** Populate Shipdate Matrix
    ** -------------------------------------------------------------------------*/
-  //read shipdate gt
-  read_from_mx(shipdate_gt, &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA, &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns);
+  //read shipdate
+  tbl_read( table , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns , &shipdate_csr_values, &shipdate_JA, &shipdate_IA);
+
+  // read_from_mx(shipdate_gt, &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA, &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns);
 
   // Memory Allocation
-  shipdate_gt_csc_values = (float*) mkl_malloc (( shipdate_gt_nnz * sizeof(float) ), MEM_LINE_SIZE );
-  shipdate_gt_JA_csc = (MKL_INT*) mkl_malloc (( shipdate_gt_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
-  shipdate_gt_IA_csc = (MKL_INT*) mkl_malloc (((shipdate_gt_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  shipdate_csc_values = (float*) mkl_malloc (( shipdate_gt_nnz * sizeof(float) ), MEM_LINE_SIZE );
+  shipdate_JA_csc = (MKL_INT*) mkl_malloc (( shipdate_gt_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  shipdate_IA_csc = (MKL_INT*) mkl_malloc (((shipdate_gt_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   // Convert from CSR to CSC
-  mkl_scsrcsc(job_csr_csc, &shipdate_gt_nnz, shipdate_gt_csr_values, shipdate_gt_JA, shipdate_gt_IA, shipdate_gt_csc_values, shipdate_gt_JA_csc, shipdate_gt_IA_csc, &status_convert_to_csc);
+  mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &status_convert_to_csc);
 
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
-  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_gt_matrix , SPARSE_INDEX_BASE_ZERO,
-      shipdate_gt_rows, shipdate_gt_columns, shipdate_gt_IA, shipdate_gt_IA+1, shipdate_gt_JA, shipdate_gt_csr_values );
+  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_matrix , SPARSE_INDEX_BASE_ZERO,
+      shipdate_rows, shipdate_columns, shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values );
 
   /** ---------------------------------------------------------------------------
-   ** Populate Shipdate LT Matrix
+   ** Auxiliar Vars
    ** -------------------------------------------------------------------------*/
-  //read shipdate lt
-  read_from_mx(shipdate_lt, &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA, &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns);
-
-  // Memory Allocation
-  shipdate_lt_csc_values = (float*) mkl_malloc (( shipdate_lt_nnz * sizeof(float) ), MEM_LINE_SIZE );
-  shipdate_lt_JA_csc = (MKL_INT*) mkl_malloc (( shipdate_lt_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
-  shipdate_lt_IA_csc = (MKL_INT*) mkl_malloc (((shipdate_lt_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
-  // Convert from CSR to CSC
-  mkl_scsrcsc(job_csr_csc, &shipdate_lt_nnz, shipdate_lt_csr_values, shipdate_lt_JA, shipdate_lt_IA, shipdate_lt_csc_values, shipdate_lt_JA_csc, shipdate_lt_IA_csc, &status_convert_to_csc);
-
-  //        convert via sparseBLAS API to Handle containing internal data for
-  //        subsequent Inspector-executor Sparse BLAS operations.
-  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_lt_matrix , SPARSE_INDEX_BASE_ZERO,
-      shipdate_lt_rows, shipdate_lt_columns, shipdate_lt_IA, shipdate_lt_IA+1, shipdate_lt_JA, shipdate_lt_csr_values );
-
   sparse_status_t selection_result;
   sparse_status_t aggregation_result;
   sparse_status_t intermediate_result;
