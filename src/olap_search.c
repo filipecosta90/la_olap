@@ -277,498 +277,498 @@ void read_from_mx (
 
 
 void tbl_read(
-              char* table_name, MKL_INT tbl_column,
-              MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-              float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
-              ){
-    
-    MKL_INT current_values_size = ARRAY_SIZE;
-    //define COO sparse-matrix M
-    MKL_INT* aux_coo_rows;
-    aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-    
-    FILE* stream = fopen(table_name, "r");
-    char line[1024];
-    MKL_INT number_rows = - 1;
-    MKL_INT number_columns = -1 ;
-    MKL_INT element_number = 1;
-    MKL_INT job[8];
-    MKL_INT padding_quark = 0;
-    for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-        char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
-        char* tmp_field = strdup(line);
-        field = getfield(tmp_field, tbl_column, field);
-        MKL_INT quark_field;
-        
-        quark_field = g_quark_from_string (field);
-        if (quark_field > 1 && element_number == 0 ){
-            padding_quark = quark_field - 1;
-        }
-        quark_field -= padding_quark;
-        /* if arrays are full double its size */
-        if ( element_number >= current_values_size ){
-            current_values_size *= GROWTH_FACTOR;
-            aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
-        }
-        
-        /* normal coo property */
-        aux_coo_rows[element_number]=  quark_field - 1 ;
-        
-        if (  quark_field > number_rows ) {
-            number_rows =  quark_field;
-        }
-        free(tmp_field);
+    char* table_name, MKL_INT tbl_column,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    ){
+
+  MKL_INT current_values_size = ARRAY_SIZE;
+  //define COO sparse-matrix M
+  MKL_INT* aux_coo_rows;
+  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+
+  FILE* stream = fopen(table_name, "r");
+  char line[1024];
+  MKL_INT number_rows = - 1;
+  MKL_INT number_columns = -1 ;
+  MKL_INT element_number = 1;
+  MKL_INT job[8];
+  MKL_INT padding_quark = 0;
+  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
+    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char* tmp_field = strdup(line);
+    field = getfield(tmp_field, tbl_column, field);
+    MKL_INT quark_field;
+
+    quark_field = g_quark_from_string (field);
+    if (quark_field > 1 && element_number == 0 ){
+      padding_quark = quark_field - 1;
     }
-    
-    fclose(stream);
-    
-    MKL_INT NNZ = element_number;
-    number_columns = element_number;
-    
-    //define COO sparse-matrix M
-    float* coo_values;
-    MKL_INT* coo_rows;
-    MKL_INT* coo_columns;
-    
-    coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
-    coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    
-    assert(coo_values != NULL);
-    assert(coo_rows != NULL);
-    assert(coo_columns != NULL);
-    
-    for (int pos = 0; pos < NNZ; pos++) {
-        coo_values[pos] = 1.0;
-        coo_columns[pos] = pos;
-        coo_rows[pos] = aux_coo_rows[pos];
+    quark_field -= padding_quark;
+    /* if arrays are full double its size */
+    if ( element_number >= current_values_size ){
+      current_values_size *= GROWTH_FACTOR;
+      aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
     }
-    
-    coo_values[NNZ] = 0.0;
-    coo_columns[NNZ] = NNZ;
-    coo_rows[NNZ] = NNZ;
-    number_rows = NNZ;
-    NNZ++;
-    
-    //  free(aux_coo_rows);
-    
-    /////////////////////////////////
-    //   CONVERT FROM COO TO CSR
-    /////////////////////////////////
-    
-    // if job[0]=2, the matrix in the coordinate format is converted to the CSR
-    // format, and the column indices in CSR representation are sorted in the
-    // increasing order within each row.
-    job[0]= 2;
-    
-    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-    job[1]= 0;
-    
-    // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
-    job[2]= 0;
-    
-    job[3]= 0;
-    // job[4]=nzmax - maximum number of the non-zero elements allowed if
-    // job[0]=0.
-    job[4]= NNZ;
-    
-    // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
-    job[5]= 0;
-    
-    *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-    *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    
-    sparse_status_t status_coo_csr;
-    mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-    mkl_free(coo_values);
-    mkl_free(coo_rows);
-    mkl_free(coo_columns);
-    *rows = number_rows;
-    *columns = number_columns;
-    *nnz = NNZ;
+
+    /* normal coo property */
+    aux_coo_rows[element_number]=  quark_field - 1 ;
+
+    if (  quark_field > number_rows ) {
+      number_rows =  quark_field;
+    }
+    free(tmp_field);
+  }
+
+  fclose(stream);
+
+  MKL_INT NNZ = element_number;
+  number_columns = element_number;
+
+  //define COO sparse-matrix M
+  float* coo_values;
+  MKL_INT* coo_rows;
+  MKL_INT* coo_columns;
+
+  coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
+  coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  assert(coo_values != NULL);
+  assert(coo_rows != NULL);
+  assert(coo_columns != NULL);
+
+  for (int pos = 0; pos < NNZ; pos++) {
+    coo_values[pos] = 1.0;
+    coo_columns[pos] = pos;
+    coo_rows[pos] = aux_coo_rows[pos];
+  }
+
+  coo_values[NNZ] = 0.0;
+  coo_columns[NNZ] = NNZ;
+  coo_rows[NNZ] = NNZ;
+  number_rows = NNZ;
+  NNZ++;
+
+  //  free(aux_coo_rows);
+
+  /////////////////////////////////
+  //   CONVERT FROM COO TO CSR
+  /////////////////////////////////
+
+  // if job[0]=2, the matrix in the coordinate format is converted to the CSR
+  // format, and the column indices in CSR representation are sorted in the
+  // increasing order within each row.
+  job[0]= 2;
+
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  job[1]= 0;
+
+  // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
+  job[2]= 0;
+
+  job[3]= 0;
+  // job[4]=nzmax - maximum number of the non-zero elements allowed if
+  // job[0]=0.
+  job[4]= NNZ;
+
+  // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+  job[5]= 0;
+
+  *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  sparse_status_t status_coo_csr;
+  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
+  mkl_free(coo_values);
+  mkl_free(coo_rows);
+  mkl_free(coo_columns);
+  *rows = number_rows;
+  *columns = number_columns;
+  *nnz = NNZ;
 }
 
 void tbl_read_measure(
-                      char* table_name, MKL_INT tbl_column,
-                      MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-                      float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
-                      ){
-    
-    MKL_INT current_values_size = ARRAY_SIZE;
-    //define COO sparse-matrix M
-    float* coo_values;
-    MKL_INT* coo_rows;
-    MKL_INT* coo_columns;
-    
-    coo_values = (float*) mkl_malloc (current_values_size * sizeof(float), MEM_LINE_SIZE );
-    coo_rows = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
-    coo_columns = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
-    
-    
-    assert(coo_values != NULL);
-    assert(coo_rows != NULL);
-    assert(coo_columns != NULL);
-    
-    FILE* stream = fopen(table_name, "r");
-    char line[1024];
-    MKL_INT number_rows = - 1;
-    MKL_INT number_columns = -1 ;
-    MKL_INT element_number = 1;
-    MKL_INT job[8];
-    MKL_INT padding_quark = 0;
-    for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-        char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
-        char* tmp_field = strdup(line);
-        field = getfield(tmp_field, tbl_column, field);
-        
-        /* if arrays are full double its size */
-        if ( element_number >= current_values_size ){
-            current_values_size *= GROWTH_FACTOR;
-            coo_values = (float*) mkl_realloc(coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
-            coo_rows = (MKL_INT*) mkl_realloc(coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
-            coo_columns = (MKL_INT*) mkl_realloc(coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
-        }
-        
-        coo_values[element_number] = atof(field);
-        coo_columns[element_number] = element_number;
-        coo_rows[element_number] = element_number;
-        
-        free(tmp_field);
+    char* table_name, MKL_INT tbl_column,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    ){
+
+  MKL_INT current_values_size = ARRAY_SIZE;
+  //define COO sparse-matrix M
+  float* coo_values;
+  MKL_INT* coo_rows;
+  MKL_INT* coo_columns;
+
+  coo_values = (float*) mkl_malloc (current_values_size * sizeof(float), MEM_LINE_SIZE );
+  coo_rows = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
+  coo_columns = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
+
+
+  assert(coo_values != NULL);
+  assert(coo_rows != NULL);
+  assert(coo_columns != NULL);
+
+  FILE* stream = fopen(table_name, "r");
+  char line[1024];
+  MKL_INT number_rows = - 1;
+  MKL_INT number_columns = -1 ;
+  MKL_INT element_number = 1;
+  MKL_INT job[8];
+  MKL_INT padding_quark = 0;
+  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
+    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char* tmp_field = strdup(line);
+    field = getfield(tmp_field, tbl_column, field);
+
+    /* if arrays are full double its size */
+    if ( element_number >= current_values_size ){
+      current_values_size *= GROWTH_FACTOR;
+      coo_values = (float*) mkl_realloc(coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
+      coo_rows = (MKL_INT*) mkl_realloc(coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+      coo_columns = (MKL_INT*) mkl_realloc(coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
     }
-    
-    fclose(stream);
-    
-    MKL_INT NNZ = element_number;
-    number_columns = element_number;
-    number_rows = element_number;
-    
-    /////////////////////////////////
-    //   CONVERT FROM COO TO CSR
-    /////////////////////////////////
-    
-    // if job[0]=2, the matrix in the coordinate format is converted to the CSR
-    // format, and the column indices in CSR representation are sorted in the
-    // increasing order within each row.
-    job[0]= 2;
-    
-    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-    job[1]= 0;
-    
-    // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
-    job[2]= 0;
-    
-    job[3]= 0;
-    // job[4]=nzmax - maximum number of the non-zero elements allowed if
-    // job[0]=0.
-    job[4]= NNZ;
-    
-    // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
-    job[5]= 0;
-    
-    *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-    *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    
-    sparse_status_t status_coo_csr;
-    mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-    mkl_free(coo_values);
-    mkl_free(coo_rows);
-    mkl_free(coo_columns);
-    *rows = number_rows;
-    *columns = number_columns;
-    *nnz = NNZ;
+
+    coo_values[element_number] = atof(field);
+    coo_columns[element_number] = element_number;
+    coo_rows[element_number] = element_number;
+
+    free(tmp_field);
+  }
+
+  fclose(stream);
+
+  MKL_INT NNZ = element_number;
+  number_columns = element_number;
+  number_rows = element_number;
+
+  /////////////////////////////////
+  //   CONVERT FROM COO TO CSR
+  /////////////////////////////////
+
+  // if job[0]=2, the matrix in the coordinate format is converted to the CSR
+  // format, and the column indices in CSR representation are sorted in the
+  // increasing order within each row.
+  job[0]= 2;
+
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  job[1]= 0;
+
+  // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
+  job[2]= 0;
+
+  job[3]= 0;
+  // job[4]=nzmax - maximum number of the non-zero elements allowed if
+  // job[0]=0.
+  job[4]= NNZ;
+
+  // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+  job[5]= 0;
+
+  *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  sparse_status_t status_coo_csr;
+  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
+  mkl_free(coo_values);
+  mkl_free(coo_rows);
+  mkl_free(coo_columns);
+  *rows = number_rows;
+  *columns = number_columns;
+  *nnz = NNZ;
 }
 
 void tbl_read_filter(
-                     char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key,
-                     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns ,
-                     float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
-                     ){
-    
-    MKL_INT current_values_size = ARRAY_SIZE;
-    
-    //define COO sparse-matrix M
-    MKL_INT* aux_coo_rows;
-    aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-    
-    float* aux_coo_values;
-    aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
-    
-    FILE* stream = fopen(table_name, "r");
-    char line[1024];
-    MKL_INT number_rows = - 1;
-    MKL_INT number_columns = -1;
-    MKL_INT element_number = 1;
-    MKL_INT job[8];
-    MKL_INT padding_quark = 0;
-    
-    // read the input file
-    for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-        
-        char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
-        char* tmp_field = strdup(line);
-        field = getfield(tmp_field, tbl_column, field);
-        
-        MKL_INT quark_field;
-        MKL_INT quark_zeroed = 0;
-        
-        MKL_INT returned_strcmp = strcmp( field , comparation_key );
-        if (
-            ( opp_code == LESS  && returned_strcmp >= 0 )
-            ||
-            ( opp_code == LESS_EQ  && returned_strcmp > 0 )
-            ||
-            ( opp_code == GREATER  && returned_strcmp <= 0 )
-            ||
-            ( opp_code == GREATER_EQ  && returned_strcmp < 0 )
-            ){
-            quark_zeroed = 1;
-        }
-        
-        quark_field = g_quark_from_string (field);
-        
-        if (quark_field > 1 && element_number == 0 ){
-            padding_quark = quark_field - 1;
-        }
-        quark_field -= padding_quark;
-        /* if arrays are full double its size */
-        if ( element_number >= current_values_size ){
-            current_values_size *= GROWTH_FACTOR;
-            aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
-            aux_coo_values = (float*)  realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
-        }
-        
-        if ( quark_zeroed == 1 ){
-            aux_coo_values[element_number]=  0 ;
-        }
-        else {
-            aux_coo_values[element_number]=  1 ;
-        }
-        
-        /* normal coo property */
-        aux_coo_rows[element_number]=  quark_field - 1 ;
-        
-        if (  quark_field > number_rows ) {
-            number_rows =  quark_field;
-        }
-        free(tmp_field);
+    char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns ,
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    ){
+
+  MKL_INT current_values_size = ARRAY_SIZE;
+
+  //define COO sparse-matrix M
+  MKL_INT* aux_coo_rows;
+  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+
+  float* aux_coo_values;
+  aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
+
+  FILE* stream = fopen(table_name, "r");
+  char line[1024];
+  MKL_INT number_rows = - 1;
+  MKL_INT number_columns = -1;
+  MKL_INT element_number = 1;
+  MKL_INT job[8];
+  MKL_INT padding_quark = 0;
+
+  // read the input file
+  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
+
+    char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char* tmp_field = strdup(line);
+    field = getfield(tmp_field, tbl_column, field);
+
+    MKL_INT quark_field;
+    MKL_INT quark_zeroed = 0;
+
+    MKL_INT returned_strcmp = strcmp( field , comparation_key );
+    if (
+        ( opp_code == LESS  && returned_strcmp >= 0 )
+        ||
+        ( opp_code == LESS_EQ  && returned_strcmp > 0 )
+        ||
+        ( opp_code == GREATER  && returned_strcmp <= 0 )
+        ||
+        ( opp_code == GREATER_EQ  && returned_strcmp < 0 )
+       ){
+      quark_zeroed = 1;
     }
-    
-    fclose(stream);
-    MKL_INT NNZ = element_number;
-    number_columns = element_number;
-    
-    //define COO sparse-matrix M
-    float* coo_values;
-    MKL_INT* coo_rows;
-    MKL_INT* coo_columns;
-    
-    coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
-    coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    
-    for (int pos = 0; pos < NNZ; pos++) {
-        coo_values[pos] = aux_coo_values[pos];
-        coo_columns[pos] = pos;
-        coo_rows[pos] = aux_coo_rows[pos];
+
+    quark_field = g_quark_from_string (field);
+
+    if (quark_field > 1 && element_number == 0 ){
+      padding_quark = quark_field - 1;
     }
-    
-    coo_values[NNZ] = 0.0;
-    coo_columns[NNZ] = NNZ;
-    coo_rows[NNZ] = NNZ;
-    number_rows = NNZ;
-    NNZ++;
-    
-    // free(aux_coo_values);
-    
-    /////////////////////////////////
-    //   CONVERT FROM COO TO CSR
-    /////////////////////////////////
-    
-    // if job[0]=2, the matrix in the coordinate format is converted to the CSR
-    // format, and the column indices in CSR representation are sorted in the
-    // increasing order within each row.
-    job[0]=  2;
-    
-    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-    job[1]= 0;
-    
-    // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
-    job[2]= 0;
-    
-    job[3]= 0;
-    
-    // job[4]=nzmax - maximum number of the non-zero elements allowed if job[0]=0.
-    job[4]= NNZ;
-    
-    // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
-    job[5]= 0;
-    
-    *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-    *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    
-    sparse_status_t status_coo_csr;
-    mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-    mkl_free(coo_values);
-    mkl_free(coo_rows);
-    mkl_free(coo_columns);
-    *rows = number_rows;
-    *columns = number_columns;
-    *nnz = NNZ;
+    quark_field -= padding_quark;
+    /* if arrays are full double its size */
+    if ( element_number >= current_values_size ){
+      current_values_size *= GROWTH_FACTOR;
+      aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+      aux_coo_values = (float*)  realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
+    }
+
+    if ( quark_zeroed == 1 ){
+      aux_coo_values[element_number]=  0 ;
+    }
+    else {
+      aux_coo_values[element_number]=  1 ;
+    }
+
+    /* normal coo property */
+    aux_coo_rows[element_number]=  quark_field - 1 ;
+
+    if (  quark_field > number_rows ) {
+      number_rows =  quark_field;
+    }
+    free(tmp_field);
+  }
+
+  fclose(stream);
+  MKL_INT NNZ = element_number;
+  number_columns = element_number;
+
+  //define COO sparse-matrix M
+  float* coo_values;
+  MKL_INT* coo_rows;
+  MKL_INT* coo_columns;
+
+  coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
+  coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  for (int pos = 0; pos < NNZ; pos++) {
+    coo_values[pos] = aux_coo_values[pos];
+    coo_columns[pos] = pos;
+    coo_rows[pos] = aux_coo_rows[pos];
+  }
+
+  coo_values[NNZ] = 0.0;
+  coo_columns[NNZ] = NNZ;
+  coo_rows[NNZ] = NNZ;
+  number_rows = NNZ;
+  NNZ++;
+
+  // free(aux_coo_values);
+
+  /////////////////////////////////
+  //   CONVERT FROM COO TO CSR
+  /////////////////////////////////
+
+  // if job[0]=2, the matrix in the coordinate format is converted to the CSR
+  // format, and the column indices in CSR representation are sorted in the
+  // increasing order within each row.
+  job[0]=  2;
+
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  job[1]= 0;
+
+  // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
+  job[2]= 0;
+
+  job[3]= 0;
+
+  // job[4]=nzmax - maximum number of the non-zero elements allowed if job[0]=0.
+  job[4]= NNZ;
+
+  // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+  job[5]= 0;
+
+  *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  sparse_status_t status_coo_csr;
+  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
+  mkl_free(coo_values);
+  mkl_free(coo_rows);
+  mkl_free(coo_columns);
+  *rows = number_rows;
+  *columns = number_columns;
+  *nnz = NNZ;
 }
 
 void tbl_read_filter_and(
-                         char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-                         MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns ,
-                         float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
-                         ){
-    
-    MKL_INT current_values_size = ARRAY_SIZE;
-    
-    //define COO sparse-matrix M
-    MKL_INT* aux_coo_rows;
-    aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-    
-    float* aux_coo_values;
-    aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
-    
-    FILE* stream = fopen(table_name, "r");
-    char line[1024];
-    MKL_INT number_rows = - 1;
-    MKL_INT number_columns = -1;
-    MKL_INT element_number = 1;
-    MKL_INT job[8];
-    MKL_INT padding_quark = 0;
-    
-    // read the input file
-    for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-        
-        char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
-        char* tmp_field = strdup(line);
-        field = getfield(tmp_field, tbl_column, field);
-        
-        MKL_INT quark_field;
-        MKL_INT quark_zeroed = 0;
-        
-        MKL_INT returned_strcmp = strcmp( field , comparation_key );
-        if (
-            ( opp_code == LESS  && returned_strcmp >= 0 )
-            ||
-            ( opp_code == LESS_EQ  && returned_strcmp > 0 )
-            ||
-            ( opp_code == GREATER  && returned_strcmp <= 0 )
-            ||
-            ( opp_code == GREATER_EQ  && returned_strcmp < 0 )
-            ){
-            quark_zeroed = 1;
-        }
-        
-        MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
-        if (
-            ( opp_code2 == LESS  && returned_strcmp2 >= 0 )
-            ||
-            ( opp_code2 == LESS_EQ  && returned_strcmp2 > 0 )
-            ||
-            ( opp_code2 == GREATER  && returned_strcmp2 <= 0 )
-            ||
-            ( opp_code2 == GREATER_EQ  && returned_strcmp2 < 0 )
-            ){
-            quark_zeroed = 1;
-        }
-        
-        quark_field = g_quark_from_string (field);
-        
-        if (quark_field > 1 && element_number == 0 ){
-            padding_quark = quark_field - 1;
-        }
-        quark_field -= padding_quark;
-        /* if arrays are full double its size */
-        if ( element_number >= current_values_size ){
-            current_values_size *= GROWTH_FACTOR;
-            aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
-            aux_coo_values = (float*)  realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
-        }
-        
-        if ( quark_zeroed == 1 ){
-            aux_coo_values[element_number]=  0 ;
-        }
-        else {
-            aux_coo_values[element_number]=  1 ;
-        }
-        
-        /* normal coo property */
-        aux_coo_rows[element_number]=  quark_field - 1 ;
-        
-        if (  quark_field > number_rows ) {
-            number_rows =  quark_field;
-        }
-        free(tmp_field);
+    char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns ,
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    ){
+
+  MKL_INT current_values_size = ARRAY_SIZE;
+
+  //define COO sparse-matrix M
+  MKL_INT* aux_coo_rows;
+  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+
+  float* aux_coo_values;
+  aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
+
+  FILE* stream = fopen(table_name, "r");
+  char line[1024];
+  MKL_INT number_rows = - 1;
+  MKL_INT number_columns = -1;
+  MKL_INT element_number = 1;
+  MKL_INT job[8];
+  MKL_INT padding_quark = 0;
+
+  // read the input file
+  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
+
+    char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char* tmp_field = strdup(line);
+    field = getfield(tmp_field, tbl_column, field);
+
+    MKL_INT quark_field;
+    MKL_INT quark_zeroed = 0;
+
+    MKL_INT returned_strcmp = strcmp( field , comparation_key );
+    if (
+        ( opp_code == LESS  && returned_strcmp >= 0 )
+        ||
+        ( opp_code == LESS_EQ  && returned_strcmp > 0 )
+        ||
+        ( opp_code == GREATER  && returned_strcmp <= 0 )
+        ||
+        ( opp_code == GREATER_EQ  && returned_strcmp < 0 )
+       ){
+      quark_zeroed = 1;
     }
-    
-    fclose(stream);
-    MKL_INT NNZ = element_number;
-    number_columns = element_number;
-    
-    //define COO sparse-matrix M
-    float* coo_values;
-    MKL_INT* coo_rows;
-    MKL_INT* coo_columns;
-    
-    coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
-    coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
-    coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    
-    for (int pos = 0; pos < NNZ; pos++) {
-        coo_values[pos] = aux_coo_values[pos];
-        coo_columns[pos] = pos;
-        coo_rows[pos] = aux_coo_rows[pos];
+
+    MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
+    if (
+        ( opp_code2 == LESS  && returned_strcmp2 >= 0 )
+        ||
+        ( opp_code2 == LESS_EQ  && returned_strcmp2 > 0 )
+        ||
+        ( opp_code2 == GREATER  && returned_strcmp2 <= 0 )
+        ||
+        ( opp_code2 == GREATER_EQ  && returned_strcmp2 < 0 )
+       ){
+      quark_zeroed = 1;
     }
-    
-    coo_values[NNZ] = 0.0;
-    coo_columns[NNZ] = NNZ;
-    coo_rows[NNZ] = NNZ;
-    number_rows = NNZ;
-    NNZ++;
-    
-    // free(aux_coo_values);
-    
-    /////////////////////////////////
-    //   CONVERT FROM COO TO CSR
-    /////////////////////////////////
-    
-    // if job[0]=2, the matrix in the coordinate format is converted to the CSR
-    // format, and the column indices in CSR representation are sorted in the
-    // increasing order within each row.
-    job[0]=  2;
-    
-    // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
-    job[1]= 0;
-    
-    // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
-    job[2]= 0;
-    
-    job[3]= 0;
-    
-    // job[4]=nzmax - maximum number of the non-zero elements allowed if job[0]=0.
-    job[4]= NNZ;
-    
-    // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
-    job[5]= 0;
-    
-    *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
-    *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-    
-    sparse_status_t status_coo_csr;
-    mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-    mkl_free(coo_values);
-    mkl_free(coo_rows);
-    mkl_free(coo_columns);
-    *rows = number_rows;
-    *columns = number_columns;
-    *nnz = NNZ;
+
+    quark_field = g_quark_from_string (field);
+
+    if (quark_field > 1 && element_number == 0 ){
+      padding_quark = quark_field - 1;
+    }
+    quark_field -= padding_quark;
+    /* if arrays are full double its size */
+    if ( element_number >= current_values_size ){
+      current_values_size *= GROWTH_FACTOR;
+      aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+      aux_coo_values = (float*)  realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
+    }
+
+    if ( quark_zeroed == 1 ){
+      aux_coo_values[element_number]=  0 ;
+    }
+    else {
+      aux_coo_values[element_number]=  1 ;
+    }
+
+    /* normal coo property */
+    aux_coo_rows[element_number]=  quark_field - 1 ;
+
+    if (  quark_field > number_rows ) {
+      number_rows =  quark_field;
+    }
+    free(tmp_field);
+  }
+
+  fclose(stream);
+  MKL_INT NNZ = element_number;
+  number_columns = element_number;
+
+  //define COO sparse-matrix M
+  float* coo_values;
+  MKL_INT* coo_rows;
+  MKL_INT* coo_columns;
+
+  coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
+  coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
+  coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  for (int pos = 0; pos < NNZ; pos++) {
+    coo_values[pos] = aux_coo_values[pos];
+    coo_columns[pos] = pos;
+    coo_rows[pos] = aux_coo_rows[pos];
+  }
+
+  coo_values[NNZ] = 0.0;
+  coo_columns[NNZ] = NNZ;
+  coo_rows[NNZ] = NNZ;
+  number_rows = NNZ;
+  NNZ++;
+
+  // free(aux_coo_values);
+
+  /////////////////////////////////
+  //   CONVERT FROM COO TO CSR
+  /////////////////////////////////
+
+  // if job[0]=2, the matrix in the coordinate format is converted to the CSR
+  // format, and the column indices in CSR representation are sorted in the
+  // increasing order within each row.
+  job[0]=  2;
+
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  job[1]= 0;
+
+  // If job[2]=0, zero-based indexing for the matrix in coordinate format is used;
+  job[2]= 0;
+
+  job[3]= 0;
+
+  // job[4]=nzmax - maximum number of the non-zero elements allowed if job[0]=0.
+  job[4]= NNZ;
+
+  // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
+  job[5]= 0;
+
+  *A_csr_values = (float*) mkl_malloc ((NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *A_JA = (MKL_INT*) mkl_malloc (( NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  sparse_status_t status_coo_csr;
+  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
+  mkl_free(coo_values);
+  mkl_free(coo_rows);
+  mkl_free(coo_columns);
+  *rows = number_rows;
+  *columns = number_columns;
+  *nnz = NNZ;
 }
 
 void check_errors( sparse_status_t stat ){
@@ -1120,20 +1120,20 @@ void csc_csr_krao(
   /////////////////////////////////
   //   COMPUTE KRAO
   /////////////////////////////////
-//  __declspec(align(MEM_LINE_SIZE))	MKL_INT nthreads = omp_get_num_threads();
- // __declspec(align(MEM_LINE_SIZE))	MKL_INT columns_per_worker =     A_number_columns / nthreads;
+  //  __declspec(align(MEM_LINE_SIZE))	MKL_INT nthreads = omp_get_num_threads();
+  // __declspec(align(MEM_LINE_SIZE))	MKL_INT columns_per_worker =     A_number_columns / nthreads;
 
-      for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-        C_IA1[at_column] = A_IA1[at_column];
-      }
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    C_IA1[at_column] = A_IA1[at_column];
+  }
 
-      for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-        C_csc_values[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
-      }
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    C_csc_values[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
+  }
 
-      for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-        C_JA1[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
-      }
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    C_JA1[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
+  }
   C_IA1[A_number_columns] = A_NNZ;
 
   /////////////////////////////////

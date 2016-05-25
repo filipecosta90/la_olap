@@ -72,6 +72,25 @@ void read_from_mx (
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns
     );
 
+
+void tbl_read(
+    char* table_name, MKL_INT tbl_column,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    );
+
+void tbl_read_measure(
+    char* table_name, MKL_INT tbl_column,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    );
+
+void tbl_read_filter(
+    char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , 
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    );
+
 void check_errors( sparse_status_t stat );
 
 
@@ -127,6 +146,15 @@ void csr_kron(
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA ,
     MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    );
+
+void csr_mx_selection_and(
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
+    &selection_nnz, &selection_rows, &selection_columns ,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );

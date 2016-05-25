@@ -336,11 +336,13 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   GET_TIME(global_time_start);
 
-  // compute selection = shipdate_gt * shipdate_lt
-  selection_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE,
-      shipdate_gt_matrix,
-      shipdate_lt_matrix,
-      &selection_matrix);
+  csr_mx_selection_and(
+      shipdate_csr_values, shipdate_JA, shipdate_IA,
+      shipdate_nnz, shipdate_rows, shipdate_columns,
+      GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01",
+      &selection_csr_values, &selection_JA, &selection_IA
+      &selection_nnz, &selection_rows, &selection_columns
+      );
 
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
 
