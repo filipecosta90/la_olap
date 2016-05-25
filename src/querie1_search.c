@@ -236,7 +236,7 @@ int main( int argc, char* argv[]){
    ** Populate Return Flag Matrix
    ** -------------------------------------------------------------------------*/
   //read return flag
-  tbl_read( table , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns, &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
+  tbl_read( table , 9, &return_flag_nnz, &return_flag_rows, &return_flag_columns, &return_flag_csr_values, &return_flag_JA, &return_flag_IA);
 
   //read_from_mx(return_flag, &return_flag_csr_values, &return_flag_JA, &return_flag_IA, &return_flag_nnz, &return_flag_rows, &return_flag_columns);
 
@@ -252,7 +252,7 @@ int main( int argc, char* argv[]){
    ** Populate Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //read line status
-  tbl_read( table , 10, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns , &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA);
+  tbl_read( table , 10, &line_status_nnz, &line_status_rows, &line_status_columns , &line_status_csr_values, &line_status_JA, &line_status_IA);
 
   // read_from_mx(line_status, &line_status_csr_values, &line_status_JA, &line_status_IA, &line_status_nnz, &line_status_rows, &line_status_columns);
 
