@@ -1,6 +1,0 @@
-/var/spool/torque/mom_priv/jobs/397667.search6.di.uminho.pt.SC: line 12: 14095 Segmentation fault      ./querie1_search_vec $tbl_size
-/var/spool/torque/mom_priv/jobs/397667.search6.di.uminho.pt.SC: line 12: 14096 Segmentation fault      ./querie1_search_vec $tbl_size
-/var/spool/torque/mom_priv/jobs/397667.search6.di.uminho.pt.SC: line 12: 14097 Segmentation fault      ./querie1_search_vec $tbl_size
-/var/spool/torque/mom_priv/jobs/397667.search6.di.uminho.pt.SC: line 12: 14098 Segmentation fault      ./querie1_search_vec $tbl_size
-/var/spool/torque/mom_priv/jobs/397667.search6.di.uminho.pt.SC: line 12: 14099 Segmentation fault      ./querie1_search_vec $tbl_size
-/var/spool/torque/mom_priv/jobs/397667.search6.di.uminho.pt.SC: line 12: 14100 Segmentation fault      ./querie1_search_vec $tbl_size
