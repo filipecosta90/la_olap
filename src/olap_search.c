@@ -830,6 +830,115 @@ void csr_mx_selection_and(
 
 }
 
+void csr_mx_selection_or(
+		float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
+		MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+		int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
+		float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
+		MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+		){
+
+	*C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
+	*C_JA =  (MKL_INT*) mkl_malloc (((A_NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
+	*C_IA =  (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+	*C_IA[0:A_NNZ] = A_IA[0:A_NNZ];
+	*C_JA[0:A_NNZ] = A_JA[0:A_NNZ];
+	*C_NNZ = A_NNZ;
+	*C_number_rows = A_number_rows;
+	*C_number_columns = A_number_columns;
+
+	char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+
+	// read the input file
+	for( MKL_INT element_number = 0 ; element_number < A_NNZ ; ++element_number ){
+
+		MKL_INT quark_zeroed = 0;
+
+		field = (char*) g_quark_to_string ( element_number );
+
+		MKL_INT returned_strcmp = strcmp( field , comparation_key );
+		MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
+
+		if (
+				( opp_code == LESS  && returned_strcmp >= 0 )
+				||
+				( opp_code == LESS_EQ  && returned_strcmp > 0 )
+				||
+				( opp_code == GREATER  && returned_strcmp <= 0 )
+				||
+				( opp_code == GREATER_EQ  && returned_strcmp < 0 )
+		   ){
+			quark_zeroed = 1;
+		}
+		else if (
+				( opp_code2 == LESS  && returned_strcmp2 >= 0 )
+				||
+				( opp_code2 == LESS_EQ  && returned_strcmp2 > 0 )
+				||
+				( opp_code2 == GREATER  && returned_strcmp2 <= 0 )
+				||
+				( opp_code2 == GREATER_EQ  && returned_strcmp2 < 0 )
+		   ){
+			quark_zeroed = 1;
+		}
+		if (quark_zeroed == 1 ){
+			*C_csr_values[element_number] = 0;
+		}
+	}
+
+}
+
+
+void csr_mx_selection(
+		float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
+		MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+		int opp_code, char* comparation_key,
+		float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
+		MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+		){
+
+	*C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
+	*C_JA =  (MKL_INT*) mkl_malloc (((A_NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
+	*C_IA =  (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+	*C_IA[0:A_NNZ] = A_IA[0:A_NNZ];
+	*C_JA[0:A_NNZ] = A_JA[0:A_NNZ];
+	*C_NNZ = A_NNZ;
+	*C_number_rows = A_number_rows;
+	*C_number_columns = A_number_columns;
+
+	char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+
+	// read the input file
+	for( MKL_INT element_number = 0 ; element_number < A_NNZ ; ++element_number ){
+
+		MKL_INT quark_zeroed = 0;
+
+		field = (char*) g_quark_to_string ( element_number );
+
+		MKL_INT returned_strcmp = strcmp( field , comparation_key );
+
+		if (
+				( opp_code == LESS  && returned_strcmp >= 0 )
+				||
+				( opp_code == LESS_EQ  && returned_strcmp > 0 )
+				||
+				( opp_code == GREATER  && returned_strcmp <= 0 )
+				||
+				( opp_code == GREATER_EQ  && returned_strcmp < 0 )
+		   ){
+			quark_zeroed = 1;
+		}
+		
+		if (quark_zeroed == 1 ){
+			*C_csr_values[element_number] = 0;
+		}
+	}
+
+}
+
+
 void check_errors( sparse_status_t stat ){
 	if ( stat == SPARSE_STATUS_SUCCESS ){
 		printf( "SPARSE_STATUS_SUCCESS.\n");
