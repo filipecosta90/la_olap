@@ -9,7 +9,7 @@
 #          PBS directives must come first; any directives
 #          after the first executable statement are ignored.
 
-#PBS -N SQL_1G_SEQ
+#PBS -N PGRES_TW_1G_SEQ
 #PBS -l walltime=01:00:00
 #PBS -q mei
 

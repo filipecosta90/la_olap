@@ -93,7 +93,6 @@ void tbl_read_filter(
 
 void check_errors( sparse_status_t stat );
 
-
 void csr_mx_selection_and(
     float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,

@@ -1,0 +1,37 @@
+Loading Parallel Studio XE 2016 Compilers ...
+DONE!
+Ready now for running make!
+going to run for 1
+going to run for 1
+going to run for 1
+going to run for 1
+going to read results from __tbl/lineitem_1.tbl
+readed matrix 6001215 6001215 : NNZ 6001216
+readed matrix 6001215 6001215 : NNZ 6001216
+SPARSE_STATUS_SUCCESS.
+readed matrix 6001215 6001215 : NNZ 6001216
+SPARSE_STATUS_SUCCESS.
+going to run for 1
+going to run for 2
+going to read results from __tbl/lineitem_2.tbl
+readed matrix 11997996 11997996 : NNZ 11997997
+readed matrix 11997996 11997996 : NNZ 11997997
+SPARSE_STATUS_SUCCESS.
+readed matrix 11997996 11997996 : NNZ 11997997
+SPARSE_STATUS_SUCCESS.
+going to run for 2
+going to run for 2
+going to run for 2
+going to read results from __tbl/lineitem_2.tbl
+readed matrix 11997996 11997996 : NNZ 11997997
+readed matrix 11997996 11997996 : NNZ 11997997
+SPARSE_STATUS_SUCCESS.
+readed matrix 11997996 11997996 : NNZ 11997997
+SPARSE_STATUS_SUCCESS.
+going to run for 2
+going to run for 4
+going to run for 4
+going to run for 4
+going to run for 4
+going to run for 4
+going to run for 8

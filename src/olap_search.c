@@ -282,43 +282,50 @@ void tbl_read(
 		float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
 	     ){
 
-	MKL_INT current_values_size = ARRAY_SIZE;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT current_values_size = ARRAY_SIZE;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT padding_quark = 0;
 	//define COO sparse-matrix M
-	MKL_INT* aux_coo_rows;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT* aux_coo_rows;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT* aux_coo_columns;
+	__declspec(align(MEM_LINE_SIZE)) float* aux_coo_values;
+
 	aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+	aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+	aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
 
 	FILE* stream = fopen(table_name, "r");
-	char line[1024];
-	MKL_INT number_rows = - 1;
-	MKL_INT number_columns = -1 ;
-	MKL_INT element_number = 1;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT number_rows = - 1;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT number_columns = -1 ;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT element_number = 1;
 	MKL_INT job[8];
-	MKL_INT padding_quark = 0;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT row;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT column;
+	float value;
+	char line[1024];
 	for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
 		char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 		char* tmp_field = strdup(line);
 		field = getfield(tmp_field, tbl_column, field);
 		MKL_INT quark_field;
-
 		quark_field = g_quark_from_string (field);
 		if (quark_field > 1 && element_number == 0 ){
 			padding_quark = quark_field - 1;
 		}
 		quark_field -= padding_quark;
-		/* if arrays are full double its size */
 		if ( element_number >= current_values_size ){
 			current_values_size *= GROWTH_FACTOR;
 			aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+			aux_coo_columns = (MKL_INT*) realloc(aux_coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+			aux_coo_values = (float*) realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
 		}
 
 		/* normal coo property */
+		aux_coo_values[element_number] = 1.0;
+		aux_coo_columns[element_number] = element_number;
 		aux_coo_rows[element_number]=  quark_field - 1 ;
 
-		if (  quark_field > number_rows ) {
-			number_rows =  quark_field;
-		}
-		free(tmp_field);
 	}
+
 
 	fclose(stream);
 
@@ -326,9 +333,9 @@ void tbl_read(
 	number_columns = element_number;
 
 	//define COO sparse-matrix M
-	float* coo_values;
-	MKL_INT* coo_rows;
-	MKL_INT* coo_columns;
+	__declspec(align(MEM_LINE_SIZE)) float* coo_values;
+	__declspec(align(MEM_LINE_SIZE)) MKL_INT* coo_rows;
+	__declspec(align(MEM_LINE_SIZE))  MKL_INT* coo_columns;
 
 	coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
 	coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
@@ -339,8 +346,8 @@ void tbl_read(
 	assert(coo_columns != NULL);
 
 	for (int pos = 0; pos < NNZ; pos++) {
-		coo_values[pos] = 1.0;
-		coo_columns[pos] = pos;
+		coo_values[pos] = aux_coo_values[pos];
+		coo_columns[pos] = aux_coo_columns[pos];
 		coo_rows[pos] = aux_coo_rows[pos];
 	}
 
@@ -387,6 +394,7 @@ void tbl_read(
 	*rows = number_rows;
 	*columns = number_columns;
 	*nnz = NNZ;
+	printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
 }
 
 void tbl_read_measure(
@@ -782,9 +790,8 @@ void csr_mx_selection_and(
 	*C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
 	*C_JA =  (MKL_INT*) mkl_malloc (((A_NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
 	*C_IA =  (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
-	*C_IA[0:A_NNZ] = A_IA[0:A_NNZ];
-	*C_JA[0:A_NNZ] = A_JA[0:A_NNZ];
+	(*C_JA)[0:A_number_columns-1] = A_IA[0:A_number_columns-1];
+	(*C_IA)[0:A_number_columns-1] = A_IA[0:A_number_columns-1];
 	*C_NNZ = A_NNZ;
 	*C_number_rows = A_number_rows;
 	*C_number_columns = A_number_columns;
@@ -792,42 +799,42 @@ void csr_mx_selection_and(
 	char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 
 	// read the input file
-	for( MKL_INT element_number = 0 ; element_number < A_NNZ ; ++element_number ){
+	for( MKL_INT element_number = 1 ; element_number < A_number_columns ; ++element_number ){
 
 		MKL_INT quark_zeroed = 0;
 
 		field = (char*) g_quark_to_string ( element_number );
+		if ( field != NULL ){
+			MKL_INT returned_strcmp = strcmp( field , comparation_key );
+			MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
 
-		MKL_INT returned_strcmp = strcmp( field , comparation_key );
-		MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
-
-		if (
-				( opp_code == LESS  && returned_strcmp >= 0 )
-				||
-				( opp_code == LESS_EQ  && returned_strcmp > 0 )
-				||
-				( opp_code == GREATER  && returned_strcmp <= 0 )
-				||
-				( opp_code == GREATER_EQ  && returned_strcmp < 0 )
-		   ){
-			quark_zeroed = 1;
-		}
-		if (
-				( opp_code2 == LESS  && returned_strcmp2 >= 0 )
-				||
-				( opp_code2 == LESS_EQ  && returned_strcmp2 > 0 )
-				||
-				( opp_code2 == GREATER  && returned_strcmp2 <= 0 )
-				||
-				( opp_code2 == GREATER_EQ  && returned_strcmp2 < 0 )
-		   ){
-			quark_zeroed = 1;
-		}
-		if (quark_zeroed == 1 ){
-			*C_csr_values[element_number] = 0;
-		}
+			if (
+					( opp_code == LESS  && returned_strcmp >= 0 )
+					||
+					( opp_code == LESS_EQ  && returned_strcmp > 0 )
+					||
+					( opp_code == GREATER  && returned_strcmp <= 0 )
+					||
+					( opp_code == GREATER_EQ  && returned_strcmp < 0 )
+			   ){
+				quark_zeroed = 1;
+			}
+			if (
+					( opp_code2 == LESS  && returned_strcmp2 >= 0 )
+					||
+					( opp_code2 == LESS_EQ  && returned_strcmp2 > 0 )
+					||
+					( opp_code2 == GREATER  && returned_strcmp2 <= 0 )
+					||
+					( opp_code2 == GREATER_EQ  && returned_strcmp2 < 0 )
+			   ){
+				quark_zeroed = 1;
+			}
+			if (quark_zeroed == 1 ){
+				(*C_csr_values)[element_number] = 0;
+			}
+		}	
 	}
-
 }
 
 void csr_mx_selection_or(
@@ -879,7 +886,7 @@ void csr_mx_selection_or(
 				( opp_code2 == GREATER  && returned_strcmp2 <= 0 )
 				||
 				( opp_code2 == GREATER_EQ  && returned_strcmp2 < 0 )
-		   ){
+			){
 			quark_zeroed = 1;
 		}
 		if (quark_zeroed == 1 ){
@@ -930,7 +937,7 @@ void csr_mx_selection(
 		   ){
 			quark_zeroed = 1;
 		}
-		
+
 		if (quark_zeroed == 1 ){
 			*C_csr_values[element_number] = 0;
 		}

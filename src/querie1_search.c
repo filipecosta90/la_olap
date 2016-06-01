@@ -47,7 +47,7 @@ double global_time_start, global_time_stop, total_time;
 void writeResults ( char* dataset ) {
   total_time = global_time_stop - global_time_start;
   char file_write[80];
-  strcpy(file_write, "timing/timings_no_vec_");
+  strcpy(file_write, "timing/timings_vec_");
   strcat(file_write, dataset);
   strcat(file_write, ".dat");
 
@@ -58,40 +58,12 @@ void writeResults ( char* dataset ) {
 
 int main( int argc, char* argv[]){
 
-  char return_flag[80];
-  char line_status[80];
-  char quantity[80];
-  char shipdate_gt[80];
-  char shipdate_lt[80];
-  char working_dir[80];
+   char table_file[80];
+  strcpy(table_file, "__tbl/lineitem_");
+  strcat(table_file, argv[1]);
+  strcat(table_file, ".tbl");
 
-  strcpy(working_dir, "__quark_mx_" );
-  strcat(working_dir, argv[1]);
-
-  strcat(return_flag, working_dir);
-  strcat(return_flag, "/return_flag_");
-  strcat(return_flag, argv[1]);
-  strcat(return_flag, ".mx");
-
-  strcat(line_status, working_dir);
-  strcat(line_status, "/line_status_");
-  strcat(line_status, argv[1]);
-  strcat(line_status, ".mx");
-
-  strcat(quantity, working_dir);
-  strcat(quantity, "/quantity_");
-  strcat(quantity, argv[1]);
-  strcat(quantity, ".mx");
-
-  strcat(shipdate_gt, working_dir);
-  strcat(shipdate_gt, "/shipdate_gt_");
-  strcat(shipdate_gt, argv[1]);
-  strcat(shipdate_gt, ".mx");
-
-  strcat(shipdate_lt, working_dir);
-  strcat(shipdate_lt, "/shipdate_lt_");
-  strcat(shipdate_lt, argv[1]);
-  strcat(shipdate_lt, ".mx");
+  printf("going to read results from %s\n", table_file);
 
   //////////////////////////////////////////
   //        CONVERT from CSR to CSC
@@ -249,7 +221,7 @@ int main( int argc, char* argv[]){
    ** Populate Return Flag Matrix
    ** -------------------------------------------------------------------------*/
   //read return flag
-  tbl_read( "__tbl/lineitem_1.tbl", 9, &return_flag_nnz, &return_flag_rows, &return_flag_columns, &return_flag_csr_values, &return_flag_JA, &return_flag_IA);
+  tbl_read( table_file , 9, &return_flag_nnz, &return_flag_rows, &return_flag_columns, &return_flag_csr_values, &return_flag_JA, &return_flag_IA);
 
   //read_from_mx(return_flag, &return_flag_csr_values, &return_flag_JA, &return_flag_IA, &return_flag_nnz, &return_flag_rows, &return_flag_columns);
 
@@ -265,7 +237,7 @@ int main( int argc, char* argv[]){
    ** Populate Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //read line status
-  tbl_read( "__tbl/lineitem_1.tbl" , 10, &line_status_nnz, &line_status_rows, &line_status_columns , &line_status_csr_values, &line_status_JA, &line_status_IA);
+  tbl_read(  table_file , 10, &line_status_nnz, &line_status_rows, &line_status_columns , &line_status_csr_values, &line_status_JA, &line_status_IA);
 
   // read_from_mx(line_status, &line_status_csr_values, &line_status_JA, &line_status_IA, &line_status_nnz, &line_status_rows, &line_status_columns);
 
@@ -281,7 +253,7 @@ int main( int argc, char* argv[]){
    ** Populate Quantity Matrix
    ** -------------------------------------------------------------------------*/
   //read quantity
-  tbl_read_measure( "__tbl/lineitem_1.tbl" , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
+  tbl_read_measure(  table_file  , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
   // read_from_mx(quantity, &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
 
   // Memory Allocation
@@ -296,12 +268,12 @@ int main( int argc, char* argv[]){
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
       quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
-
+  check_errors(status_to_csr);
   /** ---------------------------------------------------------------------------
    ** Populate Shipdate Matrix
    ** -------------------------------------------------------------------------*/
   //read shipdate
-  tbl_read( "__tbl/lineitem_1.tbl", 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns , &shipdate_csr_values, &shipdate_JA, &shipdate_IA);
+  tbl_read(  table_file , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns , &shipdate_csr_values, &shipdate_JA, &shipdate_IA);
 
   // read_from_mx(shipdate_gt, &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA, &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns);
 
@@ -310,9 +282,15 @@ int main( int argc, char* argv[]){
   shipdate_JA_csc = (MKL_INT*) mkl_malloc (( shipdate_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   shipdate_IA_csc = (MKL_INT*) mkl_malloc (((shipdate_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
+  // Memory Allocation
+  selection_csr_values = (float*) mkl_malloc (( shipdate_nnz * sizeof(float) ), MEM_LINE_SIZE );
+  selection_JA = (MKL_INT*) mkl_malloc (( shipdate_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  selection_IA = (MKL_INT*) mkl_malloc (((shipdate_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+
   // Convert from CSR to CSC
   mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &status_convert_to_csc);
-
+  check_errors(status_convert_to_csc);
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( &shipdate_matrix , SPARSE_INDEX_BASE_ZERO,
@@ -332,8 +310,9 @@ int main( int argc, char* argv[]){
   /** ---------------------------------------------------------------------------
    ** Populate Vectors
    ** -------------------------------------------------------------------------*/
-  bang_vector = (float*) mkl_malloc ( (quantity_columns * sizeof(float)), MEM_LINE_SIZE );
-  aggregation_vector = (float*) mkl_malloc ( (quantity_columns * sizeof(float)), MEM_LINE_SIZE );
+  bang_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
+  aggregation_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
+  final_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
 
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------

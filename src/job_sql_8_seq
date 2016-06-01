@@ -10,7 +10,7 @@
 #          after the first executable statement are ignored.
 
 #PBS -N SQL_8G_SEQ
-#PBS -l walltime=01:30:00
+#PBS -l walltime=00:30:00
 #PBS -q mei
 
 #          PBS can send informative email messages to you about the
@@ -36,7 +36,7 @@
 sleep 15;
 echo "Started POSTGRES"
 
-sample_size=50
+sample_size=20
 
 for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 do
