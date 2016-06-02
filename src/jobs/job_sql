@@ -50,13 +50,15 @@ else
 	
 fi
 
-sleep 15;
+sleep 10;
 echo "Started POSTGRES"
 
 for (( seq_num=1; seq_num <= samples ; ++seq_num ))
 do
 ~/postgres/bin/psql -U a57816 postgres -f /home/a57816/CPD_PI_OLAP/queries/"${version}"/"${dataset}".sql | grep "Time:" | sed 's/[^0-9.]*//g' >> "/home/a57816/CPD_PI_OLAP/src/timing/pgres_${version}_${dataset}.csv"
 done
+
+/home/a57816/postgres/bin/pg_ctl -D /home/a57816/postgres/data/ -l logfile status
 
 echo "Done..."
 
