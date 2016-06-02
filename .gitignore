@@ -5,7 +5,6 @@ querie1_search
 *.out
 .DS_Store
 *.o
-*.csv
 src/__tbl/**
 src/__tbl_1/**
 src/__tbl_2/**
