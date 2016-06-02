@@ -58,13 +58,14 @@ void writeResults ( char* dataset ) {
 
 int main( int argc, char* argv[]){
 
-   char table_file[80];
+  char table_file[80];
   strcpy(table_file, "__tbl/lineitem_");
   strcat(table_file, argv[1]);
   strcat(table_file, ".tbl");
 
   printf("going to read results from %s\n", table_file);
 
+  MKL_INT quark_start_end[MEM_LINE_SIZE];
   //////////////////////////////////////////
   //        CONVERT from CSR to CSC
   //////////////////////////////////////////
@@ -221,7 +222,7 @@ int main( int argc, char* argv[]){
    ** Populate Return Flag Matrix
    ** -------------------------------------------------------------------------*/
   //read return flag
-  tbl_read( table_file , 9, &return_flag_nnz, &return_flag_rows, &return_flag_columns, &return_flag_csr_values, &return_flag_JA, &return_flag_IA);
+  tbl_read( table_file , 9, &return_flag_nnz, &return_flag_rows, &return_flag_columns, &return_flag_csr_values, &return_flag_JA, &return_flag_IA, &quark_start_end);
 
   //read_from_mx(return_flag, &return_flag_csr_values, &return_flag_JA, &return_flag_IA, &return_flag_nnz, &return_flag_rows, &return_flag_columns);
 
@@ -237,7 +238,7 @@ int main( int argc, char* argv[]){
    ** Populate Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //read line status
-  tbl_read(  table_file , 10, &line_status_nnz, &line_status_rows, &line_status_columns , &line_status_csr_values, &line_status_JA, &line_status_IA);
+  tbl_read(  table_file , 10, &line_status_nnz, &line_status_rows, &line_status_columns , &line_status_csr_values, &line_status_JA, &line_status_IA, &quark_start_end);
 
   // read_from_mx(line_status, &line_status_csr_values, &line_status_JA, &line_status_IA, &line_status_nnz, &line_status_rows, &line_status_columns);
 
@@ -253,7 +254,7 @@ int main( int argc, char* argv[]){
    ** Populate Quantity Matrix
    ** -------------------------------------------------------------------------*/
   //read quantity
-  tbl_read_measure(  table_file  , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA);
+  tbl_read_measure(  table_file  , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA, &quark_start_end);
   // read_from_mx(quantity, &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
 
   // Memory Allocation
@@ -273,7 +274,7 @@ int main( int argc, char* argv[]){
    ** Populate Shipdate Matrix
    ** -------------------------------------------------------------------------*/
   //read shipdate
-  tbl_read(  table_file , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns , &shipdate_csr_values, &shipdate_JA, &shipdate_IA);
+  tbl_read(  table_file , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns , &shipdate_csr_values, &shipdate_JA, &shipdate_IA, &quark_start_end);
 
   // read_from_mx(shipdate_gt, &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA, &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns);
 
@@ -331,7 +332,7 @@ int main( int argc, char* argv[]){
   csr_mx_selection_and(
       shipdate_csr_values, shipdate_JA, shipdate_IA,
       shipdate_nnz, shipdate_rows, shipdate_columns,
-      GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01",
+      GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01", quark_start_end,
       &selection_csr_values, &selection_JA, &selection_IA,
       &selection_nnz, &selection_rows, &selection_columns
       );

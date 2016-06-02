@@ -33,7 +33,7 @@
 
 /home/a57816/postgres/bin/pg_ctl -D /home/a57816/postgres/data/ -l logfile start
 
-sleep 15;
+sleep 10;
 echo "Started POSTGRES"
 
 sample_size=50 
@@ -42,6 +42,8 @@ for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 do
 ~/postgres/bin/psql -U a57816 postgres -f /home/a57816/CPD_PI_OLAP/queries/par/querie1_parallel_20.sql
 done
+
+/home/a57816/postgres/bin/pg_ctl -D /home/a57816/postgres/data/ -l logfile status
 
 echo "Done..."
 
