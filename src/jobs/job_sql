@@ -9,8 +9,10 @@
 #          PBS directives must come first; any directives
 #          after the first executable statement are ignored.
 
-#PBS -N PGRES_TW_32G_SEQ
-#PBS -l walltime=00:30:00
+
+
+#PBS -N SQL
+#PBS -l walltime=01:00:00
 #PBS -q mei
 
 #          PBS can send informative email messages to you about the
@@ -31,19 +33,30 @@
 
 #PBS -l nodes=compute-652-1:ppn=40
 
-/home/a57816/postgres/bin/pg_ctl -D /home/a57816/postgres/data/ -l logfile start
+
+
+echo "running for dataset ${dataset} n=${samples} times for ${version} version"
+
+remote=$(/home/a57816/postgres/bin/pg_ctl status -D /home/a57816/postgres/data/)
+if [ "$remote" == "pg_ctl: no server running" ] 
+then 
+
+	echo "No server detected"
+	echo "starting server"
+	/home/a57816/postgres/bin/pg_ctl -D /home/a57816/postgres/data/ -l logfile start
+	echo "$remote"
+else
+	echo "$remote"
+	
+fi
 
 sleep 15;
 echo "Started POSTGRES"
 
-sample_size=20
-
-for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
+for (( seq_num=1; seq_num <= samples ; ++seq_num ))
 do
-~/postgres/bin/psql -U a57816 postgres -f /home/a57816/CPD_PI_OLAP/queries/querie32_seq.sql
+~/postgres/bin/psql -U a57816 postgres -f /home/a57816/CPD_PI_OLAP/queries/"${version}"/"${dataset}".sql | grep "Time:" | sed 's/[^0-9.]*//g' >> "/home/a57816/CPD_PI_OLAP/src/timing/pgres_${version}_${dataset}.csv"
 done
-
-/home/a57816/postgres/bin/pg_ctl -D /home/a57816/postgres/data/ -l logfile stop
 
 echo "Done..."
 
