@@ -283,6 +283,7 @@ void tbl_read(
     MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
+  printf("going to read column %d\n", tbl_column);
   __declspec(align(MEM_LINE_SIZE)) MKL_INT current_values_size = ARRAY_SIZE;
   __declspec(align(MEM_LINE_SIZE)) MKL_INT padding_quark = 0;
   //define COO sparse-matrix M
@@ -293,6 +294,10 @@ void tbl_read(
   aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
   aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
   aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
+
+  assert(aux_coo_rows != NULL);
+  assert(aux_coo_columns != NULL);
+  assert(aux_coo_values != NULL);
 
   FILE* stream = fopen(table_name, "r");
   __declspec(align(MEM_LINE_SIZE)) MKL_INT number_rows = - 1;
@@ -310,6 +315,10 @@ void tbl_read(
   if (initial_quark > 1 ){
     printf( "%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
     padding_quark = initial_quark;
+  }
+  else {
+    printf( "first table being readed (arrayPos: %d initial Quark: %d)\n",array_pos + 1,  initial_quark);
+
   }
   MKL_INT quark_field;
   MKL_INT current_quark;
@@ -418,8 +427,8 @@ void tbl_read(
 
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, aux_coo_values, aux_coo_rows, aux_coo_columns, &status_coo_csr);
-    printf("conversion from coo to csr ok?: \n");
-    check_errors(status_coo_csr);
+  printf("conversion from coo to csr ok?: \n");
+  check_errors(status_coo_csr);
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;

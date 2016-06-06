@@ -260,6 +260,7 @@ int main( int argc, char* argv[]){
 
   // Convert from CSR to CSC
   mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA_csc, line_status_IA_csc, &status_convert_to_csc);
+    check_errors(status_to_csr);
 
   /** ---------------------------------------------------------------------------
    ** Populate Quantity Matrix
@@ -268,7 +269,7 @@ int main( int argc, char* argv[]){
 
   // measure
   tbl_read(
-      table_file  , 5, 
+      table_file , 5, 
       &quantity_nnz,  &quantity_rows, &quantity_columns , 
       &quantity_csr_values, &quantity_JA, &quantity_IA, 
       &quark_start_end, &quark_distinct_tables
