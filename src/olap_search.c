@@ -316,7 +316,7 @@ void tbl_read(
   printf("\tinitial_quark:%d\n",initial_quark);
 
   if (initial_quark > 1 ){
-      padding_quark = initial_quark;
+    padding_quark = initial_quark;
     printf( "\t%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
   }
   else {
@@ -327,8 +327,8 @@ void tbl_read(
   MKL_INT current_quark;
   MKL_INT global_quark;
   global_quark = padding_quark;
-    MKL_INT current_major_row;
-    current_major_row = 0;
+  MKL_INT current_major_row;
+  current_major_row = 0;
 
   float element_value = 0.0;
   char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
@@ -387,12 +387,12 @@ void tbl_read(
     aux_coo_values = (float*) realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
   }
 
-  if ( current_major_row < element_number ){
+  if ( ((MKL_INT)current_major_row) < element_number ){
 
     aux_coo_values[element_number] = 0.0;
     aux_coo_columns[element_number] = element_number;
     aux_coo_rows[element_number] = element_number;
-    printf("\tpadding from (% x %d) to (%d x %d)\n", (MKL_INT) current_major_row, element_number, element_number, element_number);
+    printf("\tpadding from (% x %d) to (%d x %d)\n", ((MKL_INT) current_major_row), element_number, element_number, element_number);
   }
   else {
     printf("no padding needed -- already squared (%d x %d)\n", element_number, element_number);
