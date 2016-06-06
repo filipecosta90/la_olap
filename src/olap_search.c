@@ -371,7 +371,6 @@ void tbl_read(
   coo_columns[NNZ] = NNZ;
   coo_rows[NNZ] = NNZ;
   number_rows = NNZ;
-  NNZ++;
 
   //  free(aux_coo_rows);
 

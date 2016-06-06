@@ -226,11 +226,11 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   //read return flag
   tbl_read(
-      table_file , 9, &return_flag_nnz, &return_flag_rows, &return_flag_columns, &return_flag_csr_values, &return_flag_JA, &return_flag_IA,
+      table_file , 9, 
+&return_flag_nnz, &return_flag_rows, &return_flag_columns, 
+&return_flag_csr_values, &return_flag_JA, &return_flag_IA,
       &quark_start_end, &quark_distinct_tables
       );
-
-  //read_from_mx(return_flag, &return_flag_csr_values, &return_flag_JA, &return_flag_IA, &return_flag_nnz, &return_flag_rows, &return_flag_columns);
 
   // Memory Allocation
   return_flag_csc_values = (float*) mkl_malloc (( return_flag_nnz * sizeof(float) ), MEM_LINE_SIZE );
@@ -251,8 +251,6 @@ int main( int argc, char* argv[]){
       &quark_start_end, &quark_distinct_tables
       );
 
-  // read_from_mx(line_status, &line_status_csr_values, &line_status_JA, &line_status_IA, &line_status_nnz, &line_status_rows, &line_status_columns);
-
   // Memory Allocation
   line_status_csc_values = (float*) mkl_malloc (( line_status_nnz * sizeof(float) ), MEM_LINE_SIZE );
   line_status_JA_csc = (MKL_INT*) mkl_malloc (( line_status_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
@@ -271,7 +269,6 @@ int main( int argc, char* argv[]){
       &quantity_csr_values, &quantity_JA, &quantity_IA, 
       &quark_start_end, &quark_distinct_tables
       );
-  // read_from_mx(quantity, &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
 
   // Memory Allocation
   quantity_csc_values = (float*) mkl_malloc (( quantity_nnz * sizeof(float) ), MEM_LINE_SIZE );
@@ -291,11 +288,10 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   //read shipdate
   tbl_read(
-      table_file , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns , &shipdate_csr_values, &shipdate_JA, &shipdate_IA,
+      table_file , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns ,
+ &shipdate_csr_values, &shipdate_JA, &shipdate_IA,
       &quark_start_end, &quark_distinct_tables
       );
-
-  // read_from_mx(shipdate_gt, &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA, &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns);
 
   // Memory Allocation
   shipdate_csc_values = (float*) mkl_malloc (( shipdate_nnz * sizeof(float) ), MEM_LINE_SIZE );
