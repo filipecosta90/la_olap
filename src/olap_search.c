@@ -313,11 +313,11 @@ void tbl_read(
   MKL_INT quark_field;
   MKL_INT global_quark;
   float element_value = 0.0;
+  char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     char* tmp_field = strdup(line);
-
     field = getfield(tmp_field, tbl_column, field);
     element_value = atof(field);
     global_quark = g_quark_from_string (field);
@@ -341,6 +341,7 @@ void tbl_read(
   array_pos++;
   MKL_INT end_quark = global_quark;
   (*quark_start_end)[array_pos] = end_quark;
+    *quark_global_pos = array_pos;
 
   MKL_INT NNZ = element_number;
   number_columns = element_number;
@@ -439,27 +440,47 @@ void tbl_read_measure(
   MKL_INT element_number = 1;
   MKL_INT job[8];
   MKL_INT padding_quark = 0;
-  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
-    char* tmp_field = strdup(line);
-    field = getfield(tmp_field, tbl_column, field);
-
-    /* if arrays are full double its size */
-    if ( element_number >= current_values_size ){
-      current_values_size *= GROWTH_FACTOR;
-      coo_values = (float*) mkl_realloc(coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
-      coo_rows = (MKL_INT*) mkl_realloc(coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
-      coo_columns = (MKL_INT*) mkl_realloc(coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+    
+    // get to know how many quarks were used before
+    MKL_INT array_pos = *quark_global_pos;
+    MKL_INT initial_quark = *quark_start_end[array_pos];
+    if (initial_quark > 1 ){
+        padding_quark = initial_quark;
     }
-
-    coo_values[element_number] = atof(field);
-    coo_columns[element_number] = element_number;
-    coo_rows[element_number] = element_number;
-
-    free(tmp_field);
+    MKL_INT quark_field;
+    MKL_INT global_quark;
+    float element_value = 0.0;
+    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+   
+  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
+      char* tmp_field = strdup(line);
+      field = getfield(tmp_field, tbl_column, field);
+      element_value = atof(field);
+      global_quark = g_quark_from_string (field);
+      quark_field = global_quark - padding_quark;
+      
+      if ( element_number >= current_values_size ){
+          current_values_size *= GROWTH_FACTOR;
+          aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+          aux_coo_columns = (MKL_INT*) realloc(aux_coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+          aux_coo_values = (float*) realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
+      }
+      
+      /* normal coo property */
+      aux_coo_values[element_number] = element_value;
+      aux_coo_columns[element_number] = element_number;
+      aux_coo_rows[element_number]=  quark_field - 1 ;
+      
   }
 
   fclose(stream);
+    
+    
+    array_pos++;
+    MKL_INT end_quark = global_quark;
+    (*quark_start_end)[array_pos] = end_quark;
+    *quark_global_pos = array_pos;
+
 
   MKL_INT NNZ = element_number;
   number_columns = element_number;
