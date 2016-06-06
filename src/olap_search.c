@@ -312,7 +312,8 @@ void tbl_read(
   MKL_INT array_pos = *quark_global_pos;
   printf("\tquark_start_end array position:%d\n",array_pos);
 
-  MKL_INT initial_quark = *quark_start_end[array_pos];
+  MKL_INT initial_quark = (*quark_start_end)[array_pos];
+  printf("\tinitial_quark:%d\n",initial_quark);
 
   if (initial_quark > 1 ){
     printf( "%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
