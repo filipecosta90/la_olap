@@ -355,8 +355,8 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   GET_TIME(global_time_start);
 
-  csr_mx_selection_and(
-      shipdate_csr_values, shipdate_JA, shipdate_IA,
+  csc_to_csr_mx_selection_and(
+      shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc,
       shipdate_nnz, shipdate_rows, shipdate_columns,
       GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01",
       &selection_csr_values, &selection_JA, &selection_IA,
