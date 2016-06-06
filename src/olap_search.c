@@ -316,18 +316,19 @@ void tbl_read(
   printf("\tinitial_quark:%d\n",initial_quark);
 
   if (initial_quark > 1 ){
-    printf( "%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
-    padding_quark = initial_quark;
+      padding_quark = initial_quark;
+    printf( "\t%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
   }
   else {
-    printf( "first table being readed (arrayPos: %d initial Quark: %d)\n",array_pos + 1,  initial_quark);
+    printf( "\tfirst table being readed (arrayPos: %d initial Quark: %d)\n",array_pos + 1,  initial_quark);
 
   }
   MKL_INT quark_field;
   MKL_INT current_quark;
   MKL_INT global_quark;
   global_quark = padding_quark;
-  MKL_INT current_major_row = 0;
+    MKL_INT current_major_row;
+    current_major_row = 0;
 
   float element_value = 0.0;
   char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
@@ -347,8 +348,8 @@ void tbl_read(
     }
 
     // for calculating the number of rows
-    if (current_major_row < quark_field ){
-      current_major_row = quark_field;
+    if (current_major_row < (MKL_INT) quark_field ){
+      current_major_row = (MKL_INT) quark_field;
     }
 
     if ( element_number >= current_values_size ){
@@ -361,7 +362,7 @@ void tbl_read(
     /* normal coo property */
     aux_coo_values[element_number] = element_value;
     aux_coo_columns[element_number] = element_number;
-    aux_coo_rows[element_number]=  quark_field - 1 ;
+    aux_coo_rows[element_number]=  ( (MKL_INT)  quark_field) - 1 ;
 
   }
   fclose(stream);
@@ -371,7 +372,7 @@ void tbl_read(
   (*quark_start_end)[array_pos] = end_quark;
   *quark_global_pos = array_pos;
 
-  printf("readed %d lines from column,\n\tresulting in a untouched %d x %d matrix\n", element_number, current_major_row , element_number );
+  printf("\treaded %d lines from column,\n\tresulting in a untouched %d x %d matrix\n", element_number, current_major_row , element_number );
 
   if (
       // in case it cant old the last element containing the NNZ
