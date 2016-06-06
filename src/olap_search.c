@@ -284,7 +284,8 @@ void tbl_read(
     ){
 
     // get to know how many quarks were used before
-    MKL_INT initial_quark = *quark_start_end[quark_global_pos];
+	MKL_INT array_pos = *quark_global_pos;  
+  MKL_INT initial_quark = *quark_start_end[array_pos];
     
   __declspec(align(MEM_LINE_SIZE)) MKL_INT current_values_size = ARRAY_SIZE;
   __declspec(align(MEM_LINE_SIZE)) MKL_INT padding_quark = 0;
@@ -409,7 +410,6 @@ void tbl_read_measure(
     MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
-    MKL_INT initial_quark = *quark_start_end[quark_global_pos];
   MKL_INT current_values_size = ARRAY_SIZE;
   //define COO sparse-matrix M
   float* coo_values;
