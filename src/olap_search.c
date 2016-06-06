@@ -279,9 +279,13 @@ void read_from_mx (
 void tbl_read(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA, MKL_INT **quark_start_end
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
+    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
+    // get to know how many quarks were used before
+    MKL_INT initial_quark = *quark_start_end[quark_global_pos];
+    
   __declspec(align(MEM_LINE_SIZE)) MKL_INT current_values_size = ARRAY_SIZE;
   __declspec(align(MEM_LINE_SIZE)) MKL_INT padding_quark = 0;
   //define COO sparse-matrix M
@@ -312,6 +316,7 @@ void tbl_read(
       padding_quark = quark_field - 1;
     }
     quark_field -= padding_quark;
+      
     if ( element_number >= current_values_size ){
       current_values_size *= GROWTH_FACTOR;
       aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
@@ -400,9 +405,11 @@ void tbl_read(
 void tbl_read_measure(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA, MKL_INT **quark_start_end
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
+    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
+    MKL_INT initial_quark = *quark_start_end[quark_global_pos];
   MKL_INT current_values_size = ARRAY_SIZE;
   //define COO sparse-matrix M
   float* coo_values;
@@ -490,9 +497,9 @@ void tbl_read_measure(
 
 void tbl_read_filter(
     char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key,
-    MKL_INT **quark_start_end,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
+    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
   MKL_INT current_values_size = ARRAY_SIZE;
@@ -631,7 +638,8 @@ void tbl_read_filter(
 void tbl_read_filter_and(
     char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns ,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
+    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
   MKL_INT current_values_size = ARRAY_SIZE;
@@ -784,9 +792,9 @@ void csr_mx_selection_and(
     float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    MKL_INT **quark_start_end,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns,
+    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
   *C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
@@ -843,9 +851,9 @@ void csr_mx_selection_or(
     float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    MKL_INT **quark_start_end,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns,
+    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
   *C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
@@ -903,11 +911,13 @@ void csr_mx_selection_or(
 void csr_mx_selection(
     float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    int opp_code, char* comparation_key, MKL_INT **quark_start_end,
+    int opp_code, char* comparation_key,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns,
+    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
+    
   *C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
   *C_JA =  (MKL_INT*) mkl_malloc (((A_NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA =  (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
