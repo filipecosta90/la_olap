@@ -367,6 +367,7 @@ int main( int argc, char* argv[]){
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
 
   // compute projection = return_flag krao line_status
+    printf("start compute projection = return_flag krao line_status\n");
   csc_csr_krao(
       return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc,
       return_flag_nnz, return_flag_rows, return_flag_columns,
@@ -376,14 +377,19 @@ int main( int argc, char* argv[]){
       &projection_nnz, &projection_rows, &projection_columns
       );
 
+    printf(" compute compute aggregation = quantity * bang\n");
+
   // compute aggregation = quantity * bang
   aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
 
+    printf(" compute intermediate_result = projection * selection\n");
   // compute intermediate_result = projection * selection
   intermediate_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
       projection_matrix,
       selection_matrix, 
       &intermediate_matrix);
+    
+    printf(" compute final_result = intermediate_result * aggregation\n");
 
   // compute final_result = intermediate_result * aggregation
   final_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, intermediate_matrix , descrA, aggregation_vector, 1.0,  final_vector);
