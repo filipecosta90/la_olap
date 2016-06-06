@@ -65,7 +65,9 @@ int main( int argc, char* argv[]){
 
   printf("going to read results from %s\n", table_file);
 
-  MKL_INT quark_start_end[MEM_LINE_SIZE];
+  MKL_INT* quark_start_end;
+  quark_start_end = (MKL_INT*) mkl_malloc (( MEM_LINE_SIZE * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+
   //////////////////////////////////////////
   //        CONVERT from CSR to CSC
   //////////////////////////////////////////
@@ -238,7 +240,12 @@ int main( int argc, char* argv[]){
    ** Populate Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //read line status
-  tbl_read(  table_file , 10, &line_status_nnz, &line_status_rows, &line_status_columns , &line_status_csr_values, &line_status_JA, &line_status_IA, &quark_start_end);
+  tbl_read(  
+table_file , 10, 
+&line_status_nnz, &line_status_rows, &line_status_columns , 
+&line_status_csr_values, &line_status_JA, &line_status_IA, 
+&quark_start_end
+);
 
   // read_from_mx(line_status, &line_status_csr_values, &line_status_JA, &line_status_IA, &line_status_nnz, &line_status_rows, &line_status_columns);
 
@@ -254,7 +261,12 @@ int main( int argc, char* argv[]){
    ** Populate Quantity Matrix
    ** -------------------------------------------------------------------------*/
   //read quantity
-  tbl_read_measure(  table_file  , 5, &quantity_nnz, &quantity_rows, &quantity_columns , &quantity_csr_values, &quantity_JA, &quantity_IA, &quark_start_end);
+  tbl_read_measure(  
+table_file  , 5, 
+&quantity_nnz,  &quantity_rows, &quantity_columns , 
+&quantity_csr_values, &quantity_JA, &quantity_IA, 
+&quark_start_end
+);
   // read_from_mx(quantity, &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
 
   // Memory Allocation
@@ -332,7 +344,8 @@ int main( int argc, char* argv[]){
   csr_mx_selection_and(
       shipdate_csr_values, shipdate_JA, shipdate_IA,
       shipdate_nnz, shipdate_rows, shipdate_columns,
-      GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01", quark_start_end,
+      GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01", 
+	&quark_start_end,
       &selection_csr_values, &selection_JA, &selection_IA,
       &selection_nnz, &selection_rows, &selection_columns
       );
