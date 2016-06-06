@@ -859,7 +859,7 @@ void csr_mx_selection_and(
     }
     if ( field != NULL ){
       //printf("row translated into: %s\n",field);
-      MKL_INT returned_strccmp = strcmp( field , comparation_key );
+      MKL_INT returned_strcmp = strcmp( field , comparation_key );
       MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
 
       if (
