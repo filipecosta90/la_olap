@@ -86,8 +86,9 @@ void tbl_read_measure(
     );
 
 void tbl_read_filter(
-    char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key, MKL_INT **quark_start_end,
-    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns , 
+    char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key, 
+    MKL_INT **quark_start_end,
+    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns, 
     float** A_csr_values, MKL_INT** A_JA
     );
 
@@ -96,7 +97,8 @@ void check_errors( sparse_status_t stat );
 void csr_mx_selection_and(
     float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    int opp_code, char* comparation_key, int opp_code2, char* comparation_key2, MKL_INT **quark_start_end,
+    int opp_code, char* comparation_key, int opp_code2, char* comparation_key2, 
+    MKL_INT **quark_start_end,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );

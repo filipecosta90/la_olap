@@ -131,15 +131,15 @@ int main( int argc, char* argv[]){
   sparse_status_t status_to_csr;
 
   //read return flag
-/*
+  /*
 
-  printf("reading return flag\n");
-  tbl_read( "__tbl_16/lineitem.tbl" , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns, &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
-  printf("generating return flag\n");
-  convert_and_write_to_mx("__quark_mx_16/return_flag_16.mx", returnFlag_csr_values, returnFlag_JA, returnFlag_IA, returnFlag_nnz, returnFlag_rows, returnFlag_columns);
-  mkl_free(returnFlag_csr_values);
-  mkl_free(returnFlag_JA);
-  mkl_free(returnFlag_IA);
+     printf("reading return flag\n");
+     tbl_read( "__tbl_16/lineitem.tbl" , 9, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns, &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA);
+     printf("generating return flag\n");
+     convert_and_write_to_mx("__quark_mx_16/return_flag_16.mx", returnFlag_csr_values, returnFlag_JA, returnFlag_IA, returnFlag_nnz, returnFlag_rows, returnFlag_columns);
+     mkl_free(returnFlag_csr_values);
+     mkl_free(returnFlag_JA);
+     mkl_free(returnFlag_IA);
 
   //read quantity
   printf("reading quantity\n");
@@ -165,29 +165,29 @@ int main( int argc, char* argv[]){
 
 
   //read shipdate gt
-    printf("reading shipdate gt\n");
+  printf("reading shipdate gt\n");
   tbl_read_filter( "__tbl_16/lineitem.tbl" , 11, GREATER_EQ , "1998-08-28",
-      &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns , &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA);
-    printf("generating shipdate gt\n");
-    convert_and_write_to_mx("__quark_mx_16/shipdate_gt_16.mx", shipdate_gt_csr_values, shipdate_gt_JA, shipdate_gt_IA, shipdate_gt_nnz, shipdate_gt_rows, shipdate_gt_columns);
+  &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns , &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA);
+  printf("generating shipdate gt\n");
+  convert_and_write_to_mx("__quark_mx_16/shipdate_gt_16.mx", shipdate_gt_csr_values, shipdate_gt_JA, shipdate_gt_IA, shipdate_gt_nnz, shipdate_gt_rows, shipdate_gt_columns);
   mkl_free(shipdate_gt_csr_values);
   mkl_free(shipdate_gt_JA);
   mkl_free(shipdate_gt_IA);
 
- 
- 
- */
+
+
+*/
 
   //read shipdate lt
- printf("reading shipdate lt\n");
+  printf("reading shipdate lt\n");
   tbl_read_filter( "__tbl_16/lineitem.tbl" , 11, LESS_EQ , "1998-12-01",
       &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns , &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA);
- printf("generating shipdate lt\n");
- convert_and_write_to_mx("__quark_mx_16/shipdate_lt_16.mx", shipdate_lt_csr_values, shipdate_lt_JA, shipdate_lt_IA, shipdate_lt_nnz, shipdate_lt_rows, shipdate_lt_columns);
+  printf("generating shipdate lt\n");
+  convert_and_write_to_mx("__quark_mx_16/shipdate_lt_16.mx", shipdate_lt_csr_values, shipdate_lt_JA, shipdate_lt_IA, shipdate_lt_nnz, shipdate_lt_rows, shipdate_lt_columns);
   mkl_free(shipdate_lt_csr_values);
   mkl_free(shipdate_lt_JA);
   mkl_free(shipdate_lt_IA);
-    return 0;
+  return 0;
 
 }
 
