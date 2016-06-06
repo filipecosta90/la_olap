@@ -361,7 +361,7 @@ int main( int argc, char* argv[]){
       GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01",
       &selection_csr_values, &selection_JA, &selection_IA,
       &selection_nnz, &selection_rows, &selection_columns,
-      &quark_start_end, &quark_distinct_tables
+      quark_start_end, 4
       );
 
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );

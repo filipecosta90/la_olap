@@ -308,29 +308,12 @@ void tbl_read(
   float value;
   char line[1024];
 
-  // get to know how many quarks were used before
-  MKL_INT array_pos = *quark_global_pos;
-  printf("\tquark_start_end array position:%d\n",array_pos);
 
-  MKL_INT initial_quark = (*quark_start_end)[array_pos];
-  printf("\tinitial_quark:%d\n",initial_quark);
-
-  if (initial_quark > 1 ){
-    padding_quark = initial_quark;
-    printf( "\t%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
-  }
-  else {
-    printf( "\tfirst table being readed (arrayPos: %d initial Quark: %d)\n",array_pos + 1,  initial_quark);
-
-  }
   MKL_INT quark_field;
-  MKL_INT current_quark;
-  MKL_INT global_quark;
-  global_quark = padding_quark;
   MKL_INT current_major_row;
   current_major_row = 0;
-
   float element_value = 0.0;
+
   char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 
 
@@ -339,13 +322,7 @@ void tbl_read(
 
     field = getfield(tmp_field, tbl_column, field);
     element_value = 1.0;
-    current_quark = (MKL_INT) g_quark_from_string (field);
-    quark_field = current_quark - padding_quark;
-
-    // for the quark start end array
-    if ( global_quark < current_quark ){
-      global_quark = current_quark ;
-    }
+    quark_field = (MKL_INT) g_quark_from_string (field);
 
     // for calculating the number of rows
     if (current_major_row < (MKL_INT) quark_field ){
@@ -367,11 +344,6 @@ void tbl_read(
   }
   fclose(stream);
 
-  array_pos++;
-  MKL_INT end_quark = global_quark;
-  (*quark_start_end)[array_pos] = end_quark;
-  *quark_global_pos = array_pos;
-
   printf("\treaded %d lines from column,\n\tresulting in a untouched %d x %d matrix\n", element_number, current_major_row , element_number );
 
   if (
@@ -392,7 +364,7 @@ void tbl_read(
     aux_coo_values[element_number] = 0.0;
     aux_coo_columns[element_number] = element_number;
     aux_coo_rows[element_number] = element_number;
-    printf("\tpadding from (% x %d) to (%d x %d)\n", ((MKL_INT) current_major_row), element_number, element_number, element_number);
+    printf("\tpadding from (%d x %d) to (%d x %d)\n", ((MKL_INT) current_major_row), element_number, element_number, element_number);
   }
   else {
     printf("no padding needed -- already squared (%d x %d)\n", element_number, element_number);
@@ -431,7 +403,7 @@ void tbl_read(
 
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, aux_coo_values, aux_coo_rows, aux_coo_columns, &status_coo_csr);
-  printf("conversion from coo to csr ok?: \n");
+  printf("\tconversion from coo to csr ok?: \n");
   check_errors(status_coo_csr);
   *rows = number_rows;
   *columns = number_columns;
@@ -855,13 +827,15 @@ void csr_mx_selection_and(
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns,
-    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
+    MKL_INT *quark_start_end, MKL_INT quark_global_pos_array
     ){
 
   *C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
   *C_JA =  (MKL_INT*) mkl_malloc (((A_NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA =  (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  //cols
   (*C_JA)[0:A_number_columns-1] = A_IA[0:A_number_columns-1];
+  //rows
   (*C_IA)[0:A_number_columns-1] = A_IA[0:A_number_columns-1];
   *C_NNZ = A_NNZ;
   *C_number_rows = A_number_rows;
@@ -869,13 +843,20 @@ void csr_mx_selection_and(
 
   char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 
+  MKL_INT quark_zeroed = 0;
+  MKL_INT index;
   // read the input file
-  for( MKL_INT element_number = 1 ; element_number < A_number_columns ; ++element_number ){
+  for( MKL_INT element_number = 0 ; element_number < A_number_columns ; ++element_number ){
 
-    MKL_INT quark_zeroed = 0;
+    index = A_IA[element_number];
+    quark_zeroed = 0;
 
-    field = (char*) g_quark_to_string ( element_number );
+    field = (char*) g_quark_to_string ( index );
+    if (field == NULL){
+      printf("error in quark translation\n");
+    }
     if ( field != NULL ){
+      //printf("row translated into: %s\n",field);
       MKL_INT returned_strcmp = strcmp( field , comparation_key );
       MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
 
