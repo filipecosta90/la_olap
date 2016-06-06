@@ -371,7 +371,7 @@ void tbl_read(
   (*quark_start_end)[array_pos] = end_quark;
   *quark_global_pos = array_pos;
 
-
+  printf("readed %d lines from column,\n\tresulting in a untouched %d x %d matrix\n", element_number, current_major_row , element_number );
 
   if (
       // in case it cant old the last element containing the NNZ
