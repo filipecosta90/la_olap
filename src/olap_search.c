@@ -374,7 +374,7 @@ void tbl_read(
     aux_coo_values = (float*) realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
   }
 
-  if ( current_major_row < number_columns ){
+  if ( current_major_row < element_number ){
 
     aux_coo_values[element_number] = 0.0;
     aux_coo_columns[element_number] = element_number;
@@ -424,7 +424,7 @@ void tbl_read(
 
   free( aux_coo_values );
   free(  aux_coo_columns );
-  free ( )aux_coo_rows );
+  free ( aux_coo_rows );
 
   printf("readed matrix %d %d : NNZ %d\n\t\tproducing quarks between %d and %d\n", *rows, *columns, *nnz, initial_quark, end_quark );
 }
