@@ -283,10 +283,6 @@ void tbl_read(
     MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
-    // get to know how many quarks were used before
-	MKL_INT array_pos = *quark_global_pos;  
-  MKL_INT initial_quark = *quark_start_end[array_pos];
-    
   __declspec(align(MEM_LINE_SIZE)) MKL_INT current_values_size = ARRAY_SIZE;
   __declspec(align(MEM_LINE_SIZE)) MKL_INT padding_quark = 0;
   //define COO sparse-matrix M
@@ -307,17 +303,26 @@ void tbl_read(
   __declspec(align(MEM_LINE_SIZE)) MKL_INT column;
   float value;
   char line[1024];
+
+  // get to know how many quarks were used before
+  MKL_INT array_pos = *quark_global_pos;
+  MKL_INT initial_quark = *quark_start_end[array_pos];
+  if (initial_quark > 1 ){
+    padding_quark = initial_quark;
+  }
+  MKL_INT quark_field;
+  MKL_INT global_quark;
+  float element_value = 0.0;
+
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     char* tmp_field = strdup(line);
+
     field = getfield(tmp_field, tbl_column, field);
-    MKL_INT quark_field;
-    quark_field = g_quark_from_string (field);
-    if (quark_field > 1 && element_number == 0 ){
-      padding_quark = quark_field - 1;
-    }
-    quark_field -= padding_quark;
-      
+    element_value = atof(field);
+    global_quark = g_quark_from_string (field);
+    quark_field = global_quark - padding_quark;
+
     if ( element_number >= current_values_size ){
       current_values_size *= GROWTH_FACTOR;
       aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
@@ -326,14 +331,16 @@ void tbl_read(
     }
 
     /* normal coo property */
-    aux_coo_values[element_number] = 1.0;
+    aux_coo_values[element_number] = element_value;
     aux_coo_columns[element_number] = element_number;
     aux_coo_rows[element_number]=  quark_field - 1 ;
 
   }
-
-
   fclose(stream);
+
+  array_pos++;
+  MKL_INT end_quark = global_quark;
+  (*quark_start_end)[array_pos] = end_quark;
 
   MKL_INT NNZ = element_number;
   number_columns = element_number;
@@ -400,7 +407,7 @@ void tbl_read(
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
-  printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
+  printf("readed matrix %d %d : NNZ %d\n\t\tproducing quarks between %d and %d\n", *rows, *columns, *nnz, initial_quark, end_quark );
 }
 
 void tbl_read_measure(
@@ -917,7 +924,7 @@ void csr_mx_selection(
     MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
-    
+
   *C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
   *C_JA =  (MKL_INT*) mkl_malloc (((A_NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA =  (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
