@@ -304,14 +304,16 @@ void tbl_read(
   __declspec(align(MEM_LINE_SIZE)) MKL_INT number_columns = -1 ;
   __declspec(align(MEM_LINE_SIZE)) MKL_INT element_number = 1;
   MKL_INT job[8];
-  __declspec(align(MEM_LINE_SIZE)) MKL_INT row;
-  __declspec(align(MEM_LINE_SIZE)) MKL_INT column;
+
   float value;
   char line[1024];
 
   // get to know how many quarks were used before
   MKL_INT array_pos = *quark_global_pos;
+  printf("\tquark_start_end array position:%d\n",array_pos);
+
   MKL_INT initial_quark = *quark_start_end[array_pos];
+
   if (initial_quark > 1 ){
     printf( "%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
     padding_quark = initial_quark;

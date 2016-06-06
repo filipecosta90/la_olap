@@ -241,6 +241,8 @@ int main( int argc, char* argv[]){
 
   // Convert from CSR to CSC
   mkl_scsrcsc(job_csr_csc, &return_flag_nnz, return_flag_csr_values, return_flag_JA, return_flag_IA, return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc, &status_convert_to_csc);
+  printf("conversion of return flag matrix from CSR to CSC ok?\n\t");
+  check_errors(status_convert_to_csc);
 
   /** ---------------------------------------------------------------------------
    ** Populate Line Status Matrix
@@ -260,7 +262,8 @@ int main( int argc, char* argv[]){
 
   // Convert from CSR to CSC
   mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA_csc, line_status_IA_csc, &status_convert_to_csc);
-    check_errors(status_to_csr);
+  printf("conversion of linestatus matrix from CSR to CSC ok?\n\t");
+  check_errors(status_convert_to_csc);
 
   /** ---------------------------------------------------------------------------
    ** Populate Quantity Matrix
@@ -269,7 +272,7 @@ int main( int argc, char* argv[]){
 
   // measure
   tbl_read(
-      table_file , 5, 
+      table_file , 5,
       &quantity_nnz,  &quantity_rows, &quantity_columns , 
       &quantity_csr_values, &quantity_JA, &quantity_IA, 
       &quark_start_end, &quark_distinct_tables
@@ -282,6 +285,8 @@ int main( int argc, char* argv[]){
 
   // Convert from CSR to CSC
   mkl_scsrcsc(job_csr_csc, &quantity_nnz, quantity_csr_values, quantity_JA, quantity_IA, quantity_csc_values, quantity_JA_csc, quantity_IA_csc, &status_convert_to_csc);
+  printf("conversion of quantity matrix from CSR to CSC ok?\n\t");
+  check_errors(status_convert_to_csc);
 
   //        convert via sparseBLAS API to Handle containing internal data for 
   //        subsequent Inspector-executor Sparse BLAS operations.
@@ -311,6 +316,7 @@ int main( int argc, char* argv[]){
 
   // Convert from CSR to CSC
   mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &status_convert_to_csc);
+  printf("conversion of shipdate matrix from CSR to CSC ok?\n\t");
   check_errors(status_convert_to_csc);
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
