@@ -327,7 +327,7 @@ void tbl_read(
   MKL_INT current_quark;
   MKL_INT global_quark;
   global_quark = padding_quark;
-  MKL_INT current_major_row;
+  MKL_INT current_major_row = 0;
 
   float element_value = 0.0;
   char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
