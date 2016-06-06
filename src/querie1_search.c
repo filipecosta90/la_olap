@@ -394,6 +394,8 @@ int main( int argc, char* argv[]){
   // compute final_result = intermediate_result * aggregation
   final_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, intermediate_matrix , descrA, aggregation_vector, 1.0,  final_vector);
 
+    printf(" STOP TIME\n");
+
   ////////////////////////
   // STOP TIME MEASUREMENT
   ////////////////////////
