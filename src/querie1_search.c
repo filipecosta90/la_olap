@@ -363,6 +363,11 @@ int main( int argc, char* argv[]){
       &selection_nnz, &selection_rows, &selection_columns,
       quark_start_end, 4
       );
+    
+    status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
+    printf("to CSR selection ok?\n\t");
+    check_errors(status_to_csr);
+    
 
 
   // compute projection = return_flag krao line_status
