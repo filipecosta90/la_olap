@@ -420,18 +420,18 @@ void tbl_read_measure(
 
   MKL_INT current_values_size = ARRAY_SIZE;
   //define COO sparse-matrix M
-  float* coo_values;
-  MKL_INT* coo_rows;
-  MKL_INT* coo_columns;
+  float* aux_coo_values;
+  MKL_INT* aux_coo_rows;
+  MKL_INT* aux_coo_columns;
 
-  coo_values = (float*) mkl_malloc (current_values_size * sizeof(float), MEM_LINE_SIZE );
-  coo_rows = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
-  coo_columns = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
+  aux_coo_values = (float*) mkl_malloc (current_values_size * sizeof(float), MEM_LINE_SIZE );
+  aux_coo_rows = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
+  aux_coo_columns = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
 
 
-  assert(coo_values != NULL);
-  assert(coo_rows != NULL);
-  assert(coo_columns != NULL);
+  assert(aux_coo_values != NULL);
+  assert(aux_coo_rows != NULL);
+  assert(aux_coo_columns != NULL);
 
   FILE* stream = fopen(table_name, "r");
   char line[1024];
@@ -472,9 +472,7 @@ void tbl_read_measure(
       aux_coo_rows[element_number]=  quark_field - 1 ;
       
   }
-
   fclose(stream);
-    
     
     array_pos++;
     MKL_INT end_quark = global_quark;
@@ -514,10 +512,10 @@ void tbl_read_measure(
   *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   sparse_status_t status_coo_csr;
-  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-  mkl_free(coo_values);
-  mkl_free(coo_rows);
-  mkl_free(coo_columns);
+  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, aux_coo_values, aux_coo_rows, aux_coo_columns, &status_coo_csr);
+  mkl_free(aux_coo_values);
+  mkl_free(aux_coo_rows);
+  mkl_free(aux_coo_columns);
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
