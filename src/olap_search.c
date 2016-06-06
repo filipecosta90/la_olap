@@ -338,8 +338,8 @@ void tbl_read(
     char* tmp_field = strdup(line);
 
     field = getfield(tmp_field, tbl_column, field);
-    element_value = atof(field);
-    current_quark = g_quark_from_string (field);
+    element_value = 1.0;
+    current_quark = (MKL_INT) g_quark_from_string (field);
     quark_field = current_quark - padding_quark;
 
     // for the quark start end array
@@ -362,7 +362,7 @@ void tbl_read(
     /* normal coo property */
     aux_coo_values[element_number] = element_value;
     aux_coo_columns[element_number] = element_number;
-    aux_coo_rows[element_number]=  ( (MKL_INT)  quark_field) - 1 ;
+    aux_coo_rows[element_number]=  quark_field - 1 ;
 
   }
   fclose(stream);
@@ -392,7 +392,7 @@ void tbl_read(
     aux_coo_values[element_number] = 0.0;
     aux_coo_columns[element_number] = element_number;
     aux_coo_rows[element_number] = element_number;
-    printf("\tpadding from (% x %d) to (%d x %d)\n", current_major_row, element_number, element_number, element_number);
+    printf("\tpadding from (% x %d) to (%d x %d)\n", (MKL_INT) current_major_row, element_number, element_number, element_number);
   }
   else {
     printf("no padding needed -- already squared (%d x %d)\n", element_number, element_number);
