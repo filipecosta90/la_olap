@@ -379,7 +379,7 @@ void tbl_read(
     aux_coo_values[element_number] = 0.0;
     aux_coo_columns[element_number] = element_number;
     aux_coo_rows[element_number] = element_number;
-    printf("\tpadding from (% x %d) to (%d x %d)\n", current_major_row, number_columns, element_number, element_number);
+    printf("\tpadding from (% x %d) to (%d x %d)\n", current_major_row, element_number, element_number, element_number);
   }
   else {
     printf("no padding needed -- already squared (%d x %d)\n", element_number, element_number);
@@ -418,6 +418,8 @@ void tbl_read(
 
   sparse_status_t status_coo_csr;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, aux_coo_values, aux_coo_rows, aux_coo_columns, &status_coo_csr);
+    printf("conversion from coo to csr ok?: \n");
+    check_errors(status_coo_csr);
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
