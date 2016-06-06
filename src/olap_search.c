@@ -845,19 +845,21 @@ void csr_mx_selection_and(
 
   MKL_INT quark_zeroed = 0;
   MKL_INT index;
+    MKL_INT cols;
   // read the input file
   for( MKL_INT element_number = 0 ; element_number < A_number_columns ; ++element_number ){
 
     index = A_IA[element_number];
+    cols =    index = A_JA[element_number];
     quark_zeroed = 0;
 
     field = (char*) g_quark_to_string ( index );
     if (field == NULL){
-      printf("error in quark translation\n");
+      printf("error in quark translation from (%d,%d)\n", index,cols);
     }
     if ( field != NULL ){
       //printf("row translated into: %s\n",field);
-      MKL_INT returned_strcmp = strcmp( field , comparation_key );
+      MKL_INT returned_strccmp = strcmp( field , comparation_key );
       MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
 
       if (
