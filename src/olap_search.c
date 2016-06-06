@@ -821,8 +821,8 @@ void tbl_read_filter_and(
   *nnz = NNZ;
 }
 
-void csr_mx_selection_and(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
+void csc_to_csr_mx_selection_and(
+    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
@@ -830,34 +830,50 @@ void csr_mx_selection_and(
     MKL_INT *quark_start_end, MKL_INT quark_global_pos_array
     ){
 
-  *C_csr_values = (float*) mkl_malloc (((A_NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
-  *C_JA =  (MKL_INT*) mkl_malloc (((A_NNZ+1)* sizeof(MKL_INT)), MEM_LINE_SIZE );
-  *C_IA =  (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  //cols
-  (*C_JA)[0:A_number_columns-1] = A_IA[0:A_number_columns-1];
-  //rows
-  (*C_IA)[0:A_number_columns-1] = A_IA[0:A_number_columns-1];
-  *C_NNZ = A_NNZ;
-  *C_number_rows = A_number_rows;
-  *C_number_columns = A_number_columns;
+  MKL_INT job[8];
+
+  /////////////////////////////////////
+  // PREPARE FOR OPERATION
+  /////////////////////////////////////
+  //////////////////////////////////////////
+  ///////   CONVERT A and B from CSR to CSC
+  //////////////////////////////////////////
+
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job[0] = 0;
+
+  // job[1]
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job[1] = 0;
+
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+  sparse_status_t status_convert_csc;
+
 
   char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 
   MKL_INT quark_zeroed = 0;
   MKL_INT index;
-    MKL_INT cols;
-  // read the input file
-  for( MKL_INT element_number = 0 ; element_number < A_number_columns ; ++element_number ){
+  MKL_INT cols;
 
-    index = A_IA[element_number];
-    cols =    index = A_JA[element_number];
-    quark_zeroed = 0;
+  for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
+    // insert start of column int C_IA1
+    MKL_INT iaa = A_IA1[at_column];
 
-    field = (char*) g_quark_to_string ( index );
+    field = (char*) g_quark_to_string ( iaa );
     if (field == NULL){
-      printf("error in quark translation from (%d,%d)\n", index,cols);
+      printf("error in quark translation from (%d,%d)\n", iaa,at_column);
     }
-    if ( field != NULL ){
+    if ( field != NULL == ){
       //printf("row translated into: %s\n",field);
       MKL_INT returned_strccmp = strcmp( field , comparation_key );
       MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
@@ -885,10 +901,43 @@ void csr_mx_selection_and(
         quark_zeroed = 1;
       }
       if (quark_zeroed == 1 ){
-        (*C_csr_values)[element_number] = 0;
+        A_csc_values[at_column] = 0;
       }
-    }	
+    }
+
   }
+
+  /////////////////////////////////
+  //   CONVERT C from CSC to CSR
+  ////////////////////////////////
+
+  // If job[0]=1, the matrix in the CSC format is converted to the CSR format.
+  job[0] = 1;
+
+  // job[1]
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job[1] = 0;
+
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+  sparse_status_t status_convert_csr;
+
+  *C_csr_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *C_IA = (MKL_INT*) mkl_malloc (( (A_number_rows + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csr);
+
+  *C_number_rows = A_number_rows ;
+  *C_number_columns = A_number_columns;
+  *C_NNZ = A_NNZ;
 }
 
 void csr_mx_selection_or(
