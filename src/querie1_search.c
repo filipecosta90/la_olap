@@ -364,9 +364,7 @@ int main( int argc, char* argv[]){
       quark_start_end, 4
       );
 
-  status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
-  printf("to CSR projection ok?\n\t");
-  check_errors(status_to_csr);
+
   // compute projection = return_flag krao line_status
   printf("start compute projection = return_flag krao line_status\n");
   csc_csr_krao(
@@ -377,7 +375,11 @@ int main( int argc, char* argv[]){
       &projection_csr_values, &projection_JA, &projection_IA,
       &projection_nnz, &projection_rows, &projection_columns
       );
-
+    
+    status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
+    printf("to CSR projection ok?\n\t");
+    check_errors(status_to_csr);
+    
   printf(" compute compute aggregation = quantity * bang\n");
 
   // compute aggregation = quantity * bang
