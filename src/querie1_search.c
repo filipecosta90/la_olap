@@ -381,13 +381,17 @@ int main( int argc, char* argv[]){
 
   // compute aggregation = quantity * bang
   aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
-
+    printf("aggregation ok?\n\t");
+    check_errors(aggregation_result);
+    
     printf(" compute intermediate_result = projection * selection\n");
   // compute intermediate_result = projection * selection
   intermediate_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
       projection_matrix,
       selection_matrix, 
       &intermediate_matrix);
+    printf("intermediate ok?\n\t");
+    check_errors(intermediate_result);
     
     printf(" compute final_result = intermediate_result * aggregation\n");
 
