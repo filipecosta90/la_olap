@@ -413,7 +413,7 @@ void tbl_read(
   free(  aux_coo_columns );
   free ( aux_coo_rows );
 
-  printf("readed matrix %d %d : NNZ %d\n\t\tproducing quarks between %d and %d\n", *rows, *columns, *nnz, initial_quark, end_quark );
+  printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
 }
 
 void tbl_read_measure(
