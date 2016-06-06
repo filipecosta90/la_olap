@@ -68,6 +68,8 @@ int main( int argc, char* argv[]){
   MKL_INT* quark_start_end;
   quark_start_end = (MKL_INT*) mkl_malloc (( MEM_LINE_SIZE * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   MKL_INT  quark_distinct_tables = 0;
+  quark_start_end[0] = 0;
+
 
   //////////////////////////////////////////
   //        CONVERT from CSR to CSC
@@ -227,8 +229,8 @@ int main( int argc, char* argv[]){
   //read return flag
   tbl_read(
       table_file , 9, 
-&return_flag_nnz, &return_flag_rows, &return_flag_columns, 
-&return_flag_csr_values, &return_flag_JA, &return_flag_IA,
+      &return_flag_nnz, &return_flag_rows, &return_flag_columns, 
+      &return_flag_csr_values, &return_flag_JA, &return_flag_IA,
       &quark_start_end, &quark_distinct_tables
       );
 
@@ -263,7 +265,9 @@ int main( int argc, char* argv[]){
    ** Populate Quantity Matrix
    ** -------------------------------------------------------------------------*/
   //read quantity
-  tbl_read_measure(  
+
+  // measure
+  tbl_read(
       table_file  , 5, 
       &quantity_nnz,  &quantity_rows, &quantity_columns , 
       &quantity_csr_values, &quantity_JA, &quantity_IA, 
@@ -289,7 +293,7 @@ int main( int argc, char* argv[]){
   //read shipdate
   tbl_read(
       table_file , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns ,
- &shipdate_csr_values, &shipdate_JA, &shipdate_IA,
+      &shipdate_csr_values, &shipdate_JA, &shipdate_IA,
       &quark_start_end, &quark_distinct_tables
       );
 

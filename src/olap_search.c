@@ -308,13 +308,17 @@ void tbl_read(
   MKL_INT array_pos = *quark_global_pos;
   MKL_INT initial_quark = *quark_start_end[array_pos];
   if (initial_quark > 1 ){
-      printf( "%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
+    printf( "%d tables already present in quarks, corresponding to a total of %d\n",array_pos + 1,  initial_quark);
     padding_quark = initial_quark;
   }
   MKL_INT quark_field;
+  MKL_INT current_quark;
   MKL_INT global_quark;
+  global_quark = padding_quark;
+  MKL_INT current_major_row;
+
   float element_value = 0.0;
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
@@ -322,8 +326,18 @@ void tbl_read(
 
     field = getfield(tmp_field, tbl_column, field);
     element_value = atof(field);
-    global_quark = g_quark_from_string (field);
-    quark_field = global_quark - padding_quark;
+    current_quark = g_quark_from_string (field);
+    quark_field = current_quark - padding_quark;
+
+    // for the quark start end array
+    if ( global_quark < current_quark ){
+      global_quark = current_quark ;
+    }
+
+    // for calculating the number of rows
+    if (current_major_row < quark_field ){
+      current_major_row = quark_field;
+    }
 
     if ( element_number >= current_values_size ){
       current_values_size *= GROWTH_FACTOR;
@@ -343,36 +357,37 @@ void tbl_read(
   array_pos++;
   MKL_INT end_quark = global_quark;
   (*quark_start_end)[array_pos] = end_quark;
-    *quark_global_pos = array_pos;
+  *quark_global_pos = array_pos;
 
-  MKL_INT NNZ = element_number;
-  number_columns = element_number;
 
-  //define COO sparse-matrix M
-  __declspec(align(MEM_LINE_SIZE)) float* coo_values;
-  __declspec(align(MEM_LINE_SIZE)) MKL_INT* coo_rows;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* coo_columns;
 
-  coo_values = (float*) mkl_malloc (((NNZ+1) * sizeof(float)), MEM_LINE_SIZE );
-  coo_rows =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-  coo_columns =  (MKL_INT*) mkl_malloc (((NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
-  assert(coo_values != NULL);
-  assert(coo_rows != NULL);
-  assert(coo_columns != NULL);
-
-  for (int pos = 0; pos < NNZ; pos++) {
-    coo_values[pos] = aux_coo_values[pos];
-    coo_columns[pos] = aux_coo_columns[pos];
-    coo_rows[pos] = aux_coo_rows[pos];
+  if (
+      // in case it cant old the last element containing the NNZ
+      ( (element_number+1) >= current_values_size )
+      ||
+      // in case the matrix aint squared and it cant old the last element containing the NNZ + the padding of 1
+      ( (current_major_row < number_columns) && (element_number+2) >= current_values_size )
+     ){
+    current_values_size *= GROWTH_FACTOR;
+    aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+    aux_coo_columns = (MKL_INT*) realloc(aux_coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+    aux_coo_values = (float*) realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
   }
 
-  coo_values[NNZ] = 0.0;
-  coo_columns[NNZ] = NNZ;
-  coo_rows[NNZ] = NNZ;
-  number_rows = NNZ;
+  if ( current_major_row < number_columns ){
 
-  //  free(aux_coo_rows);
+    aux_coo_values[element_number] = 0.0;
+    aux_coo_columns[element_number] = element_number;
+    aux_coo_rows[element_number] = element_number;
+    printf("\tpadding from (% x %d) to (%d x %d)\n", current_major_row, number_columns, element_number, element_number);
+  }
+  else {
+    printf("no padding needed -- already squared (%d x %d)\n", element_number, element_number);
+  }
+
+  MKL_INT NNZ = element_number;
+  number_rows = element_number;
+  number_columns = element_number;
 
   /////////////////////////////////
   //   CONVERT FROM COO TO CSR
@@ -402,13 +417,15 @@ void tbl_read(
   *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   sparse_status_t status_coo_csr;
-  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-  mkl_free(coo_values);
-  mkl_free(coo_rows);
-  mkl_free(coo_columns);
+  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, aux_coo_values, aux_coo_rows, aux_coo_columns, &status_coo_csr);
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
+
+  free( aux_coo_values );
+  free(  aux_coo_columns );
+  free ( )aux_coo_rows );
+
   printf("readed matrix %d %d : NNZ %d\n\t\tproducing quarks between %d and %d\n", *rows, *columns, *nnz, initial_quark, end_quark );
 }
 
@@ -441,19 +458,19 @@ void tbl_read_measure(
   MKL_INT element_number = 1;
   MKL_INT job[8];
   MKL_INT padding_quark = 0;
-    
-    // get to know how many quarks were used before
-    MKL_INT array_pos = *quark_global_pos;
-    MKL_INT initial_quark = *quark_start_end[array_pos];
-    if (initial_quark > 1 ){
-        padding_quark = initial_quark;
-    }
-    MKL_INT quark_field;
-    MKL_INT global_quark;
-    float element_value = 0.0;
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 
-    
+  // get to know how many quarks were used before
+  MKL_INT array_pos = *quark_global_pos;
+  MKL_INT initial_quark = *quark_start_end[array_pos];
+  if (initial_quark > 1 ){
+    padding_quark = initial_quark;
+  }
+  MKL_INT quark_field;
+  MKL_INT global_quark;
+  float element_value = 0.0;
+  char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+
+
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char* tmp_field = strdup(line);
     field = getfield(tmp_field, tbl_column, field);
@@ -474,13 +491,13 @@ void tbl_read_measure(
   }
 
   fclose(stream);
-    
-    
-    array_pos++;
-    MKL_INT end_quark = global_quark;
-    (*quark_start_end)[array_pos] = end_quark;
-    *quark_global_pos = array_pos;
-    
+
+
+  array_pos++;
+  MKL_INT end_quark = global_quark;
+  (*quark_start_end)[array_pos] = end_quark;
+  *quark_global_pos = array_pos;
+
 
 
   MKL_INT NNZ = element_number;
