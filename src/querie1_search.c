@@ -403,11 +403,16 @@ int main( int argc, char* argv[]){
       );
 
   printf(" STOP TIME\n");
-
+  for (int pos =0; pos < projection_columns ; pos++){
+	if ( final_vector[pos] > 0 ){
+	printf("%f \n", final_vector[pos]);
+}
+}
   ////////////////////////
   // STOP TIME MEASUREMENT
   ////////////////////////
   GET_TIME(global_time_stop);
+
   writeResults( argv[1] );
 
   return 0;

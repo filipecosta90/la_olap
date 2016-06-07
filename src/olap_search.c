@@ -926,8 +926,12 @@ void csc_to_csr_mx_selection_and(
       }
       if (quark_zeroed == 1 ){
         zeroed_numbers++;
-        A_csc_values[at_column] = 0;
+       // printf("zeroed %s\n", field);
+	A_csc_values[at_column] = 0;
       }
+else {
+        //printf("NON zeroed %s\n", field);
+}
     }
   }
   printf("zeroed %d fields\n", zeroed_numbers);
@@ -1074,11 +1078,10 @@ void csr_mx_selection(
       *C_csr_values[element_number] = 0;
     }
   }
-
 }
 
 void tbl_write(
-    table_name,
+  char*  table_name,
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
     ){
@@ -1090,11 +1093,10 @@ void tbl_write(
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     MKL_INT iaa = A_JA1[at_column];
-    quark_zeroed = 0;
 
     field = (char*) g_quark_to_string ( iaa );
     if ( field != NULL  &&  A_csc_values[at_column] > 0 ){
-      (fp, "%s\n", field);
+      fprintf(stream, "%s\n", field);
     }
   }
   fclose(stream);
