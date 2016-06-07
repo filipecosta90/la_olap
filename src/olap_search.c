@@ -275,12 +275,10 @@ void read_from_mx (
 
 }
 
-
 void tbl_read(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
-    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     ){
 
   printf("going to read column %d\n", tbl_column);
@@ -419,77 +417,97 @@ void tbl_read(
 void tbl_read_measure(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
-    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     ){
 
-  MKL_INT current_values_size = ARRAY_SIZE;
+  printf("going to read column %d\n", tbl_column);
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT current_values_size = ARRAY_SIZE;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT padding_quark = 0;
   //define COO sparse-matrix M
-  float* coo_values;
-  MKL_INT* coo_rows;
-  MKL_INT* coo_columns;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT* aux_coo_rows;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT* aux_coo_columns;
+  __declspec(align(MEM_LINE_SIZE)) float* aux_coo_values;
 
-  coo_values = (float*) mkl_malloc (current_values_size * sizeof(float), MEM_LINE_SIZE );
-  coo_rows = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
-  coo_columns = (MKL_INT*) mkl_malloc (current_values_size * sizeof(MKL_INT), MEM_LINE_SIZE );
+  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+  aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+  aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
 
-
-  assert(coo_values != NULL);
-  assert(coo_rows != NULL);
-  assert(coo_columns != NULL);
+  assert(aux_coo_rows != NULL);
+  assert(aux_coo_columns != NULL);
+  assert(aux_coo_values != NULL);
 
   FILE* stream = fopen(table_name, "r");
-  char line[1024];
-  MKL_INT number_rows = - 1;
-  MKL_INT number_columns = -1 ;
-  MKL_INT element_number = 1;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT number_rows = - 1;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT number_columns = -1 ;
+  __declspec(align(MEM_LINE_SIZE)) MKL_INT element_number = 1;
   MKL_INT job[8];
-  MKL_INT padding_quark = 0;
 
-  // get to know how many quarks were used before
-  MKL_INT array_pos = *quark_global_pos;
-  MKL_INT initial_quark = *quark_start_end[array_pos];
-  if (initial_quark > 1 ){
-    padding_quark = initial_quark;
-  }
+  float value;
+  char line[1024];
+
   MKL_INT quark_field;
-  MKL_INT global_quark;
+  MKL_INT current_major_row;
+  current_major_row = 0;
   float element_value = 0.0;
-  char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+
+
 
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char* tmp_field = strdup(line);
+  char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     field = getfield(tmp_field, tbl_column, field);
-
-    /* if arrays are full double its size */
-    if ( element_number >= current_values_size ){
-      current_values_size *= GROWTH_FACTOR;
-      coo_values = (float*) mkl_realloc(coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
-      coo_rows = (MKL_INT*) mkl_realloc(coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
-      coo_columns = (MKL_INT*) mkl_realloc(coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+    quark_field = (MKL_INT) g_quark_from_string (field);
+    element_value = atof(field);
+    // for calculating the number of rows
+    if (current_major_row < (MKL_INT) quark_field ){
+      current_major_row = (MKL_INT) quark_field;
     }
 
-    coo_values[element_number] = atof(field);
-    coo_columns[element_number] = element_number;
-    coo_rows[element_number] = element_number;
+    if ( element_number >= current_values_size ){
+      current_values_size *= GROWTH_FACTOR;
+      aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+      aux_coo_columns = (MKL_INT*) realloc(aux_coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+      aux_coo_values = (float*) realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
+    }
 
-    free(tmp_field);
+    /* normal coo property */
+    aux_coo_values[element_number] = element_value;
+    aux_coo_columns[element_number] = element_number;
+    aux_coo_rows[element_number]=  quark_field - 1 ;
+
   }
-
   fclose(stream);
 
+  printf("\treaded %d lines from column,\n\tresulting in a untouched %d x %d matrix\n", element_number, current_major_row , element_number );
 
-  array_pos++;
-  MKL_INT end_quark = global_quark;
-  (*quark_start_end)[array_pos] = end_quark;
-  *quark_global_pos = array_pos;
+  if (
+      // in case it cant old the last element containing the NNZ
+      ( (element_number+1) >= current_values_size )
+      ||
+      // in case the matrix aint squared and it cant old the last element containing the NNZ + the padding of 1
+      ( (current_major_row < number_columns) && (element_number+2) >= current_values_size )
+     ){
+    current_values_size *= GROWTH_FACTOR;
+    aux_coo_rows = (MKL_INT*) realloc(aux_coo_rows, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+    aux_coo_columns = (MKL_INT*) realloc(aux_coo_columns, (current_values_size) * GROWTH_FACTOR * sizeof(MKL_INT) );
+    aux_coo_values = (float*) realloc(aux_coo_values, (current_values_size) * GROWTH_FACTOR * sizeof(float) );
+  }
 
+  if ( ((MKL_INT)current_major_row) < element_number ){
 
+    aux_coo_values[element_number] = 0.0;
+    aux_coo_columns[element_number] = element_number;
+    aux_coo_rows[element_number] = element_number;
+    printf("\tpadding from (%d x %d) to (%d x %d)\n", ((MKL_INT) current_major_row), element_number, element_number, element_number);
+  }
+  else {
+    printf("no padding needed -- already squared (%d x %d)\n", element_number, element_number);
+  }
 
   MKL_INT NNZ = element_number;
-  number_columns = element_number;
   number_rows = element_number;
+  number_columns = element_number;
 
   /////////////////////////////////
   //   CONVERT FROM COO TO CSR
@@ -519,13 +537,18 @@ void tbl_read_measure(
   *A_IA = (MKL_INT*) mkl_malloc (((number_rows+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   sparse_status_t status_coo_csr;
-  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &status_coo_csr);
-  mkl_free(coo_values);
-  mkl_free(coo_rows);
-  mkl_free(coo_columns);
+  mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, aux_coo_values, aux_coo_rows, aux_coo_columns, &status_coo_csr);
+  printf("\tconversion from coo to csr ok?: \n");
+  check_errors(status_coo_csr);
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
+
+  free( aux_coo_values );
+  free(  aux_coo_columns );
+  free ( aux_coo_rows );
+
+  printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
 }
 
 void tbl_read_filter(
@@ -858,26 +881,28 @@ void csc_to_csr_mx_selection_and(
   job[5] = 1;
   sparse_status_t status_convert_csc;
 
-
   char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 
   MKL_INT quark_zeroed = 0;
   MKL_INT index;
   MKL_INT cols;
+  MKL_INT zeroed_numbers = 0;
+  MKL_INT non_zeroed = 0;
 
-  for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
+  for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
-    MKL_INT iaa = A_IA1[at_column];
+    MKL_INT iaa = A_JA1[at_column];
+    quark_zeroed = 0;
+	iaa--; // due to quarks start in 1 
 
     field = (char*) g_quark_to_string ( iaa );
-    if (field == NULL){
-      printf("error in quark translation from (%d,%d)\n", iaa,at_column);
+    //	printf("%s\n", field);    
+    if (field == NULL ){
+      	printf("ERRORORORORORO\n");
     }
-    if ( field != NULL == ){
-      //printf("row translated into: %s\n",field);
-      MKL_INT returned_strccmp = strcmp( field , comparation_key );
+    if ( field != NULL   ){
+      MKL_INT returned_strcmp = strcmp( field , comparation_key );
       MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
-
       if (
           ( opp_code == LESS  && returned_strcmp >= 0 )
           ||
@@ -901,12 +926,18 @@ void csc_to_csr_mx_selection_and(
         quark_zeroed = 1;
       }
       if (quark_zeroed == 1 ){
-        A_csc_values[at_column] = 0;
+        zeroed_numbers++;
+       // printf("zeroed %s\n", field);
+	A_csc_values[at_column] = 0;
       }
+else {
+	non_zeroed++;
+        //printf("NON zeroed %s\n", field);
+}
     }
-
   }
-
+  printf("zeroed %d fields\n", zeroed_numbers);
+  printf("non zeroed %d fields\n", non_zeroed);
   /////////////////////////////////
   //   CONVERT C from CSC to CSR
   ////////////////////////////////
@@ -934,6 +965,8 @@ void csc_to_csr_mx_selection_and(
   *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc (( (A_number_rows + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csr);
+  printf("\tconversion from csc to csr ok?: \n");
+  check_errors(status_convert_csr);
 
   *C_number_rows = A_number_rows ;
   *C_number_columns = A_number_columns;
@@ -1048,7 +1081,25 @@ void csr_mx_selection(
       *C_csr_values[element_number] = 0;
     }
   }
+}
 
+void tbl_write(
+  char*  table_name,
+    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    ){
+  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  FILE* stream = fopen(table_name, "w");
+  char line[1024];
+  for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
+    // insert start of column int C_IA1
+    MKL_INT iaa = A_JA1[at_column];
+    field = (char*) g_quark_to_string ( iaa );
+    if ( field != NULL  &&  A_csc_values[at_column] > 0 ){
+      fprintf(stream, "%s\n", field);
+    }
+  }
+  fclose(stream);
 }
 
 

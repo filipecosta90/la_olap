@@ -76,15 +76,13 @@ void read_from_mx (
 void tbl_read(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
-    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     );
 
 void tbl_read_measure(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
-    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     );
 
 void tbl_read_filter(
@@ -95,6 +93,12 @@ void tbl_read_filter(
     );
 
 void check_errors( sparse_status_t stat );
+
+void tbl_write(
+    char* table_name,
+    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    );
 
 void csc_to_csr_mx_selection_and(
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
