@@ -1,0 +1,57 @@
+running for dataset 32 n=5 times for par version
+pg_ctl: server is running (PID: 33312)
+/home/a57816/postgres/bin/postgres "-D" "/home/a57816/postgres/data"
+Started POSTGRES
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 78276344.00
+(1 row)
+
+Time: 824840.386 ms
+Timing is off.
+4431 killed
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 78276344.00
+(1 row)
+
+Time: 4963.713 ms
+Timing is off.
+4480 killed
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 78276344.00
+(1 row)
+
+Time: 4748.592 ms
+Timing is off.
+4493 killed
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 78276344.00
+(1 row)
+
+Time: 5946.070 ms
+Timing is off.
+4507 killed
+SET
+Timing is on.
+ l_returnflag | l_linestatus |     sum     
+--------------+--------------+-------------
+ N            | O            | 78276344.00
+(1 row)
+
+Time: 4519.026 ms
+Timing is off.
+4521 killed
+pg_ctl: server is running (PID: 33312)
+/home/a57816/postgres/bin/postgres "-D" "/home/a57816/postgres/data"
+Done...

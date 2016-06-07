@@ -16,3 +16,5 @@ LOG:  database system was shut down at 2016-06-07 16:40:30 WEST
 LOG:  MultiXact member wraparound protections are now enabled
 LOG:  database system is ready to accept connections
 LOG:  autovacuum launcher started
+LOG:  could not send data to client: Broken pipe
+FATAL:  connection to client lost
