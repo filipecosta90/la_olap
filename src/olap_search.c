@@ -445,7 +445,6 @@ void tbl_read_measure(
   float value;
   char line[1024];
 
-
   MKL_INT quark_field;
   MKL_INT current_major_row;
   current_major_row = 0;
@@ -1076,6 +1075,29 @@ void csr_mx_selection(
     }
   }
 
+}
+
+void tbl_write(
+    table_name,
+    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    ){
+
+  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  FILE* stream = fopen(table_name, "w");
+  char line[1024];
+
+  for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
+    // insert start of column int C_IA1
+    MKL_INT iaa = A_JA1[at_column];
+    quark_zeroed = 0;
+
+    field = (char*) g_quark_to_string ( iaa );
+    if ( field != NULL  &&  A_csc_values[at_column] > 0 ){
+      (fp, "%s\n", field);
+    }
+  }
+  fclose(stream);
 }
 
 
