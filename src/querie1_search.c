@@ -281,6 +281,10 @@ int main( int argc, char* argv[]){
   quantity_JA_csc = (MKL_INT*) mkl_malloc (( quantity_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   quantity_IA_csc = (MKL_INT*) mkl_malloc ((( quantity_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
+  intermediate_csr_values = (float*) mkl_malloc (( (quantity_nnz) * sizeof(float) ), MEM_LINE_SIZE );
+  intermediate_JA = (MKL_INT*) mkl_malloc (((quantity_nnz) * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  intermediate_IA = (MKL_INT*) mkl_malloc ((( quantity_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
   // Convert from CSR to CSC
   mkl_scsrcsc(job_csr_csc, &quantity_nnz, quantity_csr_values, quantity_JA, quantity_IA, quantity_csc_values, quantity_JA_csc, quantity_IA_csc, &status_convert_to_csc);
   printf("conversion of quantity matrix from CSR to CSC ok?\n\t");
@@ -375,11 +379,6 @@ status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_
       &projection_csr_values, &projection_JA, &projection_IA,
       &projection_nnz, &projection_rows, &projection_columns
       );
-
-  csr_tbl_write("projection.tbl" ,
-	projection_csr_values, projection_JA, projection_IA,
- 	projection_nnz, projection_rows, projection_columns
-); 
  
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
   printf("to CSR projection ok?\n\t");
@@ -392,24 +391,45 @@ status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_
     
     
     char transa = 'n';
-    double alpha = 1.;
-    double beta = 0.;
+    float alpha = 1.;
+    float beta = 0.;
     char matdescra_f[6] = "G  F ";
-    mkl_scsrmv(&transa, &dim, &dim, &alpha, matdescra_f, quantity_csr_values, quantity_JA, quantity_IA, quantity_IA+1, bang, &beta, aggregation_vector);
+  /*  mkl_scsrmv(&transa, &quantity_columns, &quantity_columns, &alpha, matdescra_f, quantity_csr_values, quantity_JA, quantity_IA, quantity_IA+1, bang_vector, &beta, aggregation_vector);
     
     for (int pos =0; pos < quantity_columns ; pos++){
-        if ( aggregation_vector[pos] > 0 ){
-            printf("%f \n", aggregation_vector[pos]);
-        }
+	    
+        printf("%f \n", aggregation_vector[pos]);
+
     }
     
-  /*aggregation_result = mkl_sparse_s_mv (
+  aggregation_result = mkl_sparse_s_mv (
       SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 0.0,  aggregation_vector
       );
   */
   //  printf("aggregation ok?\n\t");
  // check_errors(aggregation_result);
   
+
+  intermediate_result = mkl_sparse_spmm (
+      SPARSE_OPERATION_NON_TRANSPOSE,
+      selection_matrix, 
+      quantity_matrix,      
+&intermediate_matrix
+      );
+  printf("intermediate ok?\n\t");
+  check_errors(intermediate_result);
+
+
+intermediate_result = mkl_sparse_s_export_csr (intermediate_matrix, SPARSE_INDEX_BASE_ZERO 
+, &intermediate_rows, &intermediate_columns, &intermediate_IA, &intermediate_IA+1,
+&intermediate_JA, &intermediate_csr_values);
+ printf("intermediate ok?\n\t");
+  check_errors(intermediate_result);
+
+  csr_tbl_write("quantity_times_shipdate.tbl" ,
+	intermediate_csr_values, intermediate_JA, intermediate_IA,
+ 	intermediate_nnz, intermediate_rows, intermediate_columns
+); 
 
   printf(" compute intermediate_vector =  selection * aggregation \n");
   // compute intermediate_vector = selection * aggregation

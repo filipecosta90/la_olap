@@ -55,7 +55,7 @@ echo "Started POSTGRES"
 
 for (( seq_num=1; seq_num <= samples ; ++seq_num ))
 do
-/home/a57816/ESC_NAS/NPB3.3.1/dstat -tvfnml --output Dstat/"postgressql_dstat".csv >> /dev/null &
+/home/a57816/ESC_NAS/NPB3.3.1/dstat -tvfnml --output "postgressql_dstat".csv >> /dev/null &
 ~/postgres/bin/psql -U a57816 postgres -f /home/a57816/CPD_PI_OLAP/queries/"${version}"/"${dataset}".sql | grep "Time:" | sed 's/[^0-9.]*//g' >> "/home/a57816/CPD_PI_OLAP/src/timing/pgres_${version}_${dataset}.csv"
 done
 
