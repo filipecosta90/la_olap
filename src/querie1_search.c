@@ -327,9 +327,10 @@ int main( int argc, char* argv[]){
   /** ---------------------------------------------------------------------------
    ** Populate Vectors
    ** -------------------------------------------------------------------------*/
-  bang_vector = (float*) malloc ( ((quantity_columns+2) * sizeof(float)));
-  aggregation_vector = (float*) mkl_malloc ( ((quantity_columns+2) * sizeof(float)), MEM_LINE_SIZE );
-  final_vector = (float*) mkl_malloc ( ((return_flag_rows+2) * sizeof(float)), MEM_LINE_SIZE );
+  bang_vector = (float*) malloc ( ((quantity_columns+1) * sizeof(float)));
+  bang_vector[0:(quantity_columns-1)] = 1.0;  
+aggregation_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
+  final_vector = (float*) mkl_malloc ( ((return_flag_rows+1) * sizeof(float)), MEM_LINE_SIZE );
 
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
@@ -378,6 +379,7 @@ int main( int argc, char* argv[]){
   printf(" compute compute aggregation = quantity * bang\n");
 
   // compute aggregation = quantity * bang
+  // results in a vector
   aggregation_result = mkl_sparse_s_mv (
       SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 1.0,  aggregation_vector
       );
@@ -386,6 +388,7 @@ int main( int argc, char* argv[]){
 
   printf(" compute intermediate_result = projection * selection\n");
   // compute intermediate_result = projection * selection
+  // results in a matrix
   intermediate_result = mkl_sparse_spmm (
       SPARSE_OPERATION_NON_TRANSPOSE,
       projection_matrix,
@@ -398,6 +401,7 @@ int main( int argc, char* argv[]){
   printf(" compute final_result = intermediate_result * aggregation\n");
 
   // compute final_result = intermediate_result * aggregation
+  //
   final_result = mkl_sparse_s_mv (
       SPARSE_OPERATION_NON_TRANSPOSE, 1.0, intermediate_matrix , descrA, aggregation_vector, 1.0,  final_vector
       );
@@ -412,7 +416,9 @@ int main( int argc, char* argv[]){
   // STOP TIME MEASUREMENT
   ////////////////////////
   GET_TIME(global_time_stop);
-
+  free(bang_vector);
+free(aggregation_vector);
+free(final_vector);
   writeResults( argv[1] );
 
   return 0;
