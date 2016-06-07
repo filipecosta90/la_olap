@@ -864,20 +864,19 @@ void csc_to_csr_mx_selection_and(
   MKL_INT quark_zeroed = 0;
   MKL_INT index;
   MKL_INT cols;
-
-  for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
+  MKL_INT zeroed_numbers = 0;
+  for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
-    MKL_INT iaa = A_IA1[at_column];
-
+    MKL_INT iaa = A_JA1[at_column];
+	
     field = (char*) g_quark_to_string ( iaa );
-    if (field == NULL){
-      printf("error in quark translation from (%d,%d)\n", iaa,at_column);
+//	printf("%s\n", field);    
+if (field == NULL && A_csc_values[at_column] > 0 ){
+//      printf("error in quark translation from (%d,%d)=\t\t [%d,%d,%f]\t%s\n", iaa,at_column,A_IA1[at_column],A_JA1[at_column], A_csc_values[at_column],field);
     }
-    if ( field != NULL == ){
-      //printf("row translated into: %s\n",field);
+    if ( field != NULL   ){
       MKL_INT returned_strcmp = strcmp( field , comparation_key );
       MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
-
       if (
           ( opp_code == LESS  && returned_strcmp >= 0 )
           ||
@@ -901,12 +900,12 @@ void csc_to_csr_mx_selection_and(
         quark_zeroed = 1;
       }
       if (quark_zeroed == 1 ){
-        A_csc_values[at_column] = 0;
+        zeroed_numbers++;
+	A_csc_values[at_column] = 0;
       }
     }
-
   }
-
+ printf("zeroed %d fields\n", zeroed_numbers);
   /////////////////////////////////
   //   CONVERT C from CSC to CSR
   ////////////////////////////////
@@ -934,7 +933,9 @@ void csc_to_csr_mx_selection_and(
   *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc (( (A_number_rows + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csr);
-
+  printf("\tconversion from csc to csr ok?: \n");
+  check_errors(status_convert_csr);
+ 
   *C_number_rows = A_number_rows ;
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;

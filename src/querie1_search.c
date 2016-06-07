@@ -307,14 +307,8 @@ int main( int argc, char* argv[]){
   shipdate_csc_values = (float*) mkl_malloc (( shipdate_nnz * sizeof(float) ), MEM_LINE_SIZE );
   shipdate_JA_csc = (MKL_INT*) mkl_malloc (( shipdate_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
   shipdate_IA_csc = (MKL_INT*) mkl_malloc (((shipdate_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
-  // Memory Allocation
-  selection_csr_values = (float*) mkl_malloc (( shipdate_nnz * sizeof(float) ), MEM_LINE_SIZE );
-  selection_JA = (MKL_INT*) mkl_malloc (( shipdate_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
-  selection_IA = (MKL_INT*) mkl_malloc (((shipdate_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
-
-
-  // Convert from CSR to CSC
+  
+// Convert from CSR to CSC
   mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &status_convert_to_csc);
   printf("conversion of shipdate matrix from CSR to CSC ok?\n\t");
   check_errors(status_convert_to_csc);
@@ -326,20 +320,20 @@ int main( int argc, char* argv[]){
   /** ---------------------------------------------------------------------------
    ** Auxiliar Vars
    ** -------------------------------------------------------------------------*/
+
   sparse_status_t selection_result;
   sparse_status_t aggregation_result;
   sparse_status_t intermediate_result;
   sparse_status_t final_result;
-
   struct matrix_descr descrA;
   descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
 
   /** ---------------------------------------------------------------------------
    ** Populate Vectors
    ** -------------------------------------------------------------------------*/
-  bang_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
-  aggregation_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
-  final_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
+  bang_vector = (float*) malloc ( ((quantity_columns+2) * sizeof(float)));
+  aggregation_vector = (float*) mkl_malloc ( ((quantity_columns+2) * sizeof(float)), MEM_LINE_SIZE );
+  final_vector = (float*) mkl_malloc ( ((return_flag_rows+2) * sizeof(float)), MEM_LINE_SIZE );
 
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
