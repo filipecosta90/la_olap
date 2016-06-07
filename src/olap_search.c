@@ -450,16 +450,15 @@ void tbl_read_measure(
   current_major_row = 0;
   float element_value = 0.0;
 
-  char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+
 
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char* tmp_field = strdup(line);
-
+  char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     field = getfield(tmp_field, tbl_column, field);
     quark_field = (MKL_INT) g_quark_from_string (field);
     element_value = atof(field);
-
     // for calculating the number of rows
     if (current_major_row < (MKL_INT) quark_field ){
       current_major_row = (MKL_INT) quark_field;
@@ -888,16 +887,18 @@ void csc_to_csr_mx_selection_and(
   MKL_INT index;
   MKL_INT cols;
   MKL_INT zeroed_numbers = 0;
+  MKL_INT non_zeroed = 0;
 
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     MKL_INT iaa = A_JA1[at_column];
     quark_zeroed = 0;
+	iaa--; // due to quarks start in 1 
 
     field = (char*) g_quark_to_string ( iaa );
     //	printf("%s\n", field);    
-    if (field == NULL && A_csc_values[at_column] > 0 ){
-      //      printf("error in quark translation from (%d,%d)=\t\t [%d,%d,%f]\t%s\n", iaa,at_column,A_IA1[at_column],A_JA1[at_column], A_csc_values[at_column],field);
+    if (field == NULL ){
+      	printf("ERRORORORORORO\n");
     }
     if ( field != NULL   ){
       MKL_INT returned_strcmp = strcmp( field , comparation_key );
@@ -930,11 +931,13 @@ void csc_to_csr_mx_selection_and(
 	A_csc_values[at_column] = 0;
       }
 else {
+	non_zeroed++;
         //printf("NON zeroed %s\n", field);
 }
     }
   }
   printf("zeroed %d fields\n", zeroed_numbers);
+  printf("non zeroed %d fields\n", non_zeroed);
   /////////////////////////////////
   //   CONVERT C from CSC to CSR
   ////////////////////////////////
@@ -1085,15 +1088,12 @@ void tbl_write(
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
     ){
-
   char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
   FILE* stream = fopen(table_name, "w");
   char line[1024];
-
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     MKL_INT iaa = A_JA1[at_column];
-
     field = (char*) g_quark_to_string ( iaa );
     if ( field != NULL  &&  A_csc_values[at_column] > 0 ){
       fprintf(stream, "%s\n", field);

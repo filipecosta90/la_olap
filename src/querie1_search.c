@@ -217,6 +217,7 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   __declspec(align(MEM_LINE_SIZE))  float* bang_vector;
   __declspec(align(MEM_LINE_SIZE))  float* aggregation_vector;
+  __declspec(align(MEM_LINE_SIZE))  float* intermediate_vector;
   __declspec(align(MEM_LINE_SIZE))  float* final_vector;
 
 
@@ -310,8 +311,10 @@ int main( int argc, char* argv[]){
   check_errors(status_convert_to_csc);
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
-  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_matrix , SPARSE_INDEX_BASE_ZERO,
-      shipdate_rows, shipdate_columns, shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values );
+  status_to_csr = mkl_sparse_s_create_csr ( 
+&shipdate_matrix , SPARSE_INDEX_BASE_ZERO,      shipdate_rows, shipdate_columns, 
+shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
+ );
 
   /** ---------------------------------------------------------------------------
    ** Auxiliar Vars
@@ -328,12 +331,15 @@ int main( int argc, char* argv[]){
    ** Populate Vectors
    ** -------------------------------------------------------------------------*/
   bang_vector = (float*) malloc ( ((quantity_columns+1) * sizeof(float)));
+ for (int pos =0; pos < projection_columns ; pos++){
+  bang_vector[pos] = 1.0; 
+  }
+
   aggregation_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
-  final_vector = (float*) mkl_malloc ( ((return_flag_rows+1) * sizeof(float)), MEM_LINE_SIZE );
+  intermediate_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
+  final_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
 
-  bang_vector[0:(quantity_columns-1)] = 1.0;
-
-  /** ---------------------------------------------------------------------------
+   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
@@ -360,8 +366,6 @@ int main( int argc, char* argv[]){
   printf("to CSR selection ok?\n\t");
   check_errors(status_to_csr);
 
-
-
   // compute projection = return_flag krao line_status
   printf("start compute projection = return_flag krao line_status\n");
   csc_csr_krao(
@@ -386,25 +390,32 @@ int main( int argc, char* argv[]){
       );
   printf("aggregation ok?\n\t");
   check_errors(aggregation_result);
+ for (int pos =0; pos < projection_columns ; pos++){
+    if ( aggregation_vector[pos] > 0 ){
+      printf("%f \n", aggregation_vector[pos]);
+    }
+  }
 
-  printf(" compute intermediate_result = projection * selection\n");
-  // compute intermediate_result = projection * selection
-  // results in a matrix
-  intermediate_result = mkl_sparse_spmm (
-      SPARSE_OPERATION_NON_TRANSPOSE,
-      projection_matrix,
-      selection_matrix, 
-      &intermediate_matrix
+  printf(" compute intermediate_vector =  selection * aggregation \n");
+  // compute intermediate_vector = selection * aggregation
+  // results in a vector
+  intermediate_result = mkl_sparse_s_mv (
+      SPARSE_OPERATION_NON_TRANSPOSE, 1.0, selection_matrix , descrA, aggregation_vector, 0.0,  intermediate_vector
       );
   printf("intermediate ok?\n\t");
   check_errors(intermediate_result);
+ for (int pos =0; pos < projection_columns ; pos++){
+    if ( intermediate_vector[pos] > 0 ){
+      printf("%f \n", intermediate_vector[pos]);
+    }
+  }
 
-  printf(" compute final_result = intermediate_result * aggregation\n");
+  printf(" compute final_result = projection * intermediate_vector\n");
 
   // compute final_result = intermediate_result * aggregation
   //
   final_result = mkl_sparse_s_mv (
-      SPARSE_OPERATION_NON_TRANSPOSE, 1.0, intermediate_matrix , descrA, aggregation_vector, 0.0,  final_vector
+      SPARSE_OPERATION_NON_TRANSPOSE, 1.0, projection_matrix , descrA, intermediate_vector, 0.0,  final_vector
       );
 
   printf(" STOP TIME\n");
