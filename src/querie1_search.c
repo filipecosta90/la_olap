@@ -389,11 +389,26 @@ status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_
 
   // compute aggregation = quantity * bang
   // results in a vector
-  aggregation_result = mkl_sparse_s_mv (
+    
+    
+    char transa = 'n';
+    double alpha = 1.;
+    double beta = 0.;
+    char matdescra_f[6] = "G  F ";
+    mkl_scsrmv(&transa, &dim, &dim, &alpha, matdescra_f, quantity_csr_values, quantity_JA, quantity_IA, quantity_IA+1, bang, &beta, aggregation_vector);
+    
+    for (int pos =0; pos < quantity_columns ; pos++){
+        if ( aggregation_vector[pos] > 0 ){
+            printf("%f \n", aggregation_vector[pos]);
+        }
+    }
+    
+  /*aggregation_result = mkl_sparse_s_mv (
       SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 0.0,  aggregation_vector
       );
-  printf("aggregation ok?\n\t");
-  check_errors(aggregation_result);
+  */
+  //  printf("aggregation ok?\n\t");
+ // check_errors(aggregation_result);
   
 
   printf(" compute intermediate_vector =  selection * aggregation \n");
