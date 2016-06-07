@@ -275,7 +275,6 @@ void read_from_mx (
 
 }
 
-
 void tbl_read(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
