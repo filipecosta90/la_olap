@@ -94,9 +94,15 @@ void tbl_read_filter(
 
 void check_errors( sparse_status_t stat );
 
-void tbl_write(
+void csc_tbl_write(
     char* table_name,
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    );
+
+void csr_tbl_write(
+    char* table_name,
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
     );
 
@@ -105,8 +111,7 @@ void csc_to_csr_mx_selection_and(
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns,
-    MKL_INT *quark_start_end, MKL_INT quark_global_pos_array
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );
 
 void csr_mx_selection_or(

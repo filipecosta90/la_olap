@@ -358,11 +358,10 @@ shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
       shipdate_nnz, shipdate_rows, shipdate_columns,
       GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01",
       &selection_csr_values, &selection_JA, &selection_IA,
-      &selection_nnz, &selection_rows, &selection_columns,
-      quark_start_end, 4
+      &selection_nnz, &selection_rows, &selection_columns
       );
-
-  status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
+ 
+status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
   printf("to CSR selection ok?\n\t");
   check_errors(status_to_csr);
 
@@ -377,6 +376,11 @@ shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
       &projection_nnz, &projection_rows, &projection_columns
       );
 
+  csr_tbl_write("projection.tbl" ,
+	projection_csr_values, projection_JA, projection_IA,
+ 	projection_nnz, projection_rows, projection_columns
+); 
+ 
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
   printf("to CSR projection ok?\n\t");
   check_errors(status_to_csr);
@@ -390,11 +394,7 @@ shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
       );
   printf("aggregation ok?\n\t");
   check_errors(aggregation_result);
- for (int pos =0; pos < projection_columns ; pos++){
-    if ( aggregation_vector[pos] > 0 ){
-      printf("%f \n", aggregation_vector[pos]);
-    }
-  }
+  
 
   printf(" compute intermediate_vector =  selection * aggregation \n");
   // compute intermediate_vector = selection * aggregation

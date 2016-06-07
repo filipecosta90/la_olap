@@ -849,8 +849,7 @@ void csc_to_csr_mx_selection_and(
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns,
-    MKL_INT *quark_start_end, MKL_INT quark_global_pos_array
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
 
   MKL_INT job[8];
@@ -883,17 +882,19 @@ void csc_to_csr_mx_selection_and(
 
   char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
 
-  MKL_INT quark_zeroed = 0;
+  MKL_INT non_zero = 0;
   MKL_INT index;
   MKL_INT cols;
   MKL_INT zeroed_numbers = 0;
   MKL_INT non_zeroed = 0;
-
+   MKL_INT returned_strcmp ;
+      MKL_INT returned_strcmp2; 
+	
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     MKL_INT iaa = A_JA1[at_column];
-    quark_zeroed = 0;
-	iaa--; // due to quarks start in 1 
+    non_zero = 0;
+	iaa++; // due to quarks start in 1 
 
     field = (char*) g_quark_to_string ( iaa );
     //	printf("%s\n", field);    
@@ -901,34 +902,36 @@ void csc_to_csr_mx_selection_and(
       	printf("ERRORORORORORO\n");
     }
     if ( field != NULL   ){
-      MKL_INT returned_strcmp = strcmp( field , comparation_key );
-      MKL_INT returned_strcmp2 = strcmp( field , comparation_key2 );
-      if (
-          ( opp_code == LESS  && returned_strcmp >= 0 )
+      returned_strcmp = strcmp( field, comparation_key);
+      returned_strcmp2 = strcmp( field, comparation_key2);
+ // printf("(%s %s)=%d (%s,%s)=%d\n", field, comparation_key, returned_strcmp, field, comparation_key2, returned_strcmp2);
+	if (
+          ( (opp_code == LESS)  && (returned_strcmp < 0 ))
           ||
-          ( opp_code == LESS_EQ  && returned_strcmp > 0 )
+          ( (opp_code == LESS_EQ)  && (returned_strcmp <= 0 ))
           ||
-          ( opp_code == GREATER  && returned_strcmp <= 0 )
+          ( (opp_code == GREATER)  && (returned_strcmp > 0 ))
           ||
-          ( opp_code == GREATER_EQ  && returned_strcmp < 0 )
+          ( (opp_code == GREATER_EQ)  && (returned_strcmp >= 0 ))
          ){
-        quark_zeroed = 1;
-      }
+        non_zero = 1;
+//printf("NON ZERO!\n");
+         }
       if (
-          ( opp_code2 == LESS  && returned_strcmp2 >= 0 )
+          ( (opp_code2 == LESS)  && (returned_strcmp2 < 0) && (non_zero ==1) )
           ||
-          ( opp_code2 == LESS_EQ  && returned_strcmp2 > 0 )
+          ( (opp_code2 == LESS_EQ)  && (returned_strcmp2 <= 0) && (non_zero ==1) )
           ||
-          ( opp_code2 == GREATER  && returned_strcmp2 <= 0 )
+          ( (opp_code2 == GREATER)  && (returned_strcmp2 > 0) && (non_zero ==1)  )
           ||
-          ( opp_code2 == GREATER_EQ  && returned_strcmp2 < 0 )
+          ( (opp_code2 == GREATER_EQ)  && (returned_strcmp2 >= 0) && (non_zero ==1) )
          ){
-        quark_zeroed = 1;
-      }
-      if (quark_zeroed == 1 ){
+        non_zero = 1;
+	}
+      if ( non_zero == 0 ){
         zeroed_numbers++;
        // printf("zeroed %s\n", field);
-	A_csc_values[at_column] = 0;
+	A_csc_values[at_column] = 0.0;
       }
 else {
 	non_zeroed++;
@@ -1083,7 +1086,7 @@ void csr_mx_selection(
   }
 }
 
-void tbl_write(
+void csc_tbl_write(
   char*  table_name,
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
@@ -1094,6 +1097,7 @@ void tbl_write(
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     MKL_INT iaa = A_JA1[at_column];
+    iaa++;
     field = (char*) g_quark_to_string ( iaa );
     if ( field != NULL  &&  A_csc_values[at_column] > 0 ){
       fprintf(stream, "%s\n", field);
@@ -1102,6 +1106,62 @@ void tbl_write(
   fclose(stream);
 }
 
+void csr_tbl_write(
+  char*  table_name,
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    ){
+
+  MKL_INT job[8];
+ printf("writing to table %s\n", table_name);
+  /////////////////////////////////////
+  // PREPARE FOR OPERATION
+  /////////////////////////////////////
+  //////////////////////////////////////////
+  ///////   CONVERT A and B from CSR to CSC
+  //////////////////////////////////////////
+
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job[0] = 0;
+
+  // job[1]
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job[1] = 0;
+
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+  sparse_status_t status_convert_csc;
+  __declspec(align(MEM_LINE_SIZE))	float* A_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
+  __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
+
+  A_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float) ), MEM_LINE_SIZE );
+  A_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  A_IA1 = (MKL_INT*) mkl_malloc (((A_NNZ+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csc);
+
+  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  FILE* stream = fopen(table_name, "w");
+  char line[1024];
+  for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
+    // insert start of column int C_IA1
+    MKL_INT iaa = A_JA1[at_column];
+    iaa++;
+    field = (char*) g_quark_to_string ( iaa );
+    if ( field != NULL  &&  A_csc_values[at_column] > 0 ){
+      fprintf(stream, "%s\n", field);
+    }
+  }
+  fclose(stream);
+}
 
 void check_errors( sparse_status_t stat ){
   if ( stat == SPARSE_STATUS_SUCCESS ){
@@ -1503,7 +1563,9 @@ void csc_csr_krao(
   *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc (( ( final_number_rows + 1 ) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
-
+   printf("CSC to CSR ok? ");
+check_errors(status_convert_csr);
+printf("\n");
   *C_number_rows = final_number_rows;
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
