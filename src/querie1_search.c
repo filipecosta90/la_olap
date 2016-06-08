@@ -231,7 +231,7 @@ int main( int argc, char* argv[]){
 
   //conversion status from csr arrays into mkl sparse_matrix_t 
   sparse_status_t status_to_csr;
-
+MKL_INT conversion_info = 0;
   /** ---------------------------------------------------------------------------
    ** Populate Return Flag Matrix
    ** -------------------------------------------------------------------------*/
@@ -248,9 +248,7 @@ int main( int argc, char* argv[]){
   return_flag_IA_csc = (MKL_INT*) mkl_malloc ((( return_flag_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   // Convert from CSR to CSC
-  mkl_scsrcsc(job_csr_csc, &return_flag_nnz, return_flag_csr_values, return_flag_JA, return_flag_IA, return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc, &status_convert_to_csc);
-  printf("conversion of return flag matrix from CSR to CSC ok?\n\t");
-  check_errors(status_convert_to_csc);
+  mkl_scsrcsc(job_csr_csc, &return_flag_nnz, return_flag_csr_values, return_flag_JA, return_flag_IA, return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc, &conversion_info);
 
   /** ---------------------------------------------------------------------------
    ** Populate Line Status Matrix
@@ -268,9 +266,7 @@ int main( int argc, char* argv[]){
   line_status_IA_csc = (MKL_INT*) mkl_malloc ((( line_status_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   // Convert from CSR to CSC
-  mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA_csc, line_status_IA_csc, &status_convert_to_csc);
-  printf("conversion of linestatus matrix from CSR to CSC ok?\n\t");
-  check_errors(status_convert_to_csc);
+  mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA_csc, line_status_IA_csc, &conversion_info);
 
   /** ---------------------------------------------------------------------------
    ** Populate Quantity Matrix
@@ -294,9 +290,7 @@ int main( int argc, char* argv[]){
   intermediate_IA = (MKL_INT*) mkl_malloc ((( quantity_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   // Convert from CSR to CSC
-  mkl_scsrcsc(job_csr_csc, &quantity_nnz, quantity_csr_values, quantity_JA, quantity_IA, quantity_csc_values, quantity_JA_csc, quantity_IA_csc, &status_convert_to_csc);
-  printf("conversion of quantity matrix from CSR to CSC ok?\n\t");
-  check_errors(status_convert_to_csc);
+  mkl_scsrcsc(job_csr_csc, &quantity_nnz, quantity_csr_values, quantity_JA, quantity_IA, quantity_csc_values, quantity_JA_csc, quantity_IA_csc, &conversion_info);
 
   //        convert via sparseBLAS API to Handle containing internal data for 
   //        subsequent Inspector-executor Sparse BLAS operations.
@@ -318,9 +312,8 @@ int main( int argc, char* argv[]){
   shipdate_IA_csc = (MKL_INT*) mkl_malloc (((shipdate_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
   // Convert from CSR to CSC
-  mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &status_convert_to_csc);
-  printf("conversion of shipdate matrix from CSR to CSC ok?\n\t");
-  check_errors(status_convert_to_csc);
+  mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &conversion_info);
+
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
   status_to_csr = mkl_sparse_s_create_csr ( 
@@ -366,6 +359,11 @@ shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
 
  mkl_sparse_optimize(quantity_matrix);
 
+MKL_INT max_threads;
+max_threads = mkl_get_max_threads();
+        mkl_set_num_threads(max_threads);
+
+printf("** Setted max thread on MKL to %d\n", max_threads);
 printf("** START TIME MEASUREMENT\n");
 GET_TIME(global_time_start);
 
@@ -434,7 +432,6 @@ printf("** STOP TIME MEASUREMENT\n");
   mkl_sparse_destroy(shipdate_matrix);
   mkl_sparse_destroy(projection_matrix);
   mkl_sparse_destroy(selection_matrix);
-  mkl_sparse_destroy(intermediate_matrix);
     return 0;
 }
 

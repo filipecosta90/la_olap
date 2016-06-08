@@ -18,3 +18,13 @@ LOG:  database system is ready to accept connections
 LOG:  autovacuum launcher started
 LOG:  could not send data to client: Broken pipe
 FATAL:  connection to client lost
+LOG:  lock file "postmaster.pid" contains wrong PID: 32026 instead of 33312
+LOG:  performing immediate shutdown because data directory lock file is invalid
+LOG:  received immediate shutdown request
+WARNING:  terminating connection because of crash of another server process
+DETAIL:  The postmaster has commanded this server process to roll back the current transaction and exit, because another server process exited abnormally and possibly corrupted shared memory.
+HINT:  In a moment you should be able to reconnect to the database and repeat your command.
+WARNING:  terminating connection because of crash of another server process
+DETAIL:  The postmaster has commanded this server process to roll back the current transaction and exit, because another server process exited abnormally and possibly corrupted shared memory.
+HINT:  In a moment you should be able to reconnect to the database and repeat your command.
+LOG:  database system is shut down
