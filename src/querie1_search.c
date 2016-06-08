@@ -42,9 +42,17 @@
 #include "olap_search.h"
 #include "timer.h"
 
-double global_time_start, global_time_stop, total_time;
+double global_time_start, global_time_stop;
+// intermediate timers
+  double global_time_selection, global_time_projection, global_time_aggregation, global_time_intermediate;
 
 void writeResults ( char* dataset ) {
+double total_time, selection_time, projection_time, aggregation_time, intermediate_time, final_time;
+
+  selection_time = global_time_selection - global_time_start;
+projection_time = global_time_projection - global_time_start;
+aggregation_time = global_time_aggregation - global_time_start;
+intermediate_time = global_time_intermediate - global_time_start;
   total_time = global_time_stop - global_time_start;
   char file_write[80];
   strcpy(file_write, "timing/timings_vec_");
@@ -52,7 +60,7 @@ void writeResults ( char* dataset ) {
   strcat(file_write, ".csv");
 
   FILE* stream = fopen(file_write, "a+");
-  fprintf(stream, "%s,%f\n",dataset, total_time);
+  fprintf(stream, "%s,%f,%f,%f,%f,%f\n",dataset, selection_time, projection_time, aggregation_time, intermediate_time, total_time);
   fclose(stream);
 }
 
@@ -335,7 +343,7 @@ shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
    ** Populate Vectors
    ** -------------------------------------------------------------------------*/
   bang_vector = (float*) malloc ( ((quantity_columns+1) * sizeof(float)));
- for (int pos =0; pos < projection_columns ; pos++){
+ for (int pos =0; pos < line_status_columns ; pos++){
   bang_vector[pos] = 1.0; 
   }
 
@@ -355,7 +363,11 @@ shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
    ** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
    ** -------------------------------------------------------------------------*/
-  GET_TIME(global_time_start);
+
+ mkl_sparse_optimize(quantity_matrix);
+
+printf("** START TIME MEASUREMENT\n");
+GET_TIME(global_time_start);
 
   csc_to_csr_mx_selection_and(
       shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc,
@@ -366,11 +378,11 @@ shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
       );
  
 status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
-  printf("to CSR selection ok?\n\t");
-  check_errors(status_to_csr);
 
+  GET_TIME(global_time_selection);
+
+// mkl_sparse_optimize(selection_matrix);
   // compute projection = return_flag krao line_status
-  printf("start compute projection = return_flag krao line_status\n");
   csc_csr_krao(
       return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc,
       return_flag_nnz, return_flag_rows, return_flag_columns,
@@ -381,102 +393,49 @@ status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_
       );
  
   status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
-  printf("to CSR projection ok?\n\t");
-  check_errors(status_to_csr);
 
-  printf(" compute compute aggregation = quantity * bang\n");
-
-  // compute aggregation = quantity * bang
+// mkl_sparse_optimize(projection_matrix);
+  GET_TIME(global_time_projection);
+  
+// compute aggregation = quantity * bang
   // results in a vector
-    
-    
-    
-  /*  mkl_scsrmv(&transa, &quantity_columns, &quantity_columns, &alpha, matdescra_f, quantity_csr_values, quantity_JA, quantity_IA, quantity_IA+1, bang_vector, &beta, aggregation_vector);
-    
-    for (int pos =0; pos < quantity_columns ; pos++){
-	    
-        printf("%f \n", aggregation_vector[pos]);
-
-    }
     
   aggregation_result = mkl_sparse_s_mv (
       SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 0.0,  aggregation_vector
       );
-  */
-  //  printf("aggregation ok?\n\t");
- // check_errors(aggregation_result);
-    float       alpha = 1.0, beta = 0.0;
-    char        transa;
-    char        matdescra[6];
-    transa = 'N';
-    matdescra[0] = 'G';
-    matdescra[1] = 'U';
-    matdescra[2] = 'N';
-    matdescra[3] = 'C';
-    mkl_scsrmm(&transa, &selection_columns, &selection_columns, &selection_rows,
-               &alpha, matdescra, selection_csr_values, &selection_JA, &selection_IA, &(selection_IA[1]),
-               &quantity_csr_values, &selection_columns,  &beta, intermediate_csr_values, &selection_rows
-               );
 
- /* intermediate_result = mkl_sparse_spmm (
-      SPARSE_OPERATION_NON_TRANSPOSE,
-      selection_matrix, 
-      quantity_matrix,      
-&intermediate_matrix
-      );
-  printf("intermediate ok?\n\t");
-  check_errors(intermediate_result);
-
-
-intermediate_result = mkl_sparse_s_export_csr (intermediate_matrix, SPARSE_INDEX_BASE_ZERO 
-, &intermediate_rows, &intermediate_columns, &intermediate_IA, &intermediate_IA+1,
-&intermediate_JA, &intermediate_csr_values);
- printf("intermediate ok?\n\t");
-  check_errors(intermediate_result);
-  */
-    printf("intermediate ok?\n\t");
-
-  csr_tbl_write("quantity_times_shipdate.tbl" ,
-	intermediate_csr_values, intermediate_JA, intermediate_IA,
- 	intermediate_nnz, intermediate_rows, intermediate_columns
-); 
-
-  printf(" compute intermediate_vector =  selection * aggregation \n");
+  GET_TIME(global_time_aggregation);
   // compute intermediate_vector = selection * aggregation
   // results in a vector
   intermediate_result = mkl_sparse_s_mv (
       SPARSE_OPERATION_NON_TRANSPOSE, 1.0, selection_matrix , descrA, aggregation_vector, 0.0,  intermediate_vector
       );
-  printf("intermediate ok?\n\t");
-  check_errors(intermediate_result);
- for (int pos =0; pos < projection_columns ; pos++){
-    if ( intermediate_vector[pos] > 0 ){
-      printf("%f \n", intermediate_vector[pos]);
-    }
-  }
 
-  printf(" compute final_result = projection * intermediate_vector\n");
-
+  GET_TIME(global_time_intermediate);
   // compute final_result = intermediate_result * aggregation
   //
   final_result = mkl_sparse_s_mv (
       SPARSE_OPERATION_NON_TRANSPOSE, 1.0, projection_matrix , descrA, intermediate_vector, 0.0,  final_vector
       );
 
-  printf(" STOP TIME\n");
-  for (int pos =0; pos < projection_columns ; pos++){
-    if ( final_vector[pos] > 0 ){
-      printf("%f \n", final_vector[pos]);
-    }
-  }
-  ////////////////////////
+ ////////////////////////
   // STOP TIME MEASUREMENT
   ////////////////////////
   GET_TIME(global_time_stop);
-
+printf("** STOP TIME MEASUREMENT\n");
   writeResults( argv[1] );
-
+  for (int pos =0; pos < projection_columns ; pos++){
+	if ( final_vector[pos] != 0) { 
+    printf("%f \n", final_vector[pos]);
+}
+  }
   return 0;
+
+ mkl_sparse_destroy(quantity_matrix);
+  mkl_sparse_destroy(shipdate_matrix);
+  mkl_sparse_destroy(projection_matrix);
+  mkl_sparse_destroy(selection_matrix);
+  mkl_sparse_destroy(intermediate_matrix);
 
 }
 

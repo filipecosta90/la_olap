@@ -365,7 +365,7 @@ void tbl_read(
     printf("\tpadding from (%d x %d) to (%d x %d)\n", ((MKL_INT) current_major_row), element_number, element_number, element_number);
   }
   else {
-    printf("no padding needed -- already squared (%d x %d)\n", element_number, element_number);
+    printf("\tno padding needed -- already squared (%d x %d)\n", element_number, element_number);
   }
 
   MKL_INT NNZ = element_number;
@@ -899,12 +899,11 @@ void csc_to_csr_mx_selection_and(
     field = (char*) g_quark_to_string ( iaa );
     //	printf("%s\n", field);    
     if (field == NULL ){
-      	printf("ERRORORORORORO\n");
+      	printf("ERROR\n");
     }
     if ( field != NULL   ){
       returned_strcmp = strcmp( field, comparation_key);
       returned_strcmp2 = strcmp( field, comparation_key2);
- // printf("(%s %s)=%d (%s,%s)=%d\n", field, comparation_key, returned_strcmp, field, comparation_key2, returned_strcmp2);
 	if (
           ( (opp_code == LESS)  && (returned_strcmp < 0 ))
           ||
@@ -915,7 +914,6 @@ void csc_to_csr_mx_selection_and(
           ( (opp_code == GREATER_EQ)  && (returned_strcmp >= 0 ))
          ){
         non_zero = 1;
-//printf("NON ZERO!\n");
          }
       if (
           ( (opp_code2 == LESS)  && (returned_strcmp2 < 0) && (non_zero ==1) )
@@ -939,8 +937,6 @@ else {
 }
     }
   }
-  printf("zeroed %d fields\n", zeroed_numbers);
-  printf("non zeroed %d fields\n", non_zeroed);
   /////////////////////////////////
   //   CONVERT C from CSC to CSR
   ////////////////////////////////
@@ -968,8 +964,6 @@ else {
   *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc (( (A_number_rows + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, A_csc_values, A_JA1, A_IA1, &status_convert_csr);
-  printf("\tconversion from csc to csr ok?: \n");
-  check_errors(status_convert_csr);
 
   *C_number_rows = A_number_rows ;
   *C_number_columns = A_number_columns;
@@ -1563,9 +1557,6 @@ void csc_csr_krao(
   *C_JA = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
   *C_IA = (MKL_INT*) mkl_malloc (( ( final_number_rows + 1 ) * sizeof(MKL_INT)), MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &status_convert_csr);
-   printf("CSC to CSR ok? ");
-check_errors(status_convert_csr);
-printf("\n");
   *C_number_rows = final_number_rows;
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
