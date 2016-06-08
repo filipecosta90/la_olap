@@ -172,6 +172,16 @@ int main( int argc, char* argv[]){
   MKL_INT projection_rows;
   MKL_INT projection_columns;
   MKL_INT projection_nnz;
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* projection_csr_values11 = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_JA11;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_IA11;
+  //COMMON
+  MKL_INT projection_rows11;
+  MKL_INT projection_columns11;
+  MKL_INT projection_nnz11;
+ 
+
   sparse_matrix_t  projection_matrix;
 
   /* ---------------------------------------------------------------------------
@@ -389,59 +399,13 @@ status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_
   // compute aggregation = quantity * bang
   // results in a vector
     
-    
-    
-  /*  mkl_scsrmv(&transa, &quantity_columns, &quantity_columns, &alpha, matdescra_f, quantity_csr_values, quantity_JA, quantity_IA, quantity_IA+1, bang_vector, &beta, aggregation_vector);
-    
-    for (int pos =0; pos < quantity_columns ; pos++){
-	    
-        printf("%f \n", aggregation_vector[pos]);
-
-    }
-    
   aggregation_result = mkl_sparse_s_mv (
       SPARSE_OPERATION_NON_TRANSPOSE, 1.0, quantity_matrix , descrA, bang_vector, 0.0,  aggregation_vector
       );
-  */
-  //  printf("aggregation ok?\n\t");
- // check_errors(aggregation_result);
-    float       alpha = 1.0, beta = 0.0;
-    char        transa;
-    char        matdescra[6];
-    transa = 'N';
-    matdescra[0] = 'G';
-    matdescra[1] = 'U';
-    matdescra[2] = 'N';
-    matdescra[3] = 'C';
-    mkl_scsrmm(&transa, &selection_columns, &selection_columns, &selection_rows,
-               &alpha, matdescra, selection_csr_values, &selection_JA, &selection_IA, &(selection_IA[1]),
-               &quantity_csr_values, &selection_columns,  &beta, intermediate_csr_values, &selection_rows
-               );
-
- /* intermediate_result = mkl_sparse_spmm (
-      SPARSE_OPERATION_NON_TRANSPOSE,
-      selection_matrix, 
-      quantity_matrix,      
-&intermediate_matrix
-      );
-  printf("intermediate ok?\n\t");
-  check_errors(intermediate_result);
-
-
-intermediate_result = mkl_sparse_s_export_csr (intermediate_matrix, SPARSE_INDEX_BASE_ZERO 
-, &intermediate_rows, &intermediate_columns, &intermediate_IA, &intermediate_IA+1,
-&intermediate_JA, &intermediate_csr_values);
- printf("intermediate ok?\n\t");
-  check_errors(intermediate_result);
-  */
-    printf("intermediate ok?\n\t");
-
-  csr_tbl_write("quantity_times_shipdate.tbl" ,
-	intermediate_csr_values, intermediate_JA, intermediate_IA,
- 	intermediate_nnz, intermediate_rows, intermediate_columns
-); 
-
-  printf(" compute intermediate_vector =  selection * aggregation \n");
+  printf("aggregation ok?\n\t");
+ check_errors(aggregation_result);
+  
+printf(" compute intermediate_vector =  selection * aggregation \n");
   // compute intermediate_vector = selection * aggregation
   // results in a vector
   intermediate_result = mkl_sparse_s_mv (
