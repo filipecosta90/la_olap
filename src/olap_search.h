@@ -72,7 +72,6 @@ void read_from_mx (
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns
     );
 
-
 void tbl_read(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
@@ -111,6 +110,14 @@ void csc_to_csr_mx_selection_and(
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
     float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    );
+
+void csc_to_csc_mx_selection_and(
+    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
+    float** C_csc_values, MKL_INT** C_JA1, MKL_INT** C_IA1,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );
 
@@ -170,6 +177,15 @@ void csc_csr_krao(
     float *restrict B_csc_values, MKL_INT *restrict B_JA1, MKL_INT *restrict B_IA1 ,
     MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
     float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    );
+
+void csc_csc_krao(
+    float *restrict A_csc_values, MKL_INT *restrict A_JA1, MKL_INT *restrict A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float *restrict B_csc_values, MKL_INT *restrict B_JA1, MKL_INT *restrict B_IA1 ,
+    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+    float **restrict C_csc_values, MKL_INT **restrict C_JA1, MKL_INT **restrict C_IA1,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );
 

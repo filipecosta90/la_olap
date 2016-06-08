@@ -52,191 +52,414 @@ void writeResults ( ) {
 
 int main( int argc, char* argv[]){
 
-  //define CSR sparse-matrix M
 
-  __declspec(align(MEM_LINE_SIZE))  float* returnFlag_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* returnFlag_IA;
-  MKL_INT returnFlag_rows;
-  MKL_INT returnFlag_columns;
-  MKL_INT returnFlag_nnz;
+  char table_file[80];
+  strcpy(table_file, "__tbl/lineitem_");
+  strcat(table_file, argv[1]);
+  strcat(table_file, ".tbl");
 
-  __declspec(align(MEM_LINE_SIZE))  float* lineStatus_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* lineStatus_IA;
-  MKL_INT lineStatus_rows;
-  MKL_INT lineStatus_columns;
-  MKL_INT lineStatus_nnz;
+  printf("going to read results from %s\n", table_file);
 
+  MKL_INT* quark_start_end;
+  quark_start_end = (MKL_INT*) mkl_malloc (( MEM_LINE_SIZE * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  MKL_INT  quark_distinct_tables = 0;
+  quark_start_end[0] = 0;
+
+
+  //////////////////////////////////////////
+  //        CONVERT from CSR to CSC
+  //////////////////////////////////////////
+
+  MKL_INT job_csr_csc[8];
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job_csr_csc[0] = 0;
+
+  // job[1]
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job_csr_csc[1] = 0;
+
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job_csr_csc[2] = 0;
+
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job_csr_csc[5] = 1;
+  sparse_status_t status_convert_to_csc;
+
+  /** ---------------------------------------------------------------------------
+   ** Return Flag Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* return_flag_csr_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_JA;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_IA;
+  //CSC
+  __declspec(align(MEM_LINE_SIZE))  float* return_flag_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_JA1_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_IA1_csc;
+  //COMMON
+  MKL_INT return_flag_rows;
+  MKL_INT return_flag_columns;
+  MKL_INT return_flag_nnz;
+
+  /** ---------------------------------------------------------------------------
+   ** Line Status Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* line_status_csr_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_JA;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_IA;
+  //CSC
+  __declspec(align(MEM_LINE_SIZE))  float* line_status_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_JA1_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_IA1_csc;
+  //COMMON
+  MKL_INT line_status_rows;
+  MKL_INT line_status_columns;
+  MKL_INT line_status_nnz;
+
+  /** ---------------------------------------------------------------------------
+   ** Quantity Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE))  float* quantity_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_IA;
+  //CSC
+  __declspec(align(MEM_LINE_SIZE))  float* quantity_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_JA1_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_IA1_csc;
+  //COMMON
   MKL_INT quantity_rows;
   MKL_INT quantity_columns;
   MKL_INT quantity_nnz;
   sparse_matrix_t  quantity_matrix;
 
-  __declspec(align(MEM_LINE_SIZE))  float* shipdate_gt_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_gt_IA;
-  MKL_INT shipdate_gt_rows;
-  MKL_INT shipdate_gt_columns;
-  MKL_INT shipdate_gt_nnz;
-  sparse_matrix_t  shipdate_gt_matrix;
+  /** ---------------------------------------------------------------------------
+   ** Shipdate Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* shipdate_csr_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_JA;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_IA;
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* shipdate_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_JA1_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_IA1_csc;
+  //COMMON
+  MKL_INT shipdate_rows;
+  MKL_INT shipdate_columns;
+  MKL_INT shipdate_nnz;
+  sparse_matrix_t  shipdate_matrix;
 
-  __declspec(align(MEM_LINE_SIZE))  float* shipdate_lt_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_lt_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_lt_IA;
-  MKL_INT shipdate_lt_rows;
-  MKL_INT shipdate_lt_columns;
-  MKL_INT shipdate_lt_nnz;
-  sparse_matrix_t  shipdate_lt_matrix;
+  /* ---------------------------------------------------------------------------
+   ** Projection return_flag quantity Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* projection_rq_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_rq_JA1_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_rq_IA1_csc;
+  //COMMON
+  MKL_INT projection_rq_rows;
+  MKL_INT projection_rq_columns;
+  MKL_INT projection_rq_nnz;
+  sparse_matrix_t  projection_rq_matrix;
 
-  __declspec(align(MEM_LINE_SIZE))  float* selection_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* selection_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* selection_IA;
+  /* ---------------------------------------------------------------------------
+   ** Projection return_flag quantity Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* projection_final_csr_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_final_JA;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_final_IA;
+  //CSC
+  __declspec(align(MEM_LINE_SIZE))  float* projection_final_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_final_JA1_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_final_IA1_csc;
+
+  //COMMON
+  MKL_INT projection_final_rows;
+  MKL_INT projection_final_columns;
+  MKL_INT projection_final_nnz;
+  sparse_matrix_t  projection_final_matrix;
+
+  /* ---------------------------------------------------------------------------
+   ** Projection line_status selection Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* projection_lw_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_lw_JA1_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_lw_IA1_csc;
+  //COMMON
+  MKL_INT projection_lw_rows;
+  MKL_INT projection_lw_columns;
+  MKL_INT projection_lw_nnz;
+  sparse_matrix_t  projection_lw_matrix;
+
+  /* ---------------------------------------------------------------------------
+   ** Selection Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
+  __declspec(align(MEM_LINE_SIZE))  float* selection_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* selection_JA1_csc;
+  __declspec(align(MEM_LINE_SIZE))  MKL_INT* selection_IA1_csc;
+  //COMMON
   MKL_INT selection_rows;
   MKL_INT selection_columns;
   MKL_INT selection_nnz;
   sparse_matrix_t  selection_matrix;
 
-  __declspec(align(MEM_LINE_SIZE))  float* projection1_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection1_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection1_IA;
-  MKL_INT projection1_rows;
-  MKL_INT projection1_columns;
-  MKL_INT projection1_nnz;
-  sparse_matrix_t  projection1_matrix;
-
-  __declspec(align(MEM_LINE_SIZE))  float* projection2_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection2_JA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* projection2_IA;
-  MKL_INT projection2_rows;
-  MKL_INT projection2_columns;
-  MKL_INT projection2_nnz;
-  sparse_matrix_t  projection2_matrix;
-
+  /* ---------------------------------------------------------------------------
+   ** Aggregation Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE)) float* aggregation_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* aggregation_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* aggregation_IA;
+  //COMMON
   MKL_INT aggregation_rows;
   MKL_INT aggregation_columns;
   MKL_INT aggregation_nnz;
 
+  /* ---------------------------------------------------------------------------
+   ** Intermediate Matrix
+   ** -------------------------------------------------------------------------*/
+  //CSR
   __declspec(align(MEM_LINE_SIZE)) float* intermediate_csr_values = NULL;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* intermediate_JA;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* intermediate_IA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT intermediate_rows;
+  //COMMON
+  MKL_INT intermediate_rows;
   MKL_INT intermediate_columns;
   MKL_INT intermediate_nnz;
   sparse_matrix_t  intermediate_matrix;
 
-  __declspec(align(MEM_LINE_SIZE)) float* final_csr_values = NULL;
-  __declspec(align(MEM_LINE_SIZE)) MKL_INT* final_JA;
-  __declspec(align(MEM_LINE_SIZE)) MKL_INT* final_IA;
-  __declspec(align(MEM_LINE_SIZE))  MKL_INT* final_IA_END;
-  MKL_INT final_rows;
-  MKL_INT final_columns;
-  MKL_INT final_nnz;
-  sparse_matrix_t  final_matrix;
-
+  /* ---------------------------------------------------------------------------
+   ** Vectors
+   ** -------------------------------------------------------------------------*/
   __declspec(align(MEM_LINE_SIZE))  float* bang_vector;
   __declspec(align(MEM_LINE_SIZE))  float* aggregation_vector;
+  __declspec(align(MEM_LINE_SIZE))  float* intermediate_vector;
+  __declspec(align(MEM_LINE_SIZE))  float* final_vector;
 
-  //conversion status from csr arrays into mkl sparse_matrix_t 
+
+  //conversion status from csr arrays into mkl sparse_matrix_t
   sparse_status_t status_to_csr;
 
+  /** ---------------------------------------------------------------------------
+   ** Populate Return Flag Matrix
+   ** -------------------------------------------------------------------------*/
   //read return flag
-  read_from_mx("__quark_mx_1/return_flag_1.mx", &returnFlag_csr_values, &returnFlag_JA, &returnFlag_IA, &returnFlag_nnz, &returnFlag_rows, &returnFlag_columns);
+  tbl_read(
+      table_file , 9,
+      &return_flag_nnz, &return_flag_rows, &return_flag_columns,
+      &return_flag_csr_values, &return_flag_JA, &return_flag_IA
+      );
 
+  // Memory Allocation
+  return_flag_csc_values = (float*) mkl_malloc (( return_flag_nnz * sizeof(float) ), MEM_LINE_SIZE );
+  return_flag_JA_csc = (MKL_INT*) mkl_malloc (( return_flag_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  return_flag_IA_csc = (MKL_INT*) mkl_malloc ((( return_flag_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  // Convert from CSR to CSC
+  mkl_scsrcsc(job_csr_csc, &return_flag_nnz, return_flag_csr_values, return_flag_JA, return_flag_IA, return_flag_csc_values, return_flag_JA1_csc, return_flag_IA1_csc, &status_convert_to_csc);
+  printf("conversion of return flag matrix from CSR to CSC ok?\n\t");
+  check_errors(status_convert_to_csc);
+
+  /** ---------------------------------------------------------------------------
+   ** Populate Line Status Matrix
+   ** -------------------------------------------------------------------------*/
   //read line status
-  read_from_mx("__quark_mx_1/line_status_1.mx", &lineStatus_csr_values, &lineStatus_JA, &lineStatus_IA, &lineStatus_nnz, &lineStatus_rows, &lineStatus_columns);
+  tbl_read(
+      table_file , 10,
+      &line_status_nnz, &line_status_rows, &line_status_columns ,
+      &line_status_csr_values, &line_status_JA, &line_status_IA
+      );
 
+  // Memory Allocation
+  line_status_csc_values = (float*) mkl_malloc (( line_status_nnz * sizeof(float) ), MEM_LINE_SIZE );
+  line_status_JA_csc = (MKL_INT*) mkl_malloc (( line_status_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  line_status_IA_csc = (MKL_INT*) mkl_malloc ((( line_status_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  // Convert from CSR to CSC
+  mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA1_csc, line_status_IA1_csc, &status_convert_to_csc);
+  printf("conversion of linestatus matrix from CSR to CSC ok?\n\t");
+  check_errors(status_convert_to_csc);
+
+  /** ---------------------------------------------------------------------------
+   ** Populate Quantity Matrix
+   ** -------------------------------------------------------------------------*/
   //read quantity
-  read_from_mx("__quark_mx_1/quantity_1.mx", &quantity_csr_values, &quantity_JA, &quantity_IA, &quantity_nnz, &quantity_rows, &quantity_columns);
 
-  //        convert via sparseBLAS API to Handle containing internal data for 
+  // measure
+  tbl_read_measure(
+      table_file , 5,
+      &quantity_nnz,  &quantity_rows, &quantity_columns ,
+      &quantity_csr_values, &quantity_JA, &quantity_IA
+      );
+
+  // Memory Allocation
+  quantity_csc_values = (float*) mkl_malloc (( quantity_nnz * sizeof(float) ), MEM_LINE_SIZE );
+  quantity_JA_csc = (MKL_INT*) mkl_malloc (( quantity_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  quantity_IA_csc = (MKL_INT*) mkl_malloc ((( quantity_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  intermediate_csr_values = (float*) mkl_malloc (( (quantity_nnz) * sizeof(float) ), MEM_LINE_SIZE );
+  intermediate_JA = (MKL_INT*) mkl_malloc (((quantity_nnz) * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  intermediate_IA = (MKL_INT*) mkl_malloc ((( quantity_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  // Convert from CSR to CSC
+  mkl_scsrcsc(job_csr_csc, &quantity_nnz, quantity_csr_values, quantity_JA, quantity_IA, quantity_csc_values, quantity_JA1_csc, quantity_IA1_csc, &status_convert_to_csc);
+  printf("conversion of quantity matrix from CSR to CSC ok?\n\t");
+  check_errors(status_convert_to_csc);
+
+  //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
-  status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
+  status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO,
       quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
+  check_errors(status_to_csr);
+  /** ---------------------------------------------------------------------------
+   ** Populate Shipdate Matrix
+   ** -------------------------------------------------------------------------*/
+  //read shipdate
+  tbl_read(
+      table_file , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns ,
+      &shipdate_csr_values, &shipdate_JA, &shipdate_IA
+      );
 
-  //read shipdate gt
-  read_from_mx("__quark_mx_1/shipdate_gt_1.mx", &shipdate_gt_csr_values, &shipdate_gt_JA, &shipdate_gt_IA, &shipdate_gt_nnz, &shipdate_gt_rows, &shipdate_gt_columns);
+  // Memory Allocation
+  shipdate_csc_values = (float*) mkl_malloc (( shipdate_nnz * sizeof(float) ), MEM_LINE_SIZE );
+  shipdate_JA_csc = (MKL_INT*) mkl_malloc (( shipdate_nnz * sizeof(MKL_INT) ), MEM_LINE_SIZE );
+  shipdate_IA_csc = (MKL_INT*) mkl_malloc (((shipdate_nnz+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
 
+  // Convert from CSR to CSC
+  mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA1_csc, shipdate_IA1_csc, &status_convert_to_csc);
+  printf("conversion of shipdate matrix from CSR to CSC ok?\n\t");
+  check_errors(status_convert_to_csc);
   //        convert via sparseBLAS API to Handle containing internal data for
   //        subsequent Inspector-executor Sparse BLAS operations.
-  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_gt_matrix , SPARSE_INDEX_BASE_ZERO,
-      shipdate_gt_rows, shipdate_gt_columns, shipdate_gt_IA, shipdate_gt_IA+1, shipdate_gt_JA, shipdate_gt_csr_values );
+  status_to_csr = mkl_sparse_s_create_csr (
+      &shipdate_matrix , SPARSE_INDEX_BASE_ZERO,      shipdate_rows, shipdate_columns,
+      shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
+      );
 
-  //read shipdate lt
-  read_from_mx("__quark_mx_1/shipdate_lt_1.mx", &shipdate_lt_csr_values, &shipdate_lt_JA, &shipdate_lt_IA, &shipdate_lt_nnz, &shipdate_lt_rows, &shipdate_lt_columns);
+  /** ---------------------------------------------------------------------------
+   ** Auxiliar Vars
+   ** -------------------------------------------------------------------------*/
 
-  //        convert via sparseBLAS API to Handle containing internal data for
-  //        subsequent Inspector-executor Sparse BLAS operations.
-  status_to_csr = mkl_sparse_s_create_csr ( &shipdate_lt_matrix , SPARSE_INDEX_BASE_ZERO,
-      shipdate_lt_rows, shipdate_lt_columns, shipdate_lt_IA, shipdate_lt_IA+1, shipdate_lt_JA, shipdate_lt_csr_values );
-  // compute selection = shipdate_gt * shipdate_lt 
   sparse_status_t selection_result;
+  sparse_status_t aggregation_result;
+  sparse_status_t intermediate_result;
+  sparse_status_t final_result;
+  struct matrix_descr descrA;
+  descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
+
+  /** ---------------------------------------------------------------------------
+   ** Populate Vectors
+   ** -------------------------------------------------------------------------*/
+  bang_vector = (float*) malloc ( ((quantity_columns+1) * sizeof(float)));
+  for (int pos =0; pos < line_status_columns ; pos++){
+    bang_vector[pos] = 1.0;
+  }
+
+  aggregation_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
+  intermediate_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
+  final_vector = (float*) mkl_malloc ( ((quantity_columns+1) * sizeof(float)), MEM_LINE_SIZE );
+
+  /** ---------------------------------------------------------------------------
+   ** ---------------------------------------------------------------------------
+   ** ---------------------------------------------------------------------------
+   ** ---------------------------------------------------------------------------
+   ** ---------------------------------------------------------------------------
+   ** START TIME MEASUREMENT
+   ** ---------------------------------------------------------------------------
+   ** ---------------------------------------------------------------------------
+   ** ---------------------------------------------------------------------------
+   ** ---------------------------------------------------------------------------
+   ** ---------------------------------------------------------------------------
+   ** -------------------------------------------------------------------------*/
 
   ////////////////////////
   // START TIME MEASUREMENT
   ////////////////////////
   GET_TIME(global_time_start);
 
-  selection_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE,
-      shipdate_gt_matrix,
-      shipdate_lt_matrix,
-      &selection_matrix);
-
-  // compute projection1 = returnFlag krao quantity
-  csr_krao(
-      returnFlag_csr_values, returnFlag_JA, returnFlag_IA, 
-      returnFlag_nnz, returnFlag_rows, returnFlag_columns,
-      quantity_csr_values, quantity_JA, quantity_IA ,
-      quantity_nnz, quantity_rows,quantity_columns,
-      &projection_csr_values, &projection_JA, &projection_IA, 
-      &projection_nnz, &projection_rows, &projection_columns  
+  csc_to_csc_mx_selection_and(
+      shipdate_csc_values, shipdate_JA1_csc, shipdate_IA1_csc,
+      shipdate_nnz, shipdate_rows, shipdate_columns,
+      GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01",
+      &selection_csc_values, &selection_JA1_csc, &selection_IA1_csc,
+      &selection_nnz, &selection_rows, &selection_columns
       );
 
-  status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
+  GET_TIME(global_time_selection);
 
-
-  // compute projection2 = returnFlag krao quantity
-  csr_krao(
-      lineStatus_csr_values, lineStatus_JA, lineStatus_IA, 
-      lineStatus_nnz, lineStatus_rows, lineStatus_columns,
-      selection_csr_values, selection_JA, selection_IA ,
+  // compute projection_lw = line_status krao selection
+  csc_csc_krao(
+      line_status_csc_values, line_status_JA1_csc, line_status_IA1_csc,
+      line_status_nnz, line_status_rows, line_status_columns,
+      selection_csc_values, selection_JA1_csc, selection_IA1_csc ,
       selection_nnz, selection_rows, selection_columns,
-      &projectioni2_csr_values, &projection2_JA, &projection2_IA, 
-      &projection2_nnz, &projection2_rows, &projection2_columns  
+      &projection_lw_csc_values, &projection_lw_JA1_csc, &projection_lw_IA1_csc,
+      &projection_lw_nnz, &projection_lw_rows, &projection_lw_columns
       );
 
-  //compute aggregation = projection2 * bang
+  GET_TIME(global_time_projection_lw);
 
-  bang_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
-  aggregation_vector = (float*) mkl_malloc ((quantity_columns * sizeof(float)), MEM_LINE_SIZE );
 
-  sparse_status_t aggregation_result;
-  struct matrix_descr descrA;
-  descrA.type = SPARSE_MATRIX_TYPE_GENERAL;
+  // compute projection_rq = return_flag krao quantity
+  csc_csc_krao(
+      return_flag_csc_values, return_flag_JA1_csc, return_flag_IA1_csc,
+      return_flag_nnz, return_flag_rows, return_flag_columns,
+      quantity_csc_values, quantity_JA1_csc, quantity_IA1_csc ,
+      quantity_nnz, quantity_rows, quantity_columns,
+      &projection_rq_csc_values, &projection_rq_JA1_csc, &projection_rq_IA1_csc,
+      &projection_rq_nnz, &projection_rq_rows, &projection_rq_columns
+      );
 
-  aggregation_result = mkl_sparse_s_mv ( SPARSE_OPERATION_NON_TRANSPOSE, 1.0, projection2_matrix , descrA, bang_vector, 1.0,  aggregation_vector);
+  GET_TIME(global_time_projection_rq);
 
-  // compute final_result = projection1 * aggregation
-  sparse_status_t final_result;
+  //compute projection_final = projection_rq * projection_lw
+  csc_csr_krao(
+      projection_rq_csc_values, projection_rq_JA1_csc, projection_rq_IA1_csc,
+      projection_rq_nnz, projection_rq_rows, projection_rq_columns,
 
-  final_result = mkl_sparse_spmm ( SPARSE_OPERATION_NON_TRANSPOSE, 
-      projection1_matrix,
-      projection2_matrix,
-      &final_matrix);
+      projection_lw_csc_values, projection_lw_JA1_csc, projection_lw_IA1_csc,
+      projection_lw_nnz, projection_lw_rows, projection_lw_columns,
+
+      projection_final_csr_values, projection_final_JA, projection_final_IA,
+      projection_final_nnz, projection_final_rows, projection_final_columns,
+      );
+
+  //        convert via sparseBLAS API to Handle containing internal data for
+  //        subsequent Inspector-executor Sparse BLAS operations.
+  status_to_csr = mkl_sparse_s_create_csr (
+      &projection_final_matrix , SPARSE_INDEX_BASE_ZERO,      projection_final_rows, projection_final_columns,
+      projection_final_IA, projection_final_+1, projection_final_JA, projection_final_csr_values
+      );
+
+  GET_TIME(global_time_projection_final);
+
+  // compute final_result = projection_final * bang
+  //
+  final_result = mkl_sparse_s_mv (
+      SPARSE_OPERATION_NON_TRANSPOSE, 1.0, projection_final_matrix , descrA, bang_vector, 0.0,  final_vector
+      );
 
   ////////////////////////
   // STOP TIME MEASUREMENT
   ////////////////////////
   GET_TIME(global_time_stop);
-  writeResults( );
-
+  printf("** STOP TIME MEASUREMENT\n");
+  writeResults( argv[1] );
+  for (int pos =0; pos < projection_columns ; pos++){
+    if ( final_vector[pos] != 0) {
+      printf("%f \n", final_vector[pos]);
+    }
+  }
   return 0;
-
 }
 

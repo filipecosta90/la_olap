@@ -455,7 +455,7 @@ void tbl_read_measure(
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char* tmp_field = strdup(line);
-  char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     field = getfield(tmp_field, tbl_column, field);
     quark_field = (MKL_INT) g_quark_from_string (field);
     element_value = atof(field);
@@ -887,24 +887,24 @@ void csc_to_csr_mx_selection_and(
   MKL_INT cols;
   MKL_INT zeroed_numbers = 0;
   MKL_INT non_zeroed = 0;
-   MKL_INT returned_strcmp ;
-      MKL_INT returned_strcmp2; 
-	
+  MKL_INT returned_strcmp ;
+  MKL_INT returned_strcmp2; 
+
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     MKL_INT iaa = A_JA1[at_column];
     non_zero = 0;
-	iaa++; // due to quarks start in 1 
+    iaa++; // due to quarks start in 1 
 
     field = (char*) g_quark_to_string ( iaa );
     //	printf("%s\n", field);    
     if (field == NULL ){
-      	printf("ERROR\n");
+      printf("ERROR\n");
     }
     if ( field != NULL   ){
       returned_strcmp = strcmp( field, comparation_key);
       returned_strcmp2 = strcmp( field, comparation_key2);
-	if (
+      if (
           ( (opp_code == LESS)  && (returned_strcmp < 0 ))
           ||
           ( (opp_code == LESS_EQ)  && (returned_strcmp <= 0 ))
@@ -914,7 +914,7 @@ void csc_to_csr_mx_selection_and(
           ( (opp_code == GREATER_EQ)  && (returned_strcmp >= 0 ))
          ){
         non_zero = 1;
-         }
+      }
       if (
           ( (opp_code2 == LESS)  && (returned_strcmp2 < 0) && (non_zero ==1) )
           ||
@@ -925,16 +925,16 @@ void csc_to_csr_mx_selection_and(
           ( (opp_code2 == GREATER_EQ)  && (returned_strcmp2 >= 0) && (non_zero ==1) )
          ){
         non_zero = 1;
-	}
+      }
       if ( non_zero == 0 ){
         zeroed_numbers++;
-       // printf("zeroed %s\n", field);
-	A_csc_values[at_column] = 0.0;
+        // printf("zeroed %s\n", field);
+        A_csc_values[at_column] = 0.0;
       }
-else {
-	non_zeroed++;
+      else {
+        non_zeroed++;
         //printf("NON zeroed %s\n", field);
-}
+      }
     }
   }
   /////////////////////////////////
@@ -969,6 +969,133 @@ else {
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
 }
+
+
+
+
+void csc_to_csc_mx_selection_and(
+    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
+    float** C_csc_values, MKL_INT** C_JA1, MKL_INT** C_IA1,
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    ){
+
+  MKL_INT job[8];
+
+  /////////////////////////////////////
+  // PREPARE FOR OPERATION
+  /////////////////////////////////////
+  //////////////////////////////////////////
+  ///////   CONVERT A and B from CSR to CSC
+  //////////////////////////////////////////
+
+  // If job[0]=0, the matrix in the CSR format is converted to the CSC format;
+  job[0] = 0;
+
+  // job[1]
+  // If job[1]=0, zero-based indexing for the matrix in CSR format is used;
+  // if job[1]=1, one-based indexing for the matrix in CSR format is used.
+  job[1] = 0;
+
+  // job[2]
+  // If job[2]=0, zero-based indexing for the matrix in the CSC format is used;
+  // if job[2]=1, one-based indexing for the matrix in the CSC format is used.
+  job[2] = 0;
+
+  // job[5] - job indicator.
+  // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
+  // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
+  job[5] = 1;
+  sparse_status_t status_convert_csc;
+
+  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+
+  MKL_INT non_zero = 0;
+  MKL_INT index;
+  MKL_INT cols;
+  MKL_INT zeroed_numbers = 0;
+  MKL_INT non_zeroed = 0;
+  MKL_INT returned_strcmp ;
+  MKL_INT returned_strcmp2;
+
+  for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
+    // insert start of column int C_IA1
+    MKL_INT iaa = A_JA1[at_column];
+    non_zero = 0;
+    iaa++; // due to quarks start in 1
+
+    field = (char*) g_quark_to_string ( iaa );
+    //	printf("%s\n", field);
+    if (field == NULL ){
+      printf("ERROR\n");
+    }
+    if ( field != NULL   ){
+      returned_strcmp = strcmp( field, comparation_key);
+      returned_strcmp2 = strcmp( field, comparation_key2);
+      if (
+          ( (opp_code == LESS)  && (returned_strcmp < 0 ))
+          ||
+          ( (opp_code == LESS_EQ)  && (returned_strcmp <= 0 ))
+          ||
+          ( (opp_code == GREATER)  && (returned_strcmp > 0 ))
+          ||
+          ( (opp_code == GREATER_EQ)  && (returned_strcmp >= 0 ))
+         ){
+        non_zero = 1;
+      }
+      if (
+          ( (opp_code2 == LESS)  && (returned_strcmp2 < 0) && (non_zero ==1) )
+          ||
+          ( (opp_code2 == LESS_EQ)  && (returned_strcmp2 <= 0) && (non_zero ==1) )
+          ||
+          ( (opp_code2 == GREATER)  && (returned_strcmp2 > 0) && (non_zero ==1)  )
+          ||
+          ( (opp_code2 == GREATER_EQ)  && (returned_strcmp2 >= 0) && (non_zero ==1) )
+         ){
+        non_zero = 1;
+      }
+      if ( non_zero == 0 ){
+        zeroed_numbers++;
+        // printf("zeroed %s\n", field);
+        A_csc_values[at_column] = 0.0;
+      }
+      else {
+        non_zeroed++;
+        //printf("NON zeroed %s\n", field);
+      }
+    }
+  }
+
+
+
+  *C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_rows + 1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+
+  *C_number_rows = A_number_rows ;
+  *C_number_columns = A_number_columns;
+  *C_NNZ = A_NNZ;
+
+
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    (*C_IA1)[at_column] = A_IA1[at_column];
+  }
+
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    (*C_csc_values)[at_column] =  A_csc_values[at_column];
+  }
+
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    (*C_JA1)[at_column] =  A_JA1[at_column] ;
+  }
+  C_IA1[A_number_columns] = A_NNZ;
+
+}
+
+
+
 
 void csr_mx_selection_or(
     float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
@@ -1081,7 +1208,7 @@ void csr_mx_selection(
 }
 
 void csc_tbl_write(
-  char*  table_name,
+    char*  table_name,
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
     ){
@@ -1101,13 +1228,13 @@ void csc_tbl_write(
 }
 
 void csr_tbl_write(
-  char*  table_name,
+    char*  table_name,
     float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
     ){
 
   MKL_INT job[8];
- printf("writing to table %s\n", table_name);
+  printf("writing to table %s\n", table_name);
   /////////////////////////////////////
   // PREPARE FOR OPERATION
   /////////////////////////////////////
@@ -1561,6 +1688,67 @@ void csc_csr_krao(
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
 }
+
+
+void csc_csc_krao(
+    float *restrict A_csc_values, MKL_INT *restrict A_JA1, MKL_INT *restrict A_IA1,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float *restrict B_csc_values, MKL_INT *restrict B_JA1, MKL_INT *restrict B_IA1 ,
+    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
+    float **restrict C_csc_values, MKL_INT **restrict C_JA1, MKL_INT **restrict C_IA1,
+    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    ){
+
+
+  /////////////////////////////////
+  //   ALLOCATE MEMORY
+  /////////////////////////////////
+
+  *C_csc_values = (float*) mkl_malloc (( A_NNZ * sizeof(float)), MEM_LINE_SIZE );
+  *C_JA1 = (MKL_INT*) mkl_malloc (( A_NNZ  * sizeof(MKL_INT)), MEM_LINE_SIZE );
+  *C_IA1 = (MKL_INT*) mkl_malloc (( (A_number_columns+1) * sizeof(MKL_INT)), MEM_LINE_SIZE );
+
+  /////////////////////////////////
+  //   COMPUTE KRAO
+  /////////////////////////////////
+
+  __declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
+  __declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
+
+  // n=16 for SSE, n=32 for AV
+  __assume_aligned(C_IA1, MEM_LINE_SIZE);
+  __assume_aligned(A_IA1, MEM_LINE_SIZE);
+  __assume_aligned(C_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(B_JA1, MEM_LINE_SIZE);
+  __assume_aligned(A_JA1, MEM_LINE_SIZE);
+  __assume_aligned(C_JA1, MEM_LINE_SIZE);
+
+  /////////////////////////////////
+  //   COMPUTE KRAO
+  /////////////////////////////////
+  //  __declspec(align(MEM_LINE_SIZE))	MKL_INT nthreads = omp_get_num_threads();
+  // __declspec(align(MEM_LINE_SIZE))	MKL_INT columns_per_worker =     A_number_columns / nthreads;
+
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    (*C_IA1)[at_column] = A_IA1[at_column];
+  }
+
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    (*C_csc_values)[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
+  }
+
+  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+    (*C_JA1)[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
+  }
+  (*C_IA1)[A_number_columns] = A_NNZ;
+
+  *C_number_rows = final_number_rows;
+  *C_number_columns = A_number_columns;
+  *C_NNZ = A_NNZ;
+}
+
 
 /////////////////////////////////
 //

@@ -429,13 +429,12 @@ printf("** STOP TIME MEASUREMENT\n");
     printf("%f \n", final_vector[pos]);
 }
   }
-  return 0;
 
  mkl_sparse_destroy(quantity_matrix);
   mkl_sparse_destroy(shipdate_matrix);
   mkl_sparse_destroy(projection_matrix);
   mkl_sparse_destroy(selection_matrix);
   mkl_sparse_destroy(intermediate_matrix);
-
+    return 0;
 }
 
