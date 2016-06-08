@@ -390,10 +390,7 @@ status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_
   // results in a vector
     
     
-    char transa = 'n';
-    float alpha = 1.;
-    float beta = 0.;
-    char matdescra_f[6] = "G  F ";
+    
   /*  mkl_scsrmv(&transa, &quantity_columns, &quantity_columns, &alpha, matdescra_f, quantity_csr_values, quantity_JA, quantity_IA, quantity_IA+1, bang_vector, &beta, aggregation_vector);
     
     for (int pos =0; pos < quantity_columns ; pos++){
@@ -408,9 +405,20 @@ status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_
   */
   //  printf("aggregation ok?\n\t");
  // check_errors(aggregation_result);
-  
+    float       alpha = 1.0, beta = 0.0;
+    char        transa;
+    char        matdescra[6];
+    transa = 'N';
+    matdescra[0] = 'G';
+    matdescra[1] = 'U';
+    matdescra[2] = 'N';
+    matdescra[3] = 'C';
+    mkl_scsrmm(&transa, &selection_columns, &selection_columns, &selection_rows,
+               &alpha, matdescra, selection_csr_values, &selection_JA, &selection_IA, &(selection_IA[1]),
+               &quantity_csr_values, &selection_columns,  &beta, intermediate_csr_values, &selection_rows
+               );
 
-  intermediate_result = mkl_sparse_spmm (
+ /* intermediate_result = mkl_sparse_spmm (
       SPARSE_OPERATION_NON_TRANSPOSE,
       selection_matrix, 
       quantity_matrix,      
@@ -425,6 +433,8 @@ intermediate_result = mkl_sparse_s_export_csr (intermediate_matrix, SPARSE_INDEX
 &intermediate_JA, &intermediate_csr_values);
  printf("intermediate ok?\n\t");
   check_errors(intermediate_result);
+  */
+    printf("intermediate ok?\n\t");
 
   csr_tbl_write("quantity_times_shipdate.tbl" ,
 	intermediate_csr_values, intermediate_JA, intermediate_IA,

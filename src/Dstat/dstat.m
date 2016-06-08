@@ -1,10 +1,10 @@
  
 
-cpu_csv = readtable('__cpu_usage/CPU_postgressql_dstat.csv','ReadVariableNames',false);
-disk_csv = readtable('__disk_usage/DISK_postgressql_dstat.csv','ReadVariableNames',false);
-memory_csv = readtable('__memory_usage/MEMORY_postgressql_dstat.csv','ReadVariableNames',false);
-net_csv = readtable('__net_usage/NET_postgressql_dstat.csv','ReadVariableNames',false);
-system_csv = readtable('__system_usage/SYSTEM_postgressql_dstat.csv','ReadVariableNames',false);
+cpu_csv = readtable('__cpu_usage/CPU_postgressql_dstat_par_seq_5.csv','ReadVariableNames',false);
+disk_csv = readtable('__disk_usage/DISK_postgressql_dstat_par_seq_5.csv','ReadVariableNames',false);
+memory_csv = readtable('__memory_usage/MEMORY_postgressql_dstat_par_seq_5.csv','ReadVariableNames',false);
+net_csv = readtable('__net_usage/NET_postgressql_dstat_par_seq_5.csv','ReadVariableNames',false);
+system_csv = readtable('__system_usage/SYSTEM_postgressql_dstat_par_seq_5.csv','ReadVariableNames',false);
 
 %%%%%% CPU STATS %%%%%
 cpu_usr = table2array( cpu_csv ( :, [3])); 
