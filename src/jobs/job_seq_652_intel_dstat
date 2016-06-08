@@ -42,6 +42,7 @@ echo "DONE!"
 
 echo "Ready now for running make!"
 
+cd
 cd CPD/PI/CPD_PI_OLAP/src
 
 
@@ -53,13 +54,14 @@ max_ppn=1
 sample_size=1
 exec = "querie1_search"
 
+sleep 5;
 for (( ppn = 1; ppn <= max_ppn; ++ppn )) 
 do
 echo "Running $sample_size * ppn: $ppn nodes"
 for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 do
 	echo "running $execc"
-        /home/a57779/dstat -tvfnml --output Dstat/"$exec".csv >> /dev/null &
+        /home/a57779/dstat -tvfnml --output /Dstat/"$exec".csv >> /dev/null &
 	echo ".. going to run $exec (dstat $!)"
 	./$exec > Dstat/DSTAT_"$exec"_.txt
 	sleep 5
