@@ -3,7 +3,7 @@
 
 <msg id="1" tool="runtool">
   <type>log-start</type>
-  <arg>2016/06/09 02:16:00</arg>
+  <arg>2016/06/09 03:28:24</arg>
 </msg>
 <msg id="2" tool="runtool">
   <type>collector-starts</type>
@@ -15,17 +15,17 @@
 <msg id="4" tool="mc">
   <type>EXEC_OF_INTEREST</type>
   <arg>/home/a57816/CPD_PI_OLAP/src/querie1_search</arg>
-  <arg>30015</arg>
+  <arg>31854</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="5" tool="mc">
   <type>MODULE_LOAD</type>
   <arg>/home/a57816/CPD_PI_OLAP/src/querie1_search</arg>
   <arg>0x400000</arg>
-  <arg>0x63bb37</arg>
+  <arg>0x63bab7</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="6" tool="mc">
   <type>MODULE_LOAD_NO_ANALYSIS</type>
@@ -33,118 +33,110 @@
   <arg>0x328d200000</arg>
   <arg>0x328d421187</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="7" tool="mc">
   <type>MODULE_LOAD</type>
-  <arg>/lib64/libglib-2.0.so.0</arg>
-  <arg>0x328f600000</arg>
-  <arg>0x328f8e4c0f</arg>
+  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_lp64.so</arg>
+  <arg>0x2b4461688000</arg>
+  <arg>0x2b4461fc5eff</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="8" tool="mc">
   <type>MODULE_LOAD</type>
-  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_ilp64.so</arg>
-  <arg>0x2b050eae0000</arg>
-  <arg>0x2b050f3bff1f</arg>
+  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_core.so</arg>
+  <arg>0x2b4461fc6000</arg>
+  <arg>0x2b44638aa147</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="9" tool="mc">
   <type>MODULE_LOAD</type>
-  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_core.so</arg>
-  <arg>0x2b050f3c0000</arg>
-  <arg>0x2b0510ca4147</arg>
+  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_sequential.so</arg>
+  <arg>0x2b44638ac000</arg>
+  <arg>0x2b4464152d4f</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="10" tool="mc">
-  <type>MODULE_LOAD</type>
-  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_thread.so</arg>
-  <arg>0x2b0510ca6000</arg>
-  <arg>0x2b0511ffce0f</arg>
-  <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
-</msg>
-<msg id="11" tool="mc">
   <type>MODULE_LOAD</type>
   <arg>/lib64/libpthread.so.0</arg>
   <arg>0x328de00000</arg>
   <arg>0x328e01c39f</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
-<msg id="12" tool="mc">
+<msg id="11" tool="mc">
   <type>MODULE_LOAD</type>
   <arg>/lib64/libm.so.6</arg>
   <arg>0x328e200000</arg>
   <arg>0x328e4830d7</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
+</msg>
+<msg id="12" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/lib64/libglib-2.0.so.0</arg>
+  <arg>0x328f600000</arg>
+  <arg>0x328f8e4c0f</arg>
+  <severity>INFO</severity>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="13" tool="mc">
   <type>MODULE_LOAD_NO_ANALYSIS</type>
-  <arg>/lib64/libdl.so.2</arg>
-  <arg>0x328da00000</arg>
-  <arg>0x328dc030ff</arg>
+  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</arg>
+  <arg>0x2b4464163000</arg>
+  <arg>0x2b44644a3bdf</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="14" tool="mc">
-  <type>MODULE_LOAD_NO_ANALYSIS</type>
-  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</arg>
-  <arg>0x2b0511ffe000</arg>
-  <arg>0x2b051233ebdf</arg>
-  <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
-</msg>
-<msg id="15" tool="mc">
   <type>MODULE_LOAD</type>
   <arg>/lib64/libgcc_s.so.1</arg>
   <arg>0x328f200000</arg>
   <arg>0x328f415cf7</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
-<msg id="16" tool="mc">
+<msg id="15" tool="mc">
   <type>MODULE_LOAD</type>
   <arg>/lib64/libc.so.6</arg>
   <arg>0x328d600000</arg>
   <arg>0x328d9928a7</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
+</msg>
+<msg id="16" tool="mc">
+  <type>MODULE_LOAD_NO_ANALYSIS</type>
+  <arg>/lib64/libdl.so.2</arg>
+  <arg>0x328da00000</arg>
+  <arg>0x328dc030ff</arg>
+  <severity>INFO</severity>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
 <msg id="17" tool="mc">
   <type>MODULE_LOAD</type>
   <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_avx.so</arg>
-  <arg>0x2b051473b000</arg>
-  <arg>0x2b0516a33d7f</arg>
+  <arg>0x2b446680c000</arg>
+  <arg>0x2b4468b04d7f</arg>
   <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+  <timestamp>Thu Jun  9 03:28:25 2016</timestamp>
 </msg>
-<msg id="18" tool="mc">
-  <type>MODULE_LOAD_NO_ANALYSIS</type>
-  <arg>/share/apps/intel/inspector_xe_2016.1.0.423441/lib64/runtime/libittnotify.so</arg>
-  <arg>0x2b05129b7000</arg>
-  <arg>0x2b0512bc38df</arg>
-  <severity>INFO</severity>
-  <timestamp>Thu Jun  9 02:16:00 2016</timestamp>
+<msg id="18" tool="runtool">
+  <type>app-exit-code</type>
+  <arg>134</arg>
 </msg>
 <msg id="19" tool="runtool">
-  <type>app-exit-code</type>
-  <arg>139</arg>
-</msg>
-<msg id="20" tool="runtool">
   <type>marker-file</type>
   <arg>/home/a57816/CPD_PI_OLAP/src/InspectorOut/InspectorOut.inspxe</arg>
 </msg>
-<msg id="21" tool="runtool">
+<msg id="20" tool="runtool">
   <type>collector-done</type>
 </msg>
-<msg id="22" tool="runtool">
+<msg id="21" tool="runtool">
   <type>log-end</type>
-  <arg>2016/06/09 02:16:04</arg>
+  <arg>2016/06/09 03:28:29</arg>
 </msg>
 
 </log>

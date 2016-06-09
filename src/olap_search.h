@@ -48,7 +48,7 @@
 ////////////////////////////////////// AUX /////////////////////////////////////
 
 //starts at position 1 
-void getfield( char* line, int num, char** return_string );
+char* getfield( char* line, int num, char* return_string );
 
 void print_csc(
     float* csc_values, MKL_INT* JA1, MKL_INT* IA1, 

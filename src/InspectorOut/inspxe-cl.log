@@ -3,7 +3,7 @@
 
 <msg id="1" tool="runtool">
   <type>log-start</type>
-  <arg>2016/06/09 02:16:00</arg>
+  <arg>2016/06/09 03:28:24</arg>
 </msg>
 <msg id="2" tool="runtool">
   <type>load-warning</type>
@@ -20,7 +20,7 @@
 </msg>
 <msg id="5" tool="runtool">
   <type>log-end</type>
-  <arg>2016/06/09 02:16:05</arg>
+  <arg>2016/06/09 03:28:30</arg>
 </msg>
 
 </log>
