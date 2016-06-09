@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<diags major="2" minor="0">
+
+<diag id="1">
+	<type>233</type>
+	<message>
+		<timestamp>50465125</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30015</threadid>
+			<stackstamp>50473258</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/home/a57816/CPD_PI_OLAP/src/querie1_search</mod>
+			<rva>0x1c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="2">
+	<type>233</type>
+	<message>
+		<timestamp>1034721150</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30018</threadid>
+			<stackstamp>1034730458</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa4b70</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="3">
+	<type>233</type>
+	<message>
+		<timestamp>1036330892</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30019</threadid>
+			<stackstamp>1036338192</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="4">
+	<type>233</type>
+	<message>
+		<timestamp>1037943658</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30020</threadid>
+			<stackstamp>1037950167</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="5">
+	<type>233</type>
+	<message>
+		<timestamp>1041457875</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30021</threadid>
+			<stackstamp>1041464567</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="6">
+	<type>233</type>
+	<message>
+		<timestamp>1043766708</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30022</threadid>
+			<stackstamp>1043773183</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="7">
+	<type>233</type>
+	<message>
+		<timestamp>1044382317</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30023</threadid>
+			<stackstamp>1044390217</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="8">
+	<type>233</type>
+	<message>
+		<timestamp>1048906583</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30024</threadid>
+			<stackstamp>1048913283</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="9">
+	<type>233</type>
+	<message>
+		<timestamp>1052488658</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30025</threadid>
+			<stackstamp>1052495258</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="10">
+	<type>233</type>
+	<message>
+		<timestamp>1054751267</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30026</threadid>
+			<stackstamp>1054757583</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="11">
+	<type>233</type>
+	<message>
+		<timestamp>1058199625</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30027</threadid>
+			<stackstamp>1058207067</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="12">
+	<type>233</type>
+	<message>
+		<timestamp>1061798625</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30028</threadid>
+			<stackstamp>1061806942</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="13">
+	<type>233</type>
+	<message>
+		<timestamp>1064078042</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30029</threadid>
+			<stackstamp>1064084633</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="14">
+	<type>233</type>
+	<message>
+		<timestamp>1067474042</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30030</threadid>
+			<stackstamp>1067482142</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="15">
+	<type>233</type>
+	<message>
+		<timestamp>1069231108</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30031</threadid>
+			<stackstamp>1069237792</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="16">
+	<type>233</type>
+	<message>
+		<timestamp>1072440325</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30032</threadid>
+			<stackstamp>1072448533</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="17">
+	<type>233</type>
+	<message>
+		<timestamp>1075015050</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30033</threadid>
+			<stackstamp>1075021675</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="18">
+	<type>233</type>
+	<message>
+		<timestamp>1078363358</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30034</threadid>
+			<stackstamp>1078370208</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="19">
+	<type>233</type>
+	<message>
+		<timestamp>1080728575</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30035</threadid>
+			<stackstamp>1080735050</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="20">
+	<type>233</type>
+	<message>
+		<timestamp>1083981058</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30036</threadid>
+			<stackstamp>1083987483</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>
+
+<diag id="21">
+	<type>233</type>
+	<message>
+		<timestamp>1087235625</timestamp>
+		<thread>
+			<thrname></thrname>
+			<threadid>30037</threadid>
+			<stackstamp>1087242167</stackstamp>
+			<stacktrace>
+			<loc>
+			<mod>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</mod>
+			<rva>0xa3c60</rva>
+			</loc>
+			</stacktrace>
+		</thread>
+	</message>
+</diag>

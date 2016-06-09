@@ -1,0 +1,23 @@
+
+=== Start: [2016/06/09 02:16:00] === 
+Analysis started...
+Result file: /home/a57816/CPD_PI_OLAP/src/InspectorOut/InspectorOut.inspxe 
+Analysis started for /home/a57816/CPD_PI_OLAP/src/querie1_search (pid = 30015) 
+Loaded module: /home/a57816/CPD_PI_OLAP/src/querie1_search, address range [0x400000-0x63bb37] 
+Loaded module: /lib64/ld-linux-x86-64.so.2, address range [0x328d200000-0x328d421187], minimal analysis 
+Loaded module: /lib64/libglib-2.0.so.0, address range [0x328f600000-0x328f8e4c0f] 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_ilp64.so, address range [0x2b050eae0000-0x2b050f3bff1f] 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_core.so, address range [0x2b050f3c0000-0x2b0510ca4147] 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_thread.so, address range [0x2b0510ca6000-0x2b0511ffce0f] 
+Loaded module: /lib64/libpthread.so.0, address range [0x328de00000-0x328e01c39f] 
+Loaded module: /lib64/libm.so.6, address range [0x328e200000-0x328e4830d7] 
+Loaded module: /lib64/libdl.so.2, address range [0x328da00000-0x328dc030ff], minimal analysis 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so, address range [0x2b0511ffe000-0x2b051233ebdf], minimal analysis 
+Loaded module: /lib64/libgcc_s.so.1, address range [0x328f200000-0x328f415cf7] 
+Loaded module: /lib64/libc.so.6, address range [0x328d600000-0x328d9928a7] 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_avx.so, address range [0x2b051473b000-0x2b0516a33d7f] 
+Loaded module: /share/apps/intel/inspector_xe_2016.1.0.423441/lib64/runtime/libittnotify.so, address range [0x2b05129b7000-0x2b0512bc38df], minimal analysis 
+Application exit code: 139 
+Result file: /home/a57816/CPD_PI_OLAP/src/InspectorOut/InspectorOut.inspxe 
+Analysis completed
+=== End: [2016/06/09 02:16:04] === 

@@ -1,0 +1,17 @@
+-r
+/home/a57816/CPD_PI_OLAP/src/InspectorOut
+-verbose
+-display-info-messages-in-verbose-mode-only
+--no-check-invalid-access
+--no-analyze-stack
+--leak-maximum=100000
+--leak-check-only
+--leak-check-on-exit
+--check-resource-leaks
+--leak-check-report-reachable
+--freelist-vol=0
+--guard-zone-size=0
+--stack-depth=8
+--
+./querie1_search
+0

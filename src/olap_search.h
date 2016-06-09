@@ -31,7 +31,7 @@
 
 //Cache-Lines size is (typically) 32 bytes
 #define MEM_LINE_SIZE 32
-#define ARRAY_SIZE MEM_LINE_SIZE / sizeof (MKL_INT)
+#define ARRAY_SIZE MEM_LINE_SIZE 
 #define GROWTH_FACTOR 2
 #define MAX_FIELD_SIZE 128
 #define MAX_REG_SIZE 1024
@@ -48,7 +48,7 @@
 ////////////////////////////////////// AUX /////////////////////////////////////
 
 //starts at position 1 
-char* getfield( char* line, int num, char* return_string );
+void getfield( char* line, int num, char** return_string );
 
 void print_csc(
     float* csc_values, MKL_INT* JA1, MKL_INT* IA1, 
