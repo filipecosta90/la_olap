@@ -111,6 +111,12 @@ void csr_tbl_write(
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
     );
 
+void csr_measure_tbl_write(
+    char* table_name,
+    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
+    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    );
+
 void csr_vector_write(
     char* vector_name,
     float* Vector_csr_values, MKL_INT Vector_NNZ
