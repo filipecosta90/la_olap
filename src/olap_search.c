@@ -647,6 +647,8 @@ void tbl_read_filter(
   number_rows = NNZ;
   NNZ++;
 
+
+
   // free(aux_coo_values);
 
   /////////////////////////////////
@@ -838,6 +840,46 @@ void tbl_read_filter_and(
   *columns = number_columns;
   *nnz = NNZ;
 }
+
+void csr_csr_square_reshape (
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
+    MKL_INT *A_nnz, MKL_INT *A_rows, MKL_INT *A_columns,
+    MKL_INT reshape_square
+    ){
+
+  MKL_INT current_row = (*A_rows);
+  MKL_INT current_column = (*A_columns);
+  MKL_INT current_nnz = (*A_nnz);
+
+  MKL_INT rows_needed = reshape_square - current_row;
+  MKL_INT columns_needed = reshape_square - current_column;
+  MKL_INT new_nnz = current_nnz + columns_needed;
+  MKL_INT new_rows = reshape_square;
+  MKL_INT new_cols = reshape_square;
+
+
+  *C_csr_values = (float*) realloc ( *A_csr_values , new_nnz * sizeof(float));
+  *C_JA = (MKL_INT*) realloc ( *C_JA , new_nnz * sizeof(MKL_INT));
+  *C_IA = (MKL_INT*) realloc ( *C_IA , (new_rows + 1) * sizeof(MKL_INT));
+
+  for (MKL_INT at_column = current_column; at_column < new_cols; ++at_column){
+    *C_csr_values[at_column] = 0.0;
+    *C_JA[at_column] = at_column;
+  }
+
+  MKL_INT nnz_it = current_nnz;
+
+  for ( MKL_INT at_row = current_row ; at_row <= new_rows; ++at_row){
+    *C_IA[at_row] = nnz_it;
+    ++nnz_it;
+  }
+
+  *A_rows = reshape_square ;
+  *A_columns = reshape_square;
+  *A_nnz = new_nnz;
+
+}
+
 
 void csc_to_csr_mx_selection_and(
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
@@ -1226,20 +1268,20 @@ void csr_vector_write(
     ){
 
   printf("writing vector to file %s\n", vector_name);
-  
+
   FILE* stream = fopen(vector_name, "w");
   char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
-  
+
   for ( MKL_INT at_row = 0; at_row < Vector_NNZ; ++at_row ){
     MKL_INT iaa = at_row;
     iaa++;
-	if (Vector_csr_values[at_row] > 0 ){
-    	field = (char*) g_quark_to_string ( iaa );
-    if ( field != NULL ){
-      fprintf(stream, "%s\n", field);
+    if (Vector_csr_values[at_row] > 0 ){
+      field = (char*) g_quark_to_string ( iaa );
+      if ( field != NULL ){
+        fprintf(stream, "%s\n", field);
+      }
     }
   }
-}
   fclose(stream);
 }
 
@@ -1250,11 +1292,11 @@ void csr_measure_vector_write(
     ){
 
   printf("writing vector to file %s\n", vector_name);
-  
+
   FILE* stream = fopen(vector_name, "w");
-  
+
   for ( MKL_INT at_row = 0; at_row < Vector_NNZ; ++at_row ){
-	if (Vector_csr_values[at_row] > 0 ){
+    if (Vector_csr_values[at_row] > 0 ){
       fprintf(stream, "%f\n", Vector_csr_values[at_row]);
     }
   }
@@ -1667,11 +1709,11 @@ void csc_csr_krao(
   *C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
   *C_IA = (MKL_INT*) malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT) );
   printf("going to convert\n\tsizeof C csr: %d %d %d\n",A_NNZ,A_NNZ, final_number_rows+1);
-  
+
   MKL_INT conversion_info;
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &conversion_info);
-  
-printf("going to convert 1\n");
+
+  printf("going to convert 1\n");
   *C_number_rows = final_number_rows;
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;

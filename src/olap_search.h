@@ -91,6 +91,12 @@ void tbl_read_filter(
     MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     );
 
+void csr_csr_square_reshape (
+    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
+    MKL_INT *A_nnz, MKL_INT *A_rows, MKL_INT *A_columns,
+    MKL_INT reshape_square
+    );
+
 void check_errors( sparse_status_t stat );
 
 void csc_tbl_write(
