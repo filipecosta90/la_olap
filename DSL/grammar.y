@@ -60,12 +60,12 @@ matrix_declaration : type idList
 idList : IDENTIFIER {
           char identifier[strlen($1)+1];
           strcpy(identifier,$1);
-          //printf("%s\n",identifier);
+          printf("%s\n",identifier);
         }
        | idList ',' IDENTIFIER {
           char identifier[strlen($3)+1];
           strcpy(identifier,$3);
-          //printf("%s\n",identifier);
+          printf("%s\n",identifier);
        }
        ;
 
