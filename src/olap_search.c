@@ -310,13 +310,11 @@ void tbl_read(
   MKL_INT current_major_row;
   MKL_INT row_of_element;
   current_major_row = 0;
-  float element_value = 0.0;
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char* tmp_field = strdup(line);
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
     field = getfield(tmp_field, tbl_column, field);
-    element_value = 1.0;
     assert(field!=NULL);
 
     quark_field = (MKL_INT) g_quark_from_string (field);
@@ -334,7 +332,7 @@ void tbl_read(
     }
 
     /* normal coo property */
-    aux_coo_values[element_number] = element_value;
+    aux_coo_values[element_number] = 1.0;
     aux_coo_columns[element_number] = element_number;
     aux_coo_rows[element_number]=  row_of_element ;
   }
@@ -857,20 +855,20 @@ void csr_csr_square_reshape (
   MKL_INT new_rows = reshape_square;
   MKL_INT new_cols = reshape_square;
 
-
-  *C_csr_values = (float*) realloc ( *A_csr_values , new_nnz * sizeof(float));
-  *C_JA = (MKL_INT*) realloc ( *C_JA , new_nnz * sizeof(MKL_INT));
-  *C_IA = (MKL_INT*) realloc ( *C_IA , (new_rows + 1) * sizeof(MKL_INT));
-
+  *A_csr_values = (float*) realloc ( (*A_csr_values) , new_nnz * sizeof(float));
+  *A_JA = (MKL_INT*) realloc ( (*A_JA) , new_nnz * sizeof(MKL_INT));
+  *A_IA = (MKL_INT*) realloc ( (*A_IA) , (new_rows + 1) * sizeof(MKL_INT));
+   
+printf("allocated going to populate with zero's\n");
   for (MKL_INT at_column = current_column; at_column < new_cols; ++at_column){
-    *C_csr_values[at_column] = 0.0;
-    *C_JA[at_column] = at_column;
+    (*A_csr_values)[at_column] = 0.0;
+  (*A_JA)[at_column] = at_column;
   }
-
+printf("two down. one to go\n");
   MKL_INT nnz_it = current_nnz;
 
   for ( MKL_INT at_row = current_row ; at_row <= new_rows; ++at_row){
-    *C_IA[at_row] = nnz_it;
+    (*A_IA)[at_row] = nnz_it;
     ++nnz_it;
   }
 
@@ -1211,6 +1209,7 @@ void csr_tbl_write(
 
   MKL_INT job[8];
   printf("writing to table %s\n", table_name);
+	printf("matrix read has %d x %d with %d nnz\n", A_number_rows, A_number_columns, A_NNZ);
   /////////////////////////////////////
   // PREPARE FOR OPERATION
   /////////////////////////////////////
@@ -1236,13 +1235,13 @@ void csr_tbl_write(
   // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
   job[5] = 1;
   sparse_status_t status_convert_csc;
-  __declspec(align(MEM_LINE_SIZE))	float* A_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
+  float* A_csc_values = NULL;
+  MKL_INT* A_JA1;
+  MKL_INT* A_IA1;
 
-  A_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  A_JA1 = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
-  A_IA1 = (MKL_INT*) malloc ((A_NNZ+1) * sizeof(MKL_INT));
+  A_csc_values = (float*) malloc ( A_number_columns * sizeof(float) );
+  A_JA1 = (MKL_INT*) malloc ( A_number_columns * sizeof(MKL_INT) );
+  A_IA1 = (MKL_INT*) malloc ((A_number_columns+1) * sizeof(MKL_INT));
   MKL_INT conversion_info;
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &conversion_info);
 
@@ -1254,7 +1253,8 @@ void csr_tbl_write(
     MKL_INT iaa = A_JA1[at_column];
     iaa++;
     field = (char*) g_quark_to_string ( iaa );
-    if ( field != NULL  &&  A_csc_values[at_column] > 0 ){
+    iaa--;
+    if (  A_csc_values[at_column] > 0 ){
       fprintf(stream, "%s\n", field);
     }
   }

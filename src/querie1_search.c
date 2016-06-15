@@ -278,7 +278,6 @@ int main( int argc, char* argv[]){
 			&quantity_csr_values, &quantity_JA, &quantity_IA
 			);
 
-
 csr_tbl_write(
     "quantity_test.txt",
     quantity_csr_values, quantity_JA, quantity_IA,
@@ -293,6 +292,52 @@ csr_tbl_write(
 	intermediate_csr_values = (float*) malloc ( (quantity_nnz) * sizeof(float) );
 	intermediate_JA = (MKL_INT*) malloc ((quantity_nnz) * sizeof(MKL_INT) );
 	intermediate_IA = (MKL_INT*) malloc (( quantity_nnz+1) * sizeof(MKL_INT));
+
+	/** ---------------------------------------------------------------------------
+	 ** Populate Shipdate Matrix
+	 ** -------------------------------------------------------------------------*/
+	//read shipdate
+	tbl_read(
+			table_file , 11,
+ &shipdate_nnz, &shipdate_rows, &shipdate_columns ,
+			&shipdate_csr_values, &shipdate_JA, &shipdate_IA
+		);
+
+csr_tbl_write(
+    "shipdate_test_csr.txt",
+    shipdate_csr_values, shipdate_JA, shipdate_IA,
+    shipdate_nnz, shipdate_rows, shipdate_columns
+    );
+
+	// Memory Allocation
+	shipdate_csc_values = (float*) malloc ( shipdate_nnz * sizeof(float) );
+	shipdate_JA_csc = (MKL_INT*) malloc ( shipdate_nnz * sizeof(MKL_INT) );
+	shipdate_IA_csc = (MKL_INT*) malloc ((shipdate_nnz+1) * sizeof(MKL_INT));
+
+	// Convert from CSR to CSC
+	mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &conversion_info);
+
+csc_tbl_write(
+    "shipdate_test_csc.txt",
+    shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc,
+    shipdate_nnz, shipdate_rows, shipdate_columns
+    );
+
+
+	//        convert via sparseBLAS API to Handle containing internal data for
+	//        subsequent Inspector-executor Sparse BLAS operations.
+	status_to_csr = mkl_sparse_s_create_csr ( 
+			&shipdate_matrix , SPARSE_INDEX_BASE_ZERO,      shipdate_rows, shipdate_columns, 
+			shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
+			);
+
+printf("going to reshape quantity table\n");
+
+csr_csr_square_reshape (
+   &quantity_csr_values, &quantity_JA, &quantity_IA,
+    &quantity_nnz, &quantity_rows, &quantity_columns,
+    shipdate_columns    
+);
 
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &quantity_nnz, quantity_csr_values, quantity_JA, quantity_IA, quantity_csc_values, quantity_JA_csc, quantity_IA_csc, &conversion_info);
@@ -311,29 +356,8 @@ csc_tbl_write(
 	status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
 			quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
 	check_errors(status_to_csr);
-	/** ---------------------------------------------------------------------------
-	 ** Populate Shipdate Matrix
-	 ** -------------------------------------------------------------------------*/
-	//read shipdate
-	tbl_read(
-			table_file , 11, &shipdate_nnz, &shipdate_rows, &shipdate_columns ,
-			&shipdate_csr_values, &shipdate_JA, &shipdate_IA
-		);
 
-	// Memory Allocation
-	shipdate_csc_values = (float*) malloc ( shipdate_nnz * sizeof(float) );
-	shipdate_JA_csc = (MKL_INT*) malloc ( shipdate_nnz * sizeof(MKL_INT) );
-	shipdate_IA_csc = (MKL_INT*) malloc ((shipdate_nnz+1) * sizeof(MKL_INT));
 
-	// Convert from CSR to CSC
-	mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &conversion_info);
-
-	//        convert via sparseBLAS API to Handle containing internal data for
-	//        subsequent Inspector-executor Sparse BLAS operations.
-	status_to_csr = mkl_sparse_s_create_csr ( 
-			&shipdate_matrix , SPARSE_INDEX_BASE_ZERO,      shipdate_rows, shipdate_columns, 
-			shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
-			);
 
 	/** ---------------------------------------------------------------------------
 	 ** Auxiliar Vars
@@ -411,6 +435,26 @@ printf("selection rows %d columns %d nnz %d\n", selection_rows, selection_column
   quantity_matrix,
   &intermediate_matrix);
 check_errors(intermediate_result);
+printf(" // compute aggregation = quantity * bang\n");
+
+	// mkl_sparse_optimize(projection_matrix);
+	GET_TIME(global_time_projection);
+
+	// compute aggregation = quantity * bang
+	// results in a vector
+
+
+	aggregation_result = mkl_sparse_s_mv (
+			SPARSE_OPERATION_NON_TRANSPOSE, 1.0, intermediate_matrix , descrA, bang_vector, 0.0,  intermediate_vector
+			);
+
+csr_measure_vector_write(
+    "intermediate_test.txt",
+    intermediate_vector, intermediate_vector_rows
+    );
+
+
+
 
 	// compute projection = return_flag krao line_status
 	csc_csr_krao(
@@ -431,23 +475,7 @@ csr_tbl_write(
 	status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
 
 	check_errors(status_to_csr);
-	printf(" // compute aggregation = quantity * bang\n");
-
-	// mkl_sparse_optimize(projection_matrix);
-	GET_TIME(global_time_projection);
-
-	// compute aggregation = quantity * bang
-	// results in a vector
-
-
-	aggregation_result = mkl_sparse_s_mv (
-			SPARSE_OPERATION_NON_TRANSPOSE, 1.0, intermediate_matrix , descrA, bang_vector, 0.0,  intermediate_vector
-			);
-
-csr_vector_write(
-    "intermediate_test.txt",
-    intermediate_vector, intermediate_vector_rows
-    );
+	
 
 /*	check_errors(aggregation_result);
 	printf(" // compute intermediate_vector = selection * aggregation\n");
