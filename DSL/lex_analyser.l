@@ -2,9 +2,12 @@ D     [0-9]
 H     [a-fA-F0-9]
 %{
   #include "y.tab.h"
+  #include <string.h>
 %}
 
 %%
+"START"   {return (START);}
+"STOP"    {return (STOP);}
 "BEGIN"   {return (BGN);}
 "END"     {return (END);}
 "vector"  {return (VECTOR);}
@@ -13,7 +16,7 @@ H     [a-fA-F0-9]
 "bang"    {return (BANG);}
 "tbl_read" {return (TBL_READ);}
 "tbl_write" {return (TBL_WRITE);}
-"tbl_filter" {return (TBL_FILTER);}
+"mx_filter_and" {return (MX_FILTER_AND);}
 
 ";"     { return(';'); }
 ","     { return(','); }
@@ -26,20 +29,18 @@ H     [a-fA-F0-9]
 "><"     { return (HADAMARD); }
 "krao"     { return (KRAO); }
 
-[0-9]+  {return (INTEGER);}
-[a-zA-Z_'.0-9/]* { return (IDENTIFIER); }
+[0-9]+  {
+          return (INTEGER);
+        }
+[a-zA-Z_'.0-9/]* { 
+          char res[strlen(yytext)+1];
+          strcpy(res, yytext);
+          yylval.sval = res;
+          return (IDENTIFIER);
+        }
 [<=>]+ { return (CONDITION); }
 [\t\r]*\'[^']+\' {return(KEY_CONDITION);}
 [ \t\v\n\f]   { }
 .     { /* ignore bad characters */ }
 
 %%
-
-/*int yywrap(){return 1;}
-
-int main(){
-  int s;
-  while( s = yylex() ){
-  printf("%d\n",s);
-  }
-}*/
