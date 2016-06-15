@@ -1219,6 +1219,50 @@ void csr_tbl_write(
   fclose(stream);
 }
 
+
+void csr_vector_write(
+    char* vector_name,
+    float* Vector_csr_values, MKL_INT Vector_NNZ
+    ){
+
+  printf("writing vector to file %s\n", vector_name);
+  
+  FILE* stream = fopen(vector_name, "w");
+  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  
+  for ( MKL_INT at_row = 0; at_row < Vector_NNZ; ++at_row ){
+    MKL_INT iaa = at_row;
+    iaa++;
+	if (Vector_csr_values[at_row] > 0 ){
+    	field = (char*) g_quark_to_string ( iaa );
+    if ( field != NULL ){
+      fprintf(stream, "%s\n", field);
+    }
+  }
+}
+  fclose(stream);
+}
+
+
+void csr_measure_vector_write(
+    char* vector_name,
+    float* Vector_csr_values, MKL_INT Vector_NNZ
+    ){
+
+  printf("writing vector to file %s\n", vector_name);
+  
+  FILE* stream = fopen(vector_name, "w");
+  
+  for ( MKL_INT at_row = 0; at_row < Vector_NNZ; ++at_row ){
+	if (Vector_csr_values[at_row] > 0 ){
+      fprintf(stream, "%f\n", Vector_csr_values[at_row]);
+    }
+  }
+  fclose(stream);
+}
+
+
+
 void check_errors( sparse_status_t stat ){
   if ( stat == SPARSE_STATUS_SUCCESS ){
     printf( "SPARSE_STATUS_SUCCESS.\n");
@@ -1613,7 +1657,7 @@ void csc_csr_krao(
   // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
   // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
   job[5] = 1;
-  MKL_INT final_number_rows = A_number_rows + B_number_rows; 
+  MKL_INT final_number_rows = A_number_rows * B_number_rows; 
 
   /////////////////////////////////
   //   ALLOCATE MEMORY
@@ -1622,10 +1666,12 @@ void csc_csr_krao(
   *C_csr_values = (float*) malloc ( A_NNZ * sizeof(float) );
   *C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
   *C_IA = (MKL_INT*) malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT) );
-  printf("going to convert\n");
+  printf("going to convert\n\tsizeof C csr: %d %d %d\n",A_NNZ,A_NNZ, final_number_rows+1);
+  
   MKL_INT conversion_info;
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &conversion_info);
-  printf("going to convert 1\n");
+  
+printf("going to convert 1\n");
   *C_number_rows = final_number_rows;
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;

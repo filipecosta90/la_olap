@@ -105,6 +105,16 @@ void csr_tbl_write(
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
     );
 
+void csr_vector_write(
+    char* vector_name,
+    float* Vector_csr_values, MKL_INT Vector_NNZ
+    );
+
+void csr_measure_vector_write(
+    char* vector_name,
+    float* Vector_csr_values, MKL_INT Vector_NNZ
+    );
+
 void csc_to_csr_mx_selection_and(
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
