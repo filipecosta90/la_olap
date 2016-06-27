@@ -193,12 +193,13 @@ void csr_csr_krao(
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );
 
-void csc_csr_krao(
+void csc_to_csr_and_csc_krao(
     float *restrict A_csc_values, MKL_INT *restrict A_JA1, MKL_INT *restrict A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     float *restrict B_csc_values, MKL_INT *restrict B_JA1, MKL_INT *restrict B_IA1 ,
     MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
     float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+    float **restrict C_csc_values, MKL_INT **restrict C_JA1, MKL_INT **restrict C_IA1,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );
 

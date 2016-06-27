@@ -1635,29 +1635,23 @@ void csr_csr_krao(
 //   COMPUTE KHATRI-RAO
 //
 /////////////////////////////////
-void csc_csr_krao(
+void csc_to_csr_and_csc_krao(
     float *restrict A_csc_values, MKL_INT *restrict A_JA1, MKL_INT *restrict A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     float *restrict B_csc_values, MKL_INT *restrict B_JA1, MKL_INT *restrict B_IA1 ,
     MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
     float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
+    float **restrict C_csc_values, MKL_INT **restrict C_JA1, MKL_INT **restrict C_IA1,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
-
-  __declspec(align(MEM_LINE_SIZE))	float* C_csc_values = NULL;
-  __declspec(align(MEM_LINE_SIZE)) 	MKL_INT* C_JA1;
-  __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
 
   /////////////////////////////////
   //   ALLOCATE MEMORY
   /////////////////////////////////
 
-  C_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  C_JA1 = (MKL_INT*) malloc ( A_NNZ  * sizeof(MKL_INT) );
-  C_IA1 = (MKL_INT*) malloc ( (A_number_columns+1) * sizeof(MKL_INT) );
-  assert(C_csc_values != NULL);
-  assert(C_JA1 != NULL);
-  assert(C_IA1 != NULL);
+  *C_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
+  *C_JA1 = (MKL_INT*) malloc ( A_NNZ  * sizeof(MKL_INT) );
+  *C_IA1 = (MKL_INT*) malloc ( (A_number_columns+1) * sizeof(MKL_INT) );
   /////////////////////////////////
   //   COMPUTE KRAO
   /////////////////////////////////
@@ -1666,37 +1660,32 @@ void csc_csr_krao(
   __declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
 
   // n=16 for SSE, n=32 for AV
-  __assume_aligned(C_IA1, MEM_LINE_SIZE);
+  __assume_aligned(*C_IA1, MEM_LINE_SIZE);
   __assume_aligned(A_IA1, MEM_LINE_SIZE);
-  __assume_aligned(C_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(*C_csc_values, MEM_LINE_SIZE);
   __assume_aligned(B_csc_values, MEM_LINE_SIZE);
   __assume_aligned(A_csc_values, MEM_LINE_SIZE);
   __assume_aligned(B_JA1, MEM_LINE_SIZE);
   __assume_aligned(A_JA1, MEM_LINE_SIZE);
-  __assume_aligned(C_JA1, MEM_LINE_SIZE);
+  __assume_aligned(*C_JA1, MEM_LINE_SIZE);
 
   /////////////////////////////////
   //   COMPUTE KRAO
   /////////////////////////////////
   printf("inside csc csr\n");
   for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-    C_IA1[at_column] = A_IA1[at_column];
+    (*C_IA1)[at_column] = A_IA1[at_column];
   }
-
-  printf("inside csc csr\n");
 
   for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-    C_csc_values[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
+    (*C_csc_values)[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
   }
-
-  printf("inside csc csr\n");
 
   for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-    C_JA1[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
+    (*C_JA1)[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
   }
-  C_IA1[A_number_columns] = A_NNZ;
+  (*C_IA1)[A_number_columns] = A_NNZ;
 
-  printf("inside csc csr\n");
   /////////////////////////////////
   //   CONVERT C from CSC to CSR
   ////////////////////////////////
@@ -1730,16 +1719,13 @@ void csc_csr_krao(
   *C_csr_values = (float*) malloc ( A_NNZ * sizeof(float) );
   *C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
   *C_IA = (MKL_INT*) malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT) );
-  printf("going to convert\n\tsizeof C csr: %d %d %d\n",A_NNZ,A_NNZ, final_number_rows+1);
 
   MKL_INT conversion_info;
-  mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &conversion_info);
+  mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, *C_csc_values, *C_JA1, *C_IA1, &conversion_info);
 
-  printf("going to convert 1\n");
   *C_number_rows = final_number_rows;
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
-  printf("going to convert 1\n");
 }
 
 
