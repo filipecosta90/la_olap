@@ -30,6 +30,7 @@ H     [a-fA-F0-9]
 "krao"     { return (KRAO); }
 
 [0-9]+  {
+          yylval.ival = atoi(yytext);
           return (INTEGER);
         }
 [a-zA-Z_'.0-9/]* { 
