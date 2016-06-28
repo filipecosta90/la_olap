@@ -15,8 +15,8 @@ v0: olap_search.o querie1_search.o
 v1: olap_search.o querie1_search_v1.o
 	$(CC) $(INCLUDE) $(CFLAGS) olap_search.c querie1_search_v1.c -o querie1_search_v1 $(LIB) 
 
-v2: olap_search.o querie1_search.o
-	$(CC) $(CFLAGS) -DD_DEBUGGING olap_search.c querie1_search.c -o querie1_search_debugging $(LIB) 
+debugging: olap_search.o querie1_search.o
+	$(CC) $(CFLAGS) -DD_DEBUGGING -o querie1_search_debugging olap_search.c querie1_search.c $(LIB) 
 
 all: v0 v1 v2
 
