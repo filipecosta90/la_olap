@@ -503,7 +503,7 @@ int main( int argc, char* argv[]){
 			&projection_csc_values, &projection_JA_csc, &projection_IA_csc,
 			&projection_nnz, &projection_rows, &projection_columns
 			);
-
+#ifdef D_DEBUGGING
 	print_csr(
 			return_flag_csr_values, return_flag_JA, return_flag_IA,
 			return_flag_nnz, return_flag_rows, return_flag_columns
@@ -518,7 +518,7 @@ int main( int argc, char* argv[]){
 			projection_csc_values, projection_JA_csc, projection_IA_csc,
 			projection_nnz, projection_rows, projection_columns
 		 );
-
+#endif
 	csc_tbl_write(
 			"projection_test_csc.txt",
 			projection_csc_values, projection_JA_csc, projection_IA_csc,

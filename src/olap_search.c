@@ -398,11 +398,11 @@ MKL_INT square = number_rows > number_columns ? number_rows : number_columns;
   *columns = number_columns;
   *nnz = NNZ;
 
+#ifdef D_DEBUGGING
 print_csr(
      *A_csr_values, *A_JA, *A_IA,
     NNZ, number_rows, number_columns
     );
-#ifdef D_DEBUGGING
   printf("\treaded %d lines from column,\n\tresulting in a untouched %d x %d matrix\n", element_number, number_rows , number_columns );
 
   printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
@@ -505,13 +505,13 @@ void tbl_read_measure(
   *rows = number_rows;
   *columns = number_columns;
   *nnz = NNZ;
-
+#ifdef D_DEBUGGING
 print_csr(
      *A_csr_values, *A_JA, *A_IA,
     NNZ, number_rows, number_columns
     );
 
-#ifdef D_DEBUGGING
+
   printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
   #endif
 }
