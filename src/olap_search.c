@@ -942,7 +942,6 @@ void csc_to_csr_mx_selection_and(
   MKL_INT returned_strcmp ;
   MKL_INT returned_strcmp2; 
   MKL_INT iaa = 0; 
-#pragma omp parallel for schedule(static)
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     iaa = A_JA1[at_column];
