@@ -170,7 +170,7 @@ int main( int argc, char* argv[]){
 	__declspec(align(MEM_LINE_SIZE))  float* projection_csr_values = NULL;
 	__declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_JA;
 	__declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_IA;
-//CSC
+	//CSC
 	__declspec(align(MEM_LINE_SIZE))  float* projection_csc_values = NULL;
 	__declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_JA_csc;
 	__declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_IA_csc;
@@ -245,6 +245,7 @@ int main( int argc, char* argv[]){
 			&return_flag_csr_values, &return_flag_JA, &return_flag_IA
 		);
 
+	printf("return flag %d %d -- nnz: %d\n", return_flag_rows, return_flag_columns, return_flag_nnz );
 	// Memory Allocation
 	return_flag_csc_values = (float*) malloc ( return_flag_nnz * sizeof(float) );
 	return_flag_JA_csc = (MKL_INT*) malloc ( return_flag_nnz * sizeof(MKL_INT) );
@@ -281,6 +282,7 @@ int main( int argc, char* argv[]){
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA_csc, line_status_IA_csc, &conversion_info);
 
+	printf("line status %d %d -- nnz: %d\n", line_status_rows, line_status_columns, line_status_nnz );
 	csc_tbl_write(
 			"line_status_csc.txt",
 			line_status_csc_values, line_status_JA_csc, line_status_IA_csc,
@@ -298,6 +300,13 @@ int main( int argc, char* argv[]){
 			table_file , 5,
 			&quantity_nnz,  &quantity_rows, &quantity_columns , 
 			&quantity_csr_values, &quantity_JA, &quantity_IA
+			);
+
+	printf("going to reshape quantity table\n");
+	csr_csr_square_reshape (
+			&quantity_csr_values, &quantity_JA, &quantity_IA,
+			&quantity_nnz, &quantity_rows, &quantity_columns,
+			line_status_columns    
 			);
 
 	csr_tbl_write(
@@ -324,6 +333,15 @@ int main( int argc, char* argv[]){
 			&shipdate_nnz, &shipdate_rows, &shipdate_columns ,
 			&shipdate_csr_values, &shipdate_JA, &shipdate_IA
 		);
+
+
+	printf("going to reshape quantity table\n");
+	csr_csr_square_reshape (
+			&shipdate_csr_values, &shipdate_JA, &shipdate_IA,
+			&shipdate_nnz, &shipdate_rows, &shipdate_columns,
+			line_status_columns    
+			);
+
 
 	csr_tbl_write(
 			"shipdate_test_csr.txt",
@@ -353,14 +371,6 @@ int main( int argc, char* argv[]){
 			shipdate_IA, shipdate_IA+1, shipdate_JA, shipdate_csr_values
 			);
 
-	printf("going to reshape quantity table\n");
-	csr_csr_square_reshape (
-			&quantity_csr_values, &quantity_JA, &quantity_IA,
-			&quantity_nnz, &quantity_rows, &quantity_columns,
-			shipdate_columns    
-			);
-
-
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &quantity_nnz, quantity_csr_values, quantity_JA, quantity_IA, quantity_csc_values, quantity_JA_csc, quantity_IA_csc, &conversion_info);
 
@@ -378,8 +388,6 @@ int main( int argc, char* argv[]){
 	status_to_csr = mkl_sparse_s_create_csr ( &quantity_matrix , SPARSE_INDEX_BASE_ZERO, 
 			quantity_rows, quantity_columns, quantity_IA, quantity_IA+1, quantity_JA, quantity_csr_values );
 	check_errors(status_to_csr);
-
-
 
 	/** ---------------------------------------------------------------------------
 	 ** Auxiliar Vars
@@ -487,6 +495,21 @@ int main( int argc, char* argv[]){
 			&projection_nnz, &projection_rows, &projection_columns
 			);
 
+	print_csr(
+			return_flag_csr_values, return_flag_JA, return_flag_IA,
+			return_flag_nnz, return_flag_rows, return_flag_columns
+		 );
+
+	print_csr(
+			line_status_csr_values, line_status_JA, line_status_IA,
+			line_status_nnz, line_status_rows, line_status_columns
+		 );
+
+	print_csc(
+			projection_csc_values, projection_JA_csc, projection_IA_csc,
+			projection_nnz, projection_rows, projection_columns
+		 );
+
 	csc_tbl_write(
 			"projection_test_csc.txt",
 			projection_csc_values, projection_JA_csc, projection_IA_csc,
@@ -500,6 +523,8 @@ int main( int argc, char* argv[]){
 		     );
 
 	printf("projection nnz: %d\n", projection_nnz);
+	printf("projection rows: %d\n", projection_rows);
+	printf("projection columns: %d\n", projection_columns);
 
 	status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
 

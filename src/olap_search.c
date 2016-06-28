@@ -93,21 +93,21 @@ void print_csr(
   printf("N NONZ: %d\t", NNZ);
   printf("N ROWS: %d\t", number_rows);
   printf("N COLS: %d\n", number_columns);
-  printf("CSR VALUES(%llu):\t", sizeof(csr_values));
+  printf("CSR_VALUES(%llu) = [\t", sizeof(csr_values));
   for (MKL_INT pos = 0; pos < NNZ; pos++){
     printf("%f, ", csr_values[pos]);
   }
-  printf("\nJA:\t");
+  printf("] \nJA = [\t");
 
   for (int pos = 0; pos < NNZ; pos++){
     printf("%d, ", JA[pos]);
   }
 
-  printf("\nIA:\t");
+  printf("] \nIA = [\t");
   for (int pos = 0; pos <= number_rows; pos++){
     printf("%d, ", IA[pos]);
   }
-  printf("\n");
+  printf("] \n");
 }
 
 void convert_and_write_to_csv (
@@ -342,11 +342,13 @@ void tbl_read(
   number_rows = current_major_row + 1; 
   number_columns = element_number;
 
-  if ( number_rows != number_columns ){ 
-  MKL_INT square = number_rows > number_columns ? number_rows : number_columns;
+ if ( number_rows != number_columns ){ 
+printf("\n\n\n##### NEED TO BE SQUARED\n\n\n");  
+MKL_INT square = number_rows > number_columns ? number_rows : number_columns;
   square++;
   element_number++;
-    aux_coo_values[element_number] = 0.0f;
+	NNZ++;  
+  aux_coo_values[element_number] = 0.0f;
     aux_coo_columns[element_number] = square;
     aux_coo_rows[element_number]= square; 
     number_rows = square;
@@ -822,12 +824,10 @@ printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_col
   *A_JA = (MKL_INT*) realloc ( (*A_JA) , new_nnz * sizeof(MKL_INT));
   *A_IA = (MKL_INT*) realloc ( (*A_IA) , (new_rows + 1) * sizeof(MKL_INT));
    
-printf("allocated going to populate with zero's\n");
   for (MKL_INT at_column = current_column; at_column < new_cols; ++at_column){
     (*A_csr_values)[at_column] = 0.0;
   (*A_JA)[at_column] = at_column;
   }
-printf("two down. one to go\n");
   MKL_INT nnz_it = current_nnz;
 
   for ( MKL_INT at_row = current_row ; at_row <= new_rows; ++at_row){
@@ -840,6 +840,50 @@ printf("two down. one to go\n");
   *A_nnz = new_nnz;
 
 }
+
+
+
+void csc_csc_square_reshape (
+    float** A_csc_values, MKL_INT** A_JA_csc, MKL_INT** A_IA_csc,
+    MKL_INT *A_nnz, MKL_INT *A_rows, MKL_INT *A_columns,
+    MKL_INT reshape_square
+    ){
+
+
+  MKL_INT current_row = (*A_rows);
+  MKL_INT current_column = (*A_columns);
+  MKL_INT current_nnz = (*A_nnz);
+
+
+  MKL_INT rows_needed = reshape_square - current_row;
+  MKL_INT columns_needed = reshape_square - current_column;
+  MKL_INT new_nnz = current_nnz + columns_needed;
+  MKL_INT new_rows = reshape_square;
+  MKL_INT new_cols = reshape_square;
+
+printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_column, current_nnz, new_rows, new_cols, new_nnz );
+
+  *A_csc_values = (float*) realloc ( (*A_csc_values) , new_nnz * sizeof(float));
+  *A_JA_csc = (MKL_INT*) realloc ( (*A_JA_csc) , new_nnz * sizeof(MKL_INT));
+  *A_IA_csc = (MKL_INT*) realloc ( (*A_IA_csc) , (new_nnz + 1) * sizeof(MKL_INT));
+   
+  for (MKL_INT at_column = current_column; at_column < new_cols; ++at_column){
+    (*A_csc_values)[at_column] = 0.0;
+  (*A_JA_csc)[at_column] = at_column;
+  }
+  MKL_INT nnz_it = current_nnz;
+
+  for ( MKL_INT at_row = current_row ; at_row <= new_rows; ++at_row){
+    (*A_IA_csc)[at_row] = nnz_it;
+    ++nnz_it;
+  }
+
+  *A_rows = reshape_square ;
+  *A_columns = reshape_square;
+  *A_nnz = new_nnz;
+
+}
+
 
 
 void csc_to_csr_mx_selection_and(
@@ -1660,7 +1704,7 @@ void csc_to_csr_and_csc_krao(
   __declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
 
   // n=16 for SSE, n=32 for AV
-  __assume_aligned(*C_IA1, MEM_LINE_SIZE);
+  /*__assume_aligned(*C_IA1, MEM_LINE_SIZE);
   __assume_aligned(A_IA1, MEM_LINE_SIZE);
   __assume_aligned(*C_csc_values, MEM_LINE_SIZE);
   __assume_aligned(B_csc_values, MEM_LINE_SIZE);
@@ -1668,25 +1712,25 @@ void csc_to_csr_and_csc_krao(
   __assume_aligned(B_JA1, MEM_LINE_SIZE);
   __assume_aligned(A_JA1, MEM_LINE_SIZE);
   __assume_aligned(*C_JA1, MEM_LINE_SIZE);
-
+*/
   /////////////////////////////////
   //   COMPUTE KRAO
   /////////////////////////////////
-  printf("inside csc csr\n");
   for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
     (*C_IA1)[at_column] = A_IA1[at_column];
   }
-
-  for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
+  (*C_IA1)[A_number_columns] = A_NNZ;
+  
+for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
     (*C_csc_values)[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
   }
 
   for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
     (*C_JA1)[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
   }
-  (*C_IA1)[A_number_columns] = A_NNZ;
 
-  /////////////////////////////////
+  MKL_INT final_number_rows = A_number_rows * B_number_rows; 
+  /*/////////////////////////////////
   //   CONVERT C from CSC to CSR
   ////////////////////////////////
   sparse_status_t status_convert_csc;
@@ -1710,7 +1754,7 @@ void csc_to_csr_and_csc_krao(
   // If job[5]=0, only arrays ja1, ia1 are filled in for the output storage.
   // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
   job[5] = 1;
-  MKL_INT final_number_rows = A_number_rows * B_number_rows; 
+
 
   /////////////////////////////////
   //   ALLOCATE MEMORY
@@ -1722,7 +1766,7 @@ void csc_to_csr_and_csc_krao(
 
   MKL_INT conversion_info;
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, *C_csc_values, *C_JA1, *C_IA1, &conversion_info);
-
+*/
   *C_number_rows = final_number_rows;
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
