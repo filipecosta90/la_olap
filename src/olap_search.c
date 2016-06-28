@@ -60,12 +60,12 @@ char* getfield( char* line, int num, char* return_string ){
   return return_string;
 }
 
+#ifdef D_DEBUGGING
 
 void print_csc(
     float* csc_values, MKL_INT* JA1, MKL_INT* IA1,
     MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns
     ){
-
   printf("N NONZ: %d\t", NNZ);
   printf("N ROWS: %d\t", number_rows);
   printf("N COLS: %d\n", number_columns);
@@ -110,6 +110,8 @@ void print_csr(
   }
   printf("] \n");
 }
+
+#endif
 
 void convert_and_write_to_csv (
     char* filename,
@@ -284,7 +286,9 @@ void tbl_read(
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
     float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     ){
+  #ifdef D_DEBUGGING
   printf("going to read column %d\n", tbl_column);
+  #endif
   MKL_INT current_values_size = ARRAY_SIZE;
   //define COO sparse-matrix M
   MKL_INT* aux_coo_rows;
@@ -344,7 +348,9 @@ void tbl_read(
   number_columns = element_number;
 
  if ( number_rows != number_columns ){ 
+  #ifdef D_DEBUGGING
 printf("\n\n\n##### NEED TO BE SQUARED\n\n\n");  
+ #endif
 MKL_INT square = number_rows > number_columns ? number_rows : number_columns;
   square++;
   element_number++;
@@ -396,10 +402,11 @@ print_csr(
      *A_csr_values, *A_JA, *A_IA,
     NNZ, number_rows, number_columns
     );
-
+#ifdef D_DEBUGGING
   printf("\treaded %d lines from column,\n\tresulting in a untouched %d x %d matrix\n", element_number, number_rows , number_columns );
 
   printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
+#endif
 }
 
 void tbl_read_measure(
@@ -407,8 +414,9 @@ void tbl_read_measure(
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
     float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     ){
-
+#ifdef D_DEBUGGING
   printf("going to read column %d\n", tbl_column);
+  #endif
   MKL_INT current_values_size = ARRAY_SIZE;
   MKL_INT padding_quark = 0;
   //define COO sparse-matrix M
@@ -503,8 +511,9 @@ print_csr(
     NNZ, number_rows, number_columns
     );
 
-
+#ifdef D_DEBUGGING
   printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
+  #endif
 }
 
 void tbl_read_filter(
@@ -819,8 +828,9 @@ void csr_csr_square_reshape (
   MKL_INT new_rows = reshape_square;
   MKL_INT new_cols = reshape_square;
 
+#ifdef D_DEBUGGING
 printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_column, current_nnz, new_rows, new_cols, new_nnz );
-
+#endif
   *A_csr_values = (float*) realloc ( (*A_csr_values) , new_nnz * sizeof(float));
   *A_JA = (MKL_INT*) realloc ( (*A_JA) , new_nnz * sizeof(MKL_INT));
   *A_IA = (MKL_INT*) realloc ( (*A_IA) , (new_rows + 1) * sizeof(MKL_INT));
@@ -861,9 +871,9 @@ void csc_csc_square_reshape (
   MKL_INT new_nnz = current_nnz + columns_needed;
   MKL_INT new_rows = reshape_square;
   MKL_INT new_cols = reshape_square;
-
+#ifdef D_DEBUGGING
 printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_column, current_nnz, new_rows, new_cols, new_nnz );
-
+#endif
   *A_csc_values = (float*) realloc ( (*A_csc_values) , new_nnz * sizeof(float));
   *A_JA_csc = (MKL_INT*) realloc ( (*A_JA_csc) , new_nnz * sizeof(MKL_INT));
   *A_IA_csc = (MKL_INT*) realloc ( (*A_IA_csc) , (new_nnz + 1) * sizeof(MKL_INT));
@@ -1217,8 +1227,10 @@ void csr_tbl_write(
     ){
 
   MKL_INT job[8];
+  #ifdef D_DEBUGGING
   printf("writing to table %s\n", table_name);
 	printf("matrix read has %d x %d with %d nnz\n", A_number_rows, A_number_columns, A_NNZ);
+  #endif
   /////////////////////////////////////
   // PREPARE FOR OPERATION
   /////////////////////////////////////
@@ -1276,8 +1288,10 @@ void csr_measure_tbl_write(
     ){
 
   MKL_INT job[8];
+  #ifdef D_DEBUGGING
   printf("writing to table %s\n", table_name);
 	printf("matrix read has %d x %d with %d nnz\n", A_number_rows, A_number_columns, A_NNZ);
+  #endif
   /////////////////////////////////////
   // PREPARE FOR OPERATION
   /////////////////////////////////////
@@ -1334,8 +1348,9 @@ void csr_vector_write(
     char* vector_name,
     float* Vector_csr_values, MKL_INT Vector_NNZ
     ){
-
+#ifdef D_DEBUGGING
   printf("writing vector to file %s\n", vector_name);
+  #endif
 
   FILE* stream = fopen(vector_name, "w");
   char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char),MEM_LINE_SIZE );
@@ -1358,8 +1373,9 @@ void csr_measure_vector_write(
     char* vector_name,
     float* Vector_csr_values, MKL_INT Vector_NNZ
     ){
-
+#ifdef D_DEBUGGING
   printf("writing vector to file %s\n", vector_name);
+  #endif
 
   FILE* stream = fopen(vector_name, "w");
 

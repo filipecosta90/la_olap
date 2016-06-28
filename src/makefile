@@ -15,8 +15,11 @@ v0: olap_search.o querie1_search.o
 v1: olap_search.o querie1_search_v1.o
 	$(CC) $(INCLUDE) $(CFLAGS) olap_search.c querie1_search_v1.c -o querie1_search_v1 $(LIB) 
 
-all: v0 v1
+v2: olap_search.o querie1_search.o
+	$(CC) $(CFLAGS) -D_DEBUGGING olap_search.c querie1_search.c -o querie1_search_debugging $(LIB) 
+
+all: v0 v1 v2
 
 .PHONY: clean
 clean:
-	rm  *.o  querie1_search querie1_search_v1
+	rm  *.o  querie1_search querie1_search_v1 querie1_search_debugging

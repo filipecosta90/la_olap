@@ -71,8 +71,9 @@ int main( int argc, char* argv[]){
 	strcat(table_file, argv[1]);
 	strcat(table_file, ".tbl");
 
+#ifdef D_DEBUGGING
 	printf("going to read results from %s\n", table_file);
-
+#endif
 	//////////////////////////////////////////
 	//        CONVERT from CSR to CSC
 	//////////////////////////////////////////
@@ -244,8 +245,9 @@ int main( int argc, char* argv[]){
 			&return_flag_nnz, &return_flag_rows, &return_flag_columns, 
 			&return_flag_csr_values, &return_flag_JA, &return_flag_IA
 		);
-
+#ifdef D_DEBUGGING
 	printf("return flag %d %d -- nnz: %d\n", return_flag_rows, return_flag_columns, return_flag_nnz );
+	#endif
 	// Memory Allocation
 	return_flag_csc_values = (float*) _mm_malloc ( return_flag_nnz * sizeof(float) ,MEM_LINE_SIZE);
 	return_flag_JA_csc = (MKL_INT*) _mm_malloc ( return_flag_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
@@ -281,8 +283,9 @@ int main( int argc, char* argv[]){
 
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA_csc, line_status_IA_csc, &conversion_info);
-
+#ifdef D_DEBUGGING
 	printf("line status %d %d -- nnz: %d\n", line_status_rows, line_status_columns, line_status_nnz );
+	#endif
 	csc_tbl_write(
 			"line_status_csc.txt",
 			line_status_csc_values, line_status_JA_csc, line_status_IA_csc,
@@ -301,8 +304,9 @@ int main( int argc, char* argv[]){
 			&quantity_nnz,  &quantity_rows, &quantity_columns , 
 			&quantity_csr_values, &quantity_JA, &quantity_IA
 			);
-
+#ifdef D_DEBUGGING
 	printf("going to reshape quantity table\n");
+	#endif
 	csr_csr_square_reshape (
 			&quantity_csr_values, &quantity_JA, &quantity_IA,
 			&quantity_nnz, &quantity_rows, &quantity_columns,
@@ -334,8 +338,9 @@ int main( int argc, char* argv[]){
 			&shipdate_csr_values, &shipdate_JA, &shipdate_IA
 		);
 
-
+#ifdef D_DEBUGGING
 	printf("going to reshape quantity table\n");
+#endif
 	csr_csr_square_reshape (
 			&shipdate_csr_values, &shipdate_JA, &shipdate_IA,
 			&shipdate_nnz, &shipdate_rows, &shipdate_columns,
@@ -427,7 +432,9 @@ int main( int argc, char* argv[]){
 	//mkl_set_num_threads(max_threads);
 
 	//	printf("** Setted max thread on MKL to %d\n", max_threads);
+	#ifdef D_DEBUGGING
 	printf("** START TIME MEASUREMENT\n");
+	#endif
 	GET_TIME(global_time_start);
 
 	csc_to_csr_mx_selection_and(
@@ -453,9 +460,10 @@ int main( int argc, char* argv[]){
 		     );
 
 	status_to_csr = mkl_sparse_s_create_csr ( &selection_matrix , SPARSE_INDEX_BASE_ZERO, selection_rows, selection_columns, selection_IA, selection_IA+1, selection_JA, selection_csr_values );
-
+#ifdef D_DEBUGGING
 	printf("quantity rows %d columns %d nnz %d\n", quantity_rows, quantity_columns, quantity_nnz);
 	printf("selection rows %d columns %d nnz %d\n", selection_rows, selection_columns, selection_nnz);
+	#endif
 	check_errors(status_to_csr);
 	GET_TIME(global_time_selection);
 
@@ -465,8 +473,9 @@ int main( int argc, char* argv[]){
 			quantity_matrix,
 			&intermediate_matrix);
 	check_errors(intermediate_result);
+	#ifdef D_DEBUGGING
 	printf(" // compute aggregation = quantity * bang\n");
-
+	#endif
 	// mkl_sparse_optimize(projection_matrix);
 	GET_TIME(global_time_projection);
 
@@ -521,11 +530,11 @@ int main( int argc, char* argv[]){
 			projection_csr_values, projection_JA, projection_IA,
 			projection_nnz, projection_rows, projection_columns
 		     );
-
+#ifdef D_DEBUGGING
 	printf("projection nnz: %d\n", projection_nnz);
 	printf("projection rows: %d\n", projection_rows);
 	printf("projection columns: %d\n", projection_columns);
-
+#endif
 	status_to_csr = mkl_sparse_s_create_csr ( &projection_matrix , SPARSE_INDEX_BASE_ZERO, projection_rows, projection_columns, projection_IA, projection_IA+1, projection_JA, projection_csr_values );
 
 
@@ -536,13 +545,16 @@ int main( int argc, char* argv[]){
 	final_result = mkl_sparse_s_mv (
 			SPARSE_OPERATION_NON_TRANSPOSE, 1.0, projection_matrix , descrA, intermediate_vector, 0.0,  final_vector
 			);
-
+#ifdef D_DEBUGGING
 	printf("end of compute\n");
+	#endif
 	////////////////////////
 	// STOP TIME MEASUREMENT
 	////////////////////////
 	GET_TIME(global_time_stop);
+	#ifdef D_DEBUGGING
 	printf("** STOP TIME MEASUREMENT\n");
+	#endif
 	writeResults( argv[1] );
 
 	csr_measure_vector_write(
