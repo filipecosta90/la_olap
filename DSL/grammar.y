@@ -89,10 +89,10 @@ expression : IDENTIFIER '*' IDENTIFIER
            ;
 
 function : TBL_READ '(' IDENTIFIER ',' INTEGER ')' {
-          char identifier[strlen($3)+1];
+          char identifier[strlen($3)];
           strcpy(identifier,$3);
-          printf("%s\n",identifier);
-         }
+          printf("tbl_read(%s,%d)\n",identifier,$5);
+}
          | TBL_WRITE '(' IDENTIFIER ',' IDENTIFIER ')'
          | MX_FILTER_AND '(' IDENTIFIER ',' CONDITION ',' KEY_CONDITION ','CONDITION ',' KEY_CONDITION')'
          | BANG '(' INTEGER ')' 
