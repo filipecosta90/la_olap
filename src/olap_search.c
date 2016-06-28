@@ -314,7 +314,7 @@ void tbl_read(
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char* tmp_field = strdup(line);
-    char *field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,,MEM_LINE_SIZE);
+    char *field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char),MEM_LINE_SIZE);
     field = getfield(tmp_field, tbl_column, field);
     assert(field!=NULL);
 
@@ -440,7 +440,7 @@ void tbl_read_measure(
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     tmp_field = strdup(line);
-    char *field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char *field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,MEM_LINE_SIZE);
   field = getfield(tmp_field, tbl_column, field);
     assert(field!=NULL);
   element_value = atof(field);
@@ -675,7 +675,7 @@ void tbl_read_filter_and(
   // read the input file
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
 
-    char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char),MEM_LINE_SIZE );
     char* tmp_field = strdup(line);
     field = getfield(tmp_field, tbl_column, field);
 
@@ -821,9 +821,9 @@ void csr_csr_square_reshape (
 
 printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_column, current_nnz, new_rows, new_cols, new_nnz );
 
-  *A_csr_values = (float*) realloc ( (*A_csr_values) , new_nnz * sizeof(float),MEM_LINE_SIZE);
-  *A_JA = (MKL_INT*) realloc ( (*A_JA) , new_nnz * sizeof(MKL_INT),MEM_LINE_SIZE);
-  *A_IA = (MKL_INT*) realloc ( (*A_IA) , (new_rows + 1) * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *A_csr_values = (float*) realloc ( (*A_csr_values) , new_nnz * sizeof(float));
+  *A_JA = (MKL_INT*) realloc ( (*A_JA) , new_nnz * sizeof(MKL_INT));
+  *A_IA = (MKL_INT*) realloc ( (*A_IA) , (new_rows + 1) * sizeof(MKL_INT));
    
   for (MKL_INT at_column = current_column; at_column < new_cols; ++at_column){
     (*A_csr_values)[at_column] = 0.0;
@@ -933,7 +933,6 @@ void csc_to_csr_mx_selection_and(
   MKL_INT returned_strcmp2; 
   MKL_INT iaa = 0; 
 #pragma omp parallel for schedule(static)
-  {
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
     iaa = A_JA1[at_column];
@@ -971,7 +970,6 @@ void csc_to_csr_mx_selection_and(
         A_csc_values[at_column] = 0.0;
       }
     }
-  }
   }
   /////////////////////////////////
   //   CONVERT C from CSC to CSR
@@ -1018,7 +1016,7 @@ void csc_to_csc_mx_selection_and(
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
 
-  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,MEM_LINE_SIZE);
 
   MKL_INT non_zero = 0;
   MKL_INT index;
