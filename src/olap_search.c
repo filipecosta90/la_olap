@@ -124,9 +124,9 @@ void convert_and_write_to_csv (
   MKL_INT* coo_rows;
   MKL_INT* coo_columns;
 
-  coo_values = (float*) malloc ((NNZ+1) * sizeof(float) );
-  coo_rows =  (MKL_INT*) malloc ((NNZ+1) * sizeof(MKL_INT));
-  coo_columns =  (MKL_INT*) malloc ((NNZ+1) * sizeof(MKL_INT));
+  coo_values = (float*) _mm_malloc ((NNZ+1) * sizeof(float),MEM_LINE_SIZE);
+  coo_rows =  (MKL_INT*) _mm_malloc ((NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
+  coo_columns =  (MKL_INT*) _mm_malloc ((NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   assert(coo_values != NULL);
   assert(coo_rows != NULL);
@@ -181,9 +181,9 @@ void read_from_mx (
   __declspec(align(MEM_LINE_SIZE)) MKL_INT* aux_coo_columns;
   __declspec(align(MEM_LINE_SIZE)) float* aux_coo_values;
 
-  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-  aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-  aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
+  aux_coo_rows = (MKL_INT*) _mm_malloc (current_values_size * sizeof(MKL_INT),MEM_LINE_SIZE);
+  aux_coo_columns = (MKL_INT*) _mm_malloc (current_values_size * sizeof(MKL_INT),MEM_LINE_SIZE);
+  aux_coo_values = (float*) _mm_malloc (current_values_size * sizeof(float),MEM_LINE_SIZE);
 
   FILE* stream = fopen(filename, "r");
   __declspec(align(MEM_LINE_SIZE)) MKL_INT number_rows = - 1;
@@ -220,9 +220,9 @@ void read_from_mx (
   __declspec(align(MEM_LINE_SIZE)) MKL_INT* coo_rows;
   __declspec(align(MEM_LINE_SIZE))  MKL_INT* coo_columns;
 
-  coo_values = (float*) malloc ((NNZ+1) * sizeof(float) );
-  coo_rows =  (MKL_INT*) malloc ((NNZ+1) * sizeof(MKL_INT) );
-  coo_columns =  (MKL_INT*) malloc ((NNZ+1) * sizeof(MKL_INT) );
+  coo_values = (float*) _mm_malloc ((NNZ+1) * sizeof(float) ,MEM_LINE_SIZE);
+  coo_rows =  (MKL_INT*) _mm_malloc ((NNZ+1) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+  coo_columns =  (MKL_INT*) _mm_malloc ((NNZ+1) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
 
   assert(coo_values != NULL);
   assert(coo_rows != NULL);
@@ -265,9 +265,9 @@ void read_from_mx (
   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
   job[5]= 0;
 
-  *A_csr_values = (float*) malloc (NNZ * sizeof(float) );
-  *A_JA = (MKL_INT*) malloc ( NNZ * sizeof(MKL_INT) );
-  *A_IA = (MKL_INT*) malloc ((number_rows+1) * sizeof(MKL_INT) );
+  *A_csr_values = (float*) _mm_malloc (NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  *A_JA = (MKL_INT*) _mm_malloc ( NNZ * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+  *A_IA = (MKL_INT*) _mm_malloc ((number_rows+1) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
 
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &conversion_info);
   mkl_free(coo_values);
@@ -291,9 +291,9 @@ void tbl_read(
   MKL_INT* aux_coo_columns;
   float* aux_coo_values;
 
-  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-  aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-  aux_coo_values = (float*) malloc (current_values_size * sizeof(MKL_INT));
+  aux_coo_rows = (MKL_INT*) _mm_malloc (current_values_size * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+  aux_coo_columns = (MKL_INT*) _mm_malloc (current_values_size * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+  aux_coo_values = (float*) _mm_malloc (current_values_size * sizeof(MKL_INT) ,MEM_LINE_SIZE);
 
   assert(aux_coo_rows != NULL);
   assert(aux_coo_columns != NULL);
@@ -314,7 +314,7 @@ void tbl_read(
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     char* tmp_field = strdup(line);
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char *field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,,MEM_LINE_SIZE);
     field = getfield(tmp_field, tbl_column, field);
     assert(field!=NULL);
 
@@ -379,9 +379,9 @@ MKL_INT square = number_rows > number_columns ? number_rows : number_columns;
   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
   job[5]= 0;
 
-  *A_csr_values = (float*) malloc (element_number * sizeof(float));
-  *A_JA = (MKL_INT*) malloc (element_number * sizeof(MKL_INT));
-  *A_IA = (MKL_INT*) malloc ((number_rows+1) * sizeof(MKL_INT));
+  *A_csr_values = (float*) _mm_malloc (element_number * sizeof(float),MEM_LINE_SIZE);
+  *A_JA = (MKL_INT*) _mm_malloc (element_number * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *A_IA = (MKL_INT*) _mm_malloc ((number_rows+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   assert(*A_csr_values != NULL);
   assert(*A_JA != NULL);
@@ -416,9 +416,9 @@ void tbl_read_measure(
   MKL_INT* aux_coo_columns;
   float* aux_coo_values;
 
-  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-  aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
-  aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
+  aux_coo_rows = (MKL_INT*) _mm_malloc (current_values_size * sizeof(MKL_INT),MEM_LINE_SIZE);
+  aux_coo_columns = (MKL_INT*) _mm_malloc (current_values_size * sizeof(MKL_INT),MEM_LINE_SIZE);
+  aux_coo_values = (float*) _mm_malloc (current_values_size * sizeof(float),MEM_LINE_SIZE);
 
   assert(aux_coo_rows != NULL);
   assert(aux_coo_columns != NULL);
@@ -440,7 +440,7 @@ void tbl_read_measure(
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
     tmp_field = strdup(line);
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char *field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) );
   field = getfield(tmp_field, tbl_column, field);
     assert(field!=NULL);
   element_value = atof(field);
@@ -485,9 +485,9 @@ void tbl_read_measure(
   job[5]= 0;
 
 
-  *A_csr_values = (float*) malloc (element_number * sizeof(float));
-  *A_JA = (MKL_INT*) malloc (element_number * sizeof(MKL_INT));
-  *A_IA = (MKL_INT*) malloc ((number_rows+1) * sizeof(MKL_INT));
+  *A_csr_values = (float*) _mm_malloc (element_number * sizeof(float),MEM_LINE_SIZE);
+  *A_JA = (MKL_INT*) _mm_malloc (element_number * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *A_IA = (MKL_INT*) _mm_malloc ((number_rows+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   assert(*A_csr_values != NULL);
   assert(*A_JA != NULL);
@@ -518,10 +518,10 @@ void tbl_read_filter(
 
   //define COO sparse-matrix M
   MKL_INT* aux_coo_rows;
-  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+  aux_coo_rows = (MKL_INT*) _mm_malloc (current_values_size * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   float* aux_coo_values;
-  aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
+  aux_coo_values = (float*) _mm_malloc (current_values_size * sizeof(float),MEM_LINE_SIZE);
 
   FILE* stream = fopen(table_name, "r");
   char line[1024];
@@ -534,7 +534,7 @@ void tbl_read_filter(
   // read the input file
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
 
-    char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,MEM_LINE_SIZE);
     char* tmp_field = strdup(line);
     field = getfield(tmp_field, tbl_column, field);
     MKL_INT quark_field;
@@ -591,9 +591,9 @@ void tbl_read_filter(
   MKL_INT* coo_rows;
   MKL_INT* coo_columns;
 
-  coo_values = (float*) malloc ((NNZ+1) * sizeof(float));
-  coo_rows =  (MKL_INT*) malloc ((NNZ+1) * sizeof(MKL_INT));
-  coo_columns =  (MKL_INT*) malloc ((NNZ+1) * sizeof(MKL_INT));
+  coo_values = (float*) _mm_malloc ((NNZ+1) * sizeof(float),MEM_LINE_SIZE);
+  coo_rows =  (MKL_INT*) _mm_malloc ((NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
+  coo_columns =  (MKL_INT*) _mm_malloc ((NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   for (int pos = 0; pos < NNZ; pos++) {
     coo_values[pos] = aux_coo_values[pos];
@@ -634,9 +634,9 @@ void tbl_read_filter(
   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
   job[5]= 0;
 
-  *A_csr_values = (float*) malloc (NNZ * sizeof(float));
-  *A_JA = (MKL_INT*) malloc ( NNZ * sizeof(MKL_INT));
-  *A_IA = (MKL_INT*) malloc ((number_rows+1) * sizeof(MKL_INT));
+  *A_csr_values = (float*) _mm_malloc (NNZ * sizeof(float),MEM_LINE_SIZE);
+  *A_JA = (MKL_INT*) _mm_malloc ( NNZ * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *A_IA = (MKL_INT*) _mm_malloc ((number_rows+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   MKL_INT conversion_info;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &conversion_info);
@@ -659,10 +659,10 @@ void tbl_read_filter_and(
 
   //define COO sparse-matrix M
   MKL_INT* aux_coo_rows;
-  aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
+  aux_coo_rows = (MKL_INT*) _mm_malloc (current_values_size * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   float* aux_coo_values;
-  aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
+  aux_coo_values = (float*) _mm_malloc (current_values_size * sizeof(float),MEM_LINE_SIZE);
 
   FILE* stream = fopen(table_name, "r");
   char line[1024];
@@ -675,7 +675,7 @@ void tbl_read_filter_and(
   // read the input file
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
 
-    char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+    char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) );
     char* tmp_field = strdup(line);
     field = getfield(tmp_field, tbl_column, field);
 
@@ -746,9 +746,9 @@ void tbl_read_filter_and(
   MKL_INT* coo_rows;
   MKL_INT* coo_columns;
 
-  coo_values = (float*) malloc ((NNZ+1) * sizeof(float));
-  coo_rows =  (MKL_INT*) malloc ((NNZ+1)* sizeof(MKL_INT));
-  coo_columns =  (MKL_INT*) malloc ((NNZ+1) * sizeof(MKL_INT));
+  coo_values = (float*) _mm_malloc ((NNZ+1) * sizeof(float),MEM_LINE_SIZE);
+  coo_rows =  (MKL_INT*) _mm_malloc ((NNZ+1)* sizeof(MKL_INT),MEM_LINE_SIZE);
+  coo_columns =  (MKL_INT*) _mm_malloc ((NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   for (int pos = 0; pos < NNZ; pos++) {
     coo_values[pos] = aux_coo_values[pos];
@@ -787,9 +787,9 @@ void tbl_read_filter_and(
   // If job[5]=0, all arrays acsr, ja, ia are filled in for the output storage.
   job[5]= 0;
 
-  *A_csr_values = (float*) malloc (NNZ * sizeof(float));
-  *A_JA = (MKL_INT*) malloc ( NNZ * sizeof(MKL_INT));
-  *A_IA = (MKL_INT*) malloc ((number_rows+1) * sizeof(MKL_INT));
+  *A_csr_values = (float*) _mm_malloc (NNZ * sizeof(float),MEM_LINE_SIZE);
+  *A_JA = (MKL_INT*) _mm_malloc ( NNZ * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *A_IA = (MKL_INT*) _mm_malloc ((number_rows+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   MKL_INT conversion_info;
   mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, coo_values, coo_rows, coo_columns, &conversion_info);
@@ -821,9 +821,9 @@ void csr_csr_square_reshape (
 
 printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_column, current_nnz, new_rows, new_cols, new_nnz );
 
-  *A_csr_values = (float*) realloc ( (*A_csr_values) , new_nnz * sizeof(float));
-  *A_JA = (MKL_INT*) realloc ( (*A_JA) , new_nnz * sizeof(MKL_INT));
-  *A_IA = (MKL_INT*) realloc ( (*A_IA) , (new_rows + 1) * sizeof(MKL_INT));
+  *A_csr_values = (float*) realloc ( (*A_csr_values) , new_nnz * sizeof(float),MEM_LINE_SIZE);
+  *A_JA = (MKL_INT*) realloc ( (*A_JA) , new_nnz * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *A_IA = (MKL_INT*) realloc ( (*A_IA) , (new_rows + 1) * sizeof(MKL_INT),MEM_LINE_SIZE);
    
   for (MKL_INT at_column = current_column; at_column < new_cols; ++at_column){
     (*A_csr_values)[at_column] = 0.0;
@@ -996,9 +996,9 @@ void csc_to_csr_mx_selection_and(
   job[5] = 1;
   sparse_status_t status_convert_csr;
 
-  *C_csr_values = (float*) malloc ( A_NNZ * sizeof(float));
-  *C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT));
-  *C_IA = (MKL_INT*) malloc ( (A_number_rows + 1) * sizeof(MKL_INT));
+  *C_csr_values = (float*) _mm_malloc ( A_NNZ * sizeof(float),MEM_LINE_SIZE);
+  *C_JA = (MKL_INT*) _mm_malloc ( A_NNZ * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *C_IA = (MKL_INT*) _mm_malloc ( (A_number_rows + 1) * sizeof(MKL_INT),MEM_LINE_SIZE);
   MKL_INT conversion_info;
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, A_csc_values, A_JA1, A_IA1, &conversion_info);
 
@@ -1018,7 +1018,7 @@ void csc_to_csc_mx_selection_and(
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     ){
 
-  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) );
 
   MKL_INT non_zero = 0;
   MKL_INT index;
@@ -1029,9 +1029,9 @@ void csc_to_csc_mx_selection_and(
   MKL_INT returned_strcmp2;
   MKL_INT iaa = 0;
 
-  *C_csc_values = (float*) malloc ( A_NNZ * sizeof(float));
-  *C_JA1 = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT));
-  *C_IA1 = (MKL_INT*) malloc ( (A_number_rows + 1) * sizeof(MKL_INT));
+  *C_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float),MEM_LINE_SIZE);
+  *C_JA1 = (MKL_INT*) _mm_malloc ( A_NNZ * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *C_IA1 = (MKL_INT*) _mm_malloc ( (A_number_rows + 1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
@@ -1091,9 +1091,9 @@ void csr_mx_selection_or(
     MKL_INT **quark_start_end, MKL_INT* quark_global_pos
     ){
 
-  *C_csr_values = (float*) malloc ((A_NNZ+1) * sizeof(float));
-  *C_JA =  (MKL_INT*) malloc ((A_NNZ+1)* sizeof(MKL_INT));
-  *C_IA =  (MKL_INT*) malloc ((A_NNZ+1) * sizeof(MKL_INT));
+  *C_csr_values = (float*) _mm_malloc ((A_NNZ+1) * sizeof(float),MEM_LINE_SIZE);
+  *C_JA =  (MKL_INT*) _mm_malloc ((A_NNZ+1)* sizeof(MKL_INT),MEM_LINE_SIZE);
+  *C_IA =  (MKL_INT*) _mm_malloc ((A_NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   *C_IA[0:A_NNZ] = A_IA[0:A_NNZ];
   *C_JA[0:A_NNZ] = A_JA[0:A_NNZ];
@@ -1101,7 +1101,7 @@ void csr_mx_selection_or(
   *C_number_rows = A_number_rows;
   *C_number_columns = A_number_columns;
 
-  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,MEM_LINE_SIZE);
 
   // read the input file
   for( MKL_INT element_number = 0 ; element_number < A_NNZ ; ++element_number ){
@@ -1153,9 +1153,9 @@ void csr_mx_selection(
     ){
 
 
-  *C_csr_values = (float*) malloc ((A_NNZ+1) * sizeof(float));
-  *C_JA =  (MKL_INT*) malloc ((A_NNZ+1)* sizeof(MKL_INT));
-  *C_IA =  (MKL_INT*) malloc ((A_NNZ+1) * sizeof(MKL_INT));
+  *C_csr_values = (float*) _mm_malloc ((A_NNZ+1) * sizeof(float),MEM_LINE_SIZE);
+  *C_JA =  (MKL_INT*) _mm_malloc ((A_NNZ+1)* sizeof(MKL_INT),MEM_LINE_SIZE);
+  *C_IA =  (MKL_INT*) _mm_malloc ((A_NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
   *C_IA[0:A_NNZ] = A_IA[0:A_NNZ];
   *C_JA[0:A_NNZ] = A_JA[0:A_NNZ];
@@ -1163,7 +1163,7 @@ void csr_mx_selection(
   *C_number_rows = A_number_rows;
   *C_number_columns = A_number_columns;
 
-  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,MEM_LINE_SIZE);
 
   // read the input file
   for( MKL_INT element_number = 0 ; element_number < A_NNZ ; ++element_number ){
@@ -1197,7 +1197,7 @@ void csc_tbl_write(
     float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
     ){
-  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,MEM_LINE_SIZE);
   FILE* stream = fopen(table_name, "w");
   char line[1024];
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
@@ -1250,13 +1250,13 @@ void csr_tbl_write(
   MKL_INT* A_JA1;
   MKL_INT* A_IA1;
 
-  A_csc_values = (float*) malloc ( A_number_columns * sizeof(float) );
-  A_JA1 = (MKL_INT*) malloc ( A_number_columns * sizeof(MKL_INT) );
-  A_IA1 = (MKL_INT*) malloc ((A_number_columns+1) * sizeof(MKL_INT));
+  A_csc_values = (float*) _mm_malloc ( A_number_columns * sizeof(float) ,MEM_LINE_SIZE);
+  A_JA1 = (MKL_INT*) _mm_malloc ( A_number_columns * sizeof(MKL_INT),MEM_LINE_SIZE );
+  A_IA1 = (MKL_INT*) _mm_malloc ((A_number_columns+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
   MKL_INT conversion_info;
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &conversion_info);
 
-  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,MEM_LINE_SIZE);
   FILE* stream = fopen(table_name, "w");
   char line[1024];
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
@@ -1309,13 +1309,13 @@ void csr_measure_tbl_write(
   MKL_INT* A_JA1;
   MKL_INT* A_IA1;
 
-  A_csc_values = (float*) malloc ( A_number_columns * sizeof(float) );
-  A_JA1 = (MKL_INT*) malloc ( A_number_columns * sizeof(MKL_INT) );
-  A_IA1 = (MKL_INT*) malloc ((A_number_columns+1) * sizeof(MKL_INT));
+  A_csc_values = (float*) _mm_malloc ( A_number_columns * sizeof(float),MEM_LINE_SIZE );
+  A_JA1 = (MKL_INT*) _mm_malloc ( A_number_columns * sizeof(MKL_INT),MEM_LINE_SIZE );
+  A_IA1 = (MKL_INT*) _mm_malloc ((A_number_columns+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
   MKL_INT conversion_info;
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &conversion_info);
 
-  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char) ,MEM_LINE_SIZE);
   FILE* stream = fopen(table_name, "w");
   char line[1024];
   for ( MKL_INT at_column = 0; at_column < A_number_columns; ++at_column){
@@ -1340,7 +1340,7 @@ void csr_vector_write(
   printf("writing vector to file %s\n", vector_name);
 
   FILE* stream = fopen(vector_name, "w");
-  char* field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char) );
+  char* field = (char*) _mm_malloc( MAX_FIELD_SIZE * sizeof(char),MEM_LINE_SIZE );
 
   for ( MKL_INT at_row = 0; at_row < Vector_NNZ; ++at_row ){
     MKL_INT iaa = at_row;
@@ -1448,9 +1448,9 @@ void csr_hadamard(
   __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
   __declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
 
-  A_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  A_JA1 = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
-  A_IA1 = (MKL_INT*) malloc ((A_NNZ+1) * sizeof(MKL_INT) );
+  A_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  A_JA1 = (MKL_INT*) _mm_malloc ( A_NNZ * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+  A_IA1 = (MKL_INT*) _mm_malloc ((A_NNZ+1) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
 
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &conversion_info);
 
@@ -1458,9 +1458,9 @@ void csr_hadamard(
   __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_JA1;
   __declspec(align(MEM_LINE_SIZE))	MKL_INT* B_IA1;
 
-  B_csc_values = (float*) malloc ( B_NNZ * sizeof(float));
-  B_JA1 = (MKL_INT*) malloc ( B_NNZ * sizeof(MKL_INT));
-  B_IA1 = (MKL_INT*) malloc ( (B_NNZ+1) * sizeof(MKL_INT));
+  B_csc_values = (float*) _mm_malloc ( B_NNZ * sizeof(float),MEM_LINE_SIZE);
+  B_JA1 = (MKL_INT*) _mm_malloc ( B_NNZ * sizeof(MKL_INT),MEM_LINE_SIZE);
+  B_IA1 = (MKL_INT*) _mm_malloc ( (B_NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &conversion_info);
 
   /////////////////////////////////
@@ -1471,9 +1471,9 @@ void csr_hadamard(
   __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_JA1;
   __declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
 
-  C_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  C_JA1 = (MKL_INT*) malloc ( A_NNZ  * sizeof(MKL_INT) );
-  C_IA1 = (MKL_INT*) malloc ( (A_number_columns+1) * sizeof(MKL_INT) );
+  C_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  C_JA1 = (MKL_INT*) _mm_malloc ( A_NNZ  * sizeof(MKL_INT),MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) _mm_malloc ( (A_number_columns+1) * sizeof(MKL_INT),MEM_LINE_SIZE );
 
   __declspec(align(MEM_LINE_SIZE))	MKL_INT at_column = 0;
   __declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
@@ -1528,9 +1528,9 @@ void csr_hadamard(
   // If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
   job[5] = 1;
 
-  *C_csr_values = (float*) malloc ( A_NNZ * sizeof(float));
-  *C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT));
-  *C_IA = (MKL_INT*) malloc ( (A_number_rows + 1) * sizeof(MKL_INT));
+  *C_csr_values = (float*) _mm_malloc ( A_NNZ * sizeof(float),MEM_LINE_SIZE);
+  *C_JA = (MKL_INT*) _mm_malloc ( A_NNZ * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *C_IA = (MKL_INT*) _mm_malloc ( (A_number_rows + 1) * sizeof(MKL_INT),MEM_LINE_SIZE);
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &conversion_info);
 
   *C_number_rows = A_number_rows ;
@@ -1600,19 +1600,19 @@ void csr_csr_krao(
   //   ALLOCATE MEMORY
   /////////////////////////////////
 
-  A_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  A_JA1 = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
-  A_IA1 = (MKL_INT*) malloc ((A_NNZ+1) * sizeof(MKL_INT));
+  A_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  A_JA1 = (MKL_INT*) _mm_malloc ( A_NNZ * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+  A_IA1 = (MKL_INT*) _mm_malloc ((A_NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &conversion_info);
 
-  B_csc_values = (float*) malloc ( B_NNZ * sizeof(float) );
-  B_JA1 = (MKL_INT*) malloc ( B_NNZ * sizeof(MKL_INT) );
-  B_IA1 = (MKL_INT*) malloc ( (B_NNZ+1) * sizeof(MKL_INT) );
+  B_csc_values = (float*) _mm_malloc ( B_NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  B_JA1 = (MKL_INT*) _mm_malloc ( B_NNZ * sizeof(MKL_INT),MEM_LINE_SIZE );
+  B_IA1 = (MKL_INT*) _mm_malloc ( (B_NNZ+1) * sizeof(MKL_INT),MEM_LINE_SIZE );
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &conversion_info);
 
-  C_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  C_JA1 = (MKL_INT*) malloc ( A_NNZ  * sizeof(MKL_INT) );
-  C_IA1 = (MKL_INT*) malloc ( (A_number_columns+1) * sizeof(MKL_INT) );
+  C_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float),MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) _mm_malloc ( A_NNZ  * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+  C_IA1 = (MKL_INT*) _mm_malloc ( (A_number_columns+1) * sizeof(MKL_INT),MEM_LINE_SIZE );
 
   /////////////////////////////////
   //   COMPUTE KRAO
@@ -1668,9 +1668,9 @@ void csr_csr_krao(
   //   ALLOCATE MEMORY
   /////////////////////////////////
 
-  *C_csr_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  *C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
-  *C_IA = (MKL_INT*) malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT) );
+  *C_csr_values = (float*) _mm_malloc ( A_NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  *C_JA = (MKL_INT*) _mm_malloc ( A_NNZ * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+  *C_IA = (MKL_INT*) _mm_malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT),MEM_LINE_SIZE );
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &conversion_info);
 
   *C_number_rows = final_number_rows; 
@@ -1697,9 +1697,9 @@ void csc_to_csr_and_csc_krao(
   //   ALLOCATE MEMORY
   /////////////////////////////////
 
-  *C_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  *C_JA1 = (MKL_INT*) malloc ( A_NNZ  * sizeof(MKL_INT) );
-  *C_IA1 = (MKL_INT*) malloc ( (A_number_columns+1) * sizeof(MKL_INT) );
+  *C_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  *C_JA1 = (MKL_INT*) _mm_malloc ( A_NNZ  * sizeof(MKL_INT),MEM_LINE_SIZE );
+  *C_IA1 = (MKL_INT*) _mm_malloc ( (A_number_columns+1) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
   /////////////////////////////////
   //   COMPUTE KRAO
   /////////////////////////////////
@@ -1764,9 +1764,9 @@ for ( MKL_INT at_column = 0 ; at_column < A_number_columns ; ++at_column ){
   //   ALLOCATE MEMORY
   /////////////////////////////////
 
-  *C_csr_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  *C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
-  *C_IA = (MKL_INT*) malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT) );
+  *C_csr_values = (float*) _mm_malloc ( A_NNZ * sizeof(float) );
+  *C_JA = (MKL_INT*) _mm_malloc ( A_NNZ * sizeof(MKL_INT) );
+  *C_IA = (MKL_INT*) _mm_malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT) );
 
   MKL_INT conversion_info;
   mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, *C_csc_values, *C_JA1, *C_IA1, &conversion_info);
@@ -1789,9 +1789,9 @@ void csc_csc_krao(
   //   ALLOCATE MEMORY
   /////////////////////////////////
 
-  *C_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  *C_JA1 = (MKL_INT*) malloc ( A_NNZ  * sizeof(MKL_INT) );
-  *C_IA1 = (MKL_INT*) malloc ( (A_number_columns+1) * sizeof(MKL_INT) );
+  *C_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  *C_JA1 = (MKL_INT*) _mm_malloc ( A_NNZ  * sizeof(MKL_INT),MEM_LINE_SIZE );
+  *C_IA1 = (MKL_INT*) _mm_malloc ( (A_number_columns+1) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
 
   /////////////////////////////////
   //   COMPUTE KRAO
@@ -1872,18 +1872,18 @@ void csr_kron(
   MKL_INT* A_JA1;
   MKL_INT* A_IA1;
 
-  A_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  A_JA1 = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
-  A_IA1 = (MKL_INT*) malloc ( (A_number_columns+1) * sizeof(MKL_INT) );
+  A_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float),MEM_LINE_SIZE );
+  A_JA1 = (MKL_INT*) _mm_malloc ( A_NNZ * sizeof(MKL_INT),MEM_LINE_SIZE );
+  A_IA1 = (MKL_INT*) _mm_malloc ( (A_number_columns+1) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
   mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &conversion_info);
 
   float* B_csc_values = NULL;
   MKL_INT* B_JA1;
   MKL_INT* B_IA1;
 
-  B_csc_values = (float*) malloc ( B_NNZ * sizeof(float) );
-  B_JA1 = (MKL_INT*) malloc ( B_NNZ * sizeof(MKL_INT) );
-  B_IA1 = (MKL_INT*) malloc ( (B_number_columns+1) * sizeof(MKL_INT) );
+  B_csc_values = (float*) _mm_malloc ( B_NNZ * sizeof(float) ,MEM_LINE_SIZE);
+  B_JA1 = (MKL_INT*) _mm_malloc ( B_NNZ * sizeof(MKL_INT),MEM_LINE_SIZE );
+  B_IA1 = (MKL_INT*) _mm_malloc ( (B_number_columns+1) * sizeof(MKL_INT),MEM_LINE_SIZE );
   mkl_scsrcsc(job, &B_NNZ, B_csr_values, B_JA, B_IA, B_csc_values, B_JA1, B_IA1, &conversion_info);
 
 
@@ -1896,9 +1896,9 @@ void csr_kron(
   MKL_INT C_nnz = A_NNZ * B_NNZ;
   MKL_INT C_ncols = A_number_columns * B_number_columns;
   MKL_INT C_nrows = A_number_rows * B_number_rows;
-  C_csc_values = (float*) malloc ( (C_nnz) * sizeof(float) );
-  C_JA1 = (MKL_INT*) malloc ( (C_nnz) * sizeof(MKL_INT) );
-  C_IA1 = (MKL_INT*) malloc ( (C_ncols +1) * sizeof(MKL_INT) );
+  C_csc_values = (float*) _mm_malloc ( (C_nnz) * sizeof(float),MEM_LINE_SIZE );
+  C_JA1 = (MKL_INT*) _mm_malloc ( (C_nnz) * sizeof(MKL_INT),MEM_LINE_SIZE );
+  C_IA1 = (MKL_INT*) _mm_malloc ( (C_ncols +1) * sizeof(MKL_INT),MEM_LINE_SIZE );
 
   MKL_INT at_column = 0;
   MKL_INT end_column = 0;
@@ -1963,9 +1963,9 @@ void csr_kron(
   job[5] = 1;
 
   sparse_status_t status_convert_csr;
-  *C_csr_values = (float*) malloc ( C_nnz * sizeof(float) );
-  *C_JA = (MKL_INT*) malloc ( C_nnz * sizeof(MKL_INT));
-  *C_IA = (MKL_INT*) malloc ( (C_nnz + 1) * sizeof(MKL_INT) );
+  *C_csr_values = (float*) _mm_malloc ( C_nnz * sizeof(float),MEM_LINE_SIZE );
+  *C_JA = (MKL_INT*) _mm_malloc ( C_nnz * sizeof(MKL_INT),MEM_LINE_SIZE);
+  *C_IA = (MKL_INT*) _mm_malloc ( (C_nnz + 1) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
 
   mkl_scsrcsc(job, &C_nnz, *C_csr_values, *C_JA, *C_IA, C_csc_values, C_JA1, C_IA1, &conversion_info);
 

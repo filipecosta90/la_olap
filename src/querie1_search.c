@@ -247,9 +247,9 @@ int main( int argc, char* argv[]){
 
 	printf("return flag %d %d -- nnz: %d\n", return_flag_rows, return_flag_columns, return_flag_nnz );
 	// Memory Allocation
-	return_flag_csc_values = (float*) malloc ( return_flag_nnz * sizeof(float) );
-	return_flag_JA_csc = (MKL_INT*) malloc ( return_flag_nnz * sizeof(MKL_INT) );
-	return_flag_IA_csc = (MKL_INT*) malloc (( return_flag_nnz+1) * sizeof(MKL_INT));
+	return_flag_csc_values = (float*) _mm_malloc ( return_flag_nnz * sizeof(float) ,MEM_LINE_SIZE);
+	return_flag_JA_csc = (MKL_INT*) _mm_malloc ( return_flag_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+	return_flag_IA_csc = (MKL_INT*) _mm_malloc (( return_flag_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &return_flag_nnz, return_flag_csr_values, return_flag_JA, return_flag_IA, return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc, &conversion_info);
@@ -275,9 +275,9 @@ int main( int argc, char* argv[]){
 		);
 
 	// Memory Allocation
-	line_status_csc_values = (float*) malloc ( line_status_nnz * sizeof(float) );
-	line_status_JA_csc = (MKL_INT*) malloc ( line_status_nnz * sizeof(MKL_INT) );
-	line_status_IA_csc = (MKL_INT*) malloc (( line_status_nnz+1) * sizeof(MKL_INT));
+	line_status_csc_values = (float*) _mm_malloc ( line_status_nnz * sizeof(float) ,MEM_LINE_SIZE);
+	line_status_JA_csc = (MKL_INT*) _mm_malloc ( line_status_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+	line_status_IA_csc = (MKL_INT*) _mm_malloc (( line_status_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA_csc, line_status_IA_csc, &conversion_info);
@@ -316,13 +316,13 @@ int main( int argc, char* argv[]){
 		     );
 
 	// Memory Allocation
-	quantity_csc_values = (float*) malloc ( quantity_nnz * sizeof(float) );
-	quantity_JA_csc = (MKL_INT*) malloc ( quantity_nnz * sizeof(MKL_INT) );
-	quantity_IA_csc = (MKL_INT*) malloc (( quantity_nnz+1) * sizeof(MKL_INT));
+	quantity_csc_values = (float*) _mm_malloc ( quantity_nnz * sizeof(float) ,MEM_LINE_SIZE);
+	quantity_JA_csc = (MKL_INT*) _mm_malloc ( quantity_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+	quantity_IA_csc = (MKL_INT*) _mm_malloc (( quantity_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
-	intermediate_csr_values = (float*) malloc ( (quantity_nnz) * sizeof(float) );
-	intermediate_JA = (MKL_INT*) malloc ((quantity_nnz) * sizeof(MKL_INT) );
-	intermediate_IA = (MKL_INT*) malloc (( quantity_nnz+1) * sizeof(MKL_INT));
+	intermediate_csr_values = (float*) _mm_malloc ( (quantity_nnz) * sizeof(float) ,MEM_LINE_SIZE);
+	intermediate_JA = (MKL_INT*) _mm_malloc ((quantity_nnz) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+	intermediate_IA = (MKL_INT*) _mm_malloc (( quantity_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
 	/** ---------------------------------------------------------------------------
 	 ** Populate Shipdate Matrix
@@ -350,9 +350,9 @@ int main( int argc, char* argv[]){
 		     );
 
 	// Memory Allocation
-	shipdate_csc_values = (float*) malloc ( shipdate_nnz * sizeof(float) );
-	shipdate_JA_csc = (MKL_INT*) malloc ( shipdate_nnz * sizeof(MKL_INT) );
-	shipdate_IA_csc = (MKL_INT*) malloc ((shipdate_nnz+1) * sizeof(MKL_INT));
+	shipdate_csc_values = (float*) _mm_malloc ( shipdate_nnz * sizeof(float),MEM_LINE_SIZE );
+	shipdate_JA_csc = (MKL_INT*) _mm_malloc ( shipdate_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
+	shipdate_IA_csc = (MKL_INT*) _mm_malloc ((shipdate_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
 
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &conversion_info);
@@ -381,7 +381,7 @@ int main( int argc, char* argv[]){
 		     );
 
 	aggregation_vector_rows = quantity_columns;
-	aggregation_vector = (float*) malloc ((aggregation_vector_rows+1) * sizeof(float));
+	aggregation_vector = (float*) _mm_malloc ((aggregation_vector_rows+1) * sizeof(float),MEM_LINE_SIZE);
 
 	//        convert via sparseBLAS API to Handle containing internal data for 
 	//        subsequent Inspector-executor Sparse BLAS operations.
@@ -405,7 +405,7 @@ int main( int argc, char* argv[]){
 	 ** -------------------------------------------------------------------------*/
 
 
-	final_vector = (float*) malloc ( (quantity_columns+1) * sizeof(float));
+	final_vector = (float*) _mm_malloc ( (quantity_columns+1) * sizeof(float),MEM_LINE_SIZE);
 
 	/** ---------------------------------------------------------------------------
 	 ** ---------------------------------------------------------------------------
@@ -440,8 +440,8 @@ int main( int argc, char* argv[]){
 
 	intermediate_vector_rows = selection_columns;
 
-	intermediate_vector = (float*) malloc ( (intermediate_vector_rows+1) * sizeof(float));
-	bang_vector = (float*) malloc ( (quantity_columns+1) * sizeof(float));
+	intermediate_vector = (float*) _mm_malloc ( (intermediate_vector_rows+1) * sizeof(float),MEM_LINE_SIZE);
+	bang_vector = (float*) _mm_malloc ( (quantity_columns+1) * sizeof(float),MEM_LINE_SIZE);
 	for (int pos =0; pos < line_status_columns ; pos++){
 		bang_vector[pos] = 1.0; 
 	}
