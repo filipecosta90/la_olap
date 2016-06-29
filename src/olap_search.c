@@ -68,6 +68,7 @@ void print_csc(
 	printf("N NONZ: %d\t", NNZ);
 	printf("N ROWS: %d\t", number_rows);
 	printf("N COLS: %d\n", number_columns);
+if (number_columns <= 100){
 	printf("CSC VALUES(%llu):\t", sizeof(csc_values));
 	for (MKL_INT pos = 0; pos < NNZ; pos++){
 		printf("%f, ", csc_values[pos]);
@@ -84,6 +85,7 @@ void print_csc(
 	}
 	printf("\n");
 }
+}
 
 void print_csr(
 		float* csr_values, MKL_INT* JA, MKL_INT* IA,
@@ -93,6 +95,7 @@ void print_csr(
 	printf("N NONZ: %d\t", NNZ);
 	printf("N ROWS: %d\t", number_rows);
 	printf("N COLS: %d\n", number_columns);
+if (number_columns <= 100){
 	printf("CSR_VALUES(%llu) = [\t", sizeof(csr_values));
 	for (MKL_INT pos = 0; pos < NNZ; pos++){
 		printf("%f, ", csr_values[pos]);
@@ -109,7 +112,7 @@ void print_csr(
 	}
 	printf("] \n");
 }
-
+}
 
 void convert_and_write_to_csv (
 		char* filename,
@@ -333,20 +336,20 @@ void tbl_read(
 		if ( element_number >= current_values_size ){
 			current_values_size *= GROWTH_FACTOR;
             MKL_INT* temp_rows = (MKL_INT*) realloc( aux_coo_rows, current_values_size * GROWTH_FACTOR * sizeof(MKL_INT) );
-            if (temp_rows != null ){
+            if (temp_rows != NULL ){
                 aux_coo_rows = temp_rows;
             }
             else {printf("realloc error!!\n");}
             
             MKL_INT* temp_columns = (MKL_INT*) realloc( aux_coo_columns, current_values_size * GROWTH_FACTOR * sizeof(MKL_INT));
-            if (temp_columns != null ){
+            if (temp_columns != NULL ){
                 aux_coo_columns = temp_columns;
             }
             else {printf("realloc error!!\n");}
 
             
             float* temp_values = (float*) realloc( aux_coo_values, current_values_size * GROWTH_FACTOR * sizeof(float) );
-            if (temp_values != null ){
+            if (temp_values != NULL ){
                 aux_coo_values = temp_values;
             }
             else {printf("realloc error!!\n");}
@@ -363,20 +366,6 @@ void tbl_read(
 	number_rows = current_major_row + 1; 
 	number_columns = element_number;
 
-	if ( number_rows != number_columns ){ 
-#ifdef D_DEBUGGING
-		printf("\n\n\n##### NEED TO BE SQUARED\n\n\n");  
-#endif
-		MKL_INT square = number_rows > number_columns ? number_rows : number_columns;
-		square++;
-		element_number++;
-		NNZ++;  
-		aux_coo_values[element_number] = 0.0f;
-		aux_coo_columns[element_number] = square;
-		aux_coo_rows[element_number]= square; 
-		number_rows = square;
-		number_columns = square;
-	}
 
 	/////////////////////////////////
 	//   CONVERT FROM COO TO CSR
@@ -403,13 +392,21 @@ void tbl_read(
 
 	*A_csr_values = (float*) malloc (element_number * sizeof(float));
 	*A_JA = (MKL_INT*) malloc (element_number * sizeof(MKL_INT));
-	*A_IA = (MKL_INT*) malloc ((number_rows+1) * sizeof(MKL_INT));
+	*A_IA = (MKL_INT*) malloc ((element_number+1) * sizeof(MKL_INT));
 
 	assert(*A_csr_values != NULL);
 	assert(*A_JA != NULL);
 	assert(*A_IA != NULL);
 	MKL_INT conversion_info;
 	mkl_scsrcoo (job, &number_rows, *A_csr_values, *A_JA, *A_IA, &NNZ, aux_coo_values, aux_coo_rows, aux_coo_columns, &conversion_info );
+
+
+	if ( number_rows != number_columns ){ 
+		for (MKL_INT row_pos = number_rows ; row_pos < number_columns; ++row_pos) {
+		(*A_IA)[row_pos]=element_number;
+}
+	number_rows = element_number;
+	}
 	*rows = number_rows;
 	*columns = number_columns;
 	*nnz = NNZ;
@@ -898,7 +895,7 @@ void csc_csc_square_reshape (
 	printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_column, current_nnz, new_rows, new_cols, new_nnz );
 #endif
     float* temp_values = (float*) realloc ( (*A_csc_values) , new_nnz * sizeof(float));
-    if ( temp_values != null ){
+    if ( temp_values != NULL ){
         *A_csc_values = temp_values;
     }
     else {
@@ -906,7 +903,7 @@ void csc_csc_square_reshape (
     }
     
     MKL_INT* temp_ja = (MKL_INT*) realloc ( (*A_JA_csc) , new_nnz * sizeof(MKL_INT));
-    if (temp_ja != null ){
+    if (temp_ja != NULL ){
     *A_JA_csc = temp_ja;
     }
     else {
@@ -914,7 +911,7 @@ void csc_csc_square_reshape (
     }
     
     MKL_INT* temp_ia = (MKL_INT*) realloc ( (*A_IA_csc) , (new_nnz + 1) * sizeof(MKL_INT));
-    if (temp_ia != null ){
+    if (temp_ia != NULL ){
         *A_IA_csc = temp_ia;
     }
     else {
