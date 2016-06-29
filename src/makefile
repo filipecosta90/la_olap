@@ -5,10 +5,10 @@ LIBLDIR=
 INCLUDE= -I${MKLROOT}/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include 
 
 #flags
-LIB=  -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm -ldl -lglib-2.0 
+LIB= -lglib-2.0 -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_core.a ${MKLROOT}/lib/intel64/libmkl_sequential.a -Wl,--end-group -lpthread -lm 
 
-CFLAGS= -qopenmp -I${MKLROOT}/include -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) 
-DEBUGFLAGS= -qopenmp -I${MKLROOT}/include -g -ggdb -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) 
+CFLAGS=  -openmp  -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) -vec-report7
+DEBUGFLAGS= -fopenmp -I${MKLROOT}/include -g -ggdb -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) 
 
 v0: olap_search.o querie1_search.o
 	$(CC) $(CFLAGS) olap_search.c querie1_search.c -o querie1_search $(LIB) 
