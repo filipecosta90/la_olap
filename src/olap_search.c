@@ -333,20 +333,20 @@ void tbl_read(
 		if ( element_number >= current_values_size ){
 			current_values_size *= GROWTH_FACTOR;
             MKL_INT* temp_rows = (MKL_INT*) realloc( aux_coo_rows, current_values_size * GROWTH_FACTOR * sizeof(MKL_INT) );
-            if (temp_rows != null ){
+            if (temp_rows != NULL ){
                 aux_coo_rows = temp_rows;
             }
             else {printf("realloc error!!\n");}
             
             MKL_INT* temp_columns = (MKL_INT*) realloc( aux_coo_columns, current_values_size * GROWTH_FACTOR * sizeof(MKL_INT));
-            if (temp_columns != null ){
+            if (temp_columns != NULL ){
                 aux_coo_columns = temp_columns;
             }
             else {printf("realloc error!!\n");}
 
             
             float* temp_values = (float*) realloc( aux_coo_values, current_values_size * GROWTH_FACTOR * sizeof(float) );
-            if (temp_values != null ){
+            if (temp_values != NULL ){
                 aux_coo_values = temp_values;
             }
             else {printf("realloc error!!\n");}
@@ -898,7 +898,7 @@ void csc_csc_square_reshape (
 	printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_column, current_nnz, new_rows, new_cols, new_nnz );
 #endif
     float* temp_values = (float*) realloc ( (*A_csc_values) , new_nnz * sizeof(float));
-    if ( temp_values != null ){
+    if ( temp_values != NULL ){
         *A_csc_values = temp_values;
     }
     else {
@@ -906,7 +906,7 @@ void csc_csc_square_reshape (
     }
     
     MKL_INT* temp_ja = (MKL_INT*) realloc ( (*A_JA_csc) , new_nnz * sizeof(MKL_INT));
-    if (temp_ja != null ){
+    if (temp_ja != NULL ){
     *A_JA_csc = temp_ja;
     }
     else {
@@ -914,7 +914,7 @@ void csc_csc_square_reshape (
     }
     
     MKL_INT* temp_ia = (MKL_INT*) realloc ( (*A_IA_csc) , (new_nnz + 1) * sizeof(MKL_INT));
-    if (temp_ia != null ){
+    if (temp_ia != NULL ){
         *A_IA_csc = temp_ia;
     }
     else {
