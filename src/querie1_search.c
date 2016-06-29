@@ -436,8 +436,8 @@ int main( int argc, char* argv[]){
 	 ** ---------------------------------------------------------------------------
 	 ** -------------------------------------------------------------------------*/
 
-	/*	mkl_sparse_optimize(quantity_matrix);
-
+		mkl_sparse_optimize(quantity_matrix);
+/*
 		MKL_INT max_threads;
 		max_threads = mkl_get_max_threads();
 		mkl_set_num_threads(max_threads);
@@ -458,6 +458,12 @@ int main( int argc, char* argv[]){
 			);
 
 	intermediate_vector_rows = selection_columns;
+printf("#######selecao\n");
+	print_csr(
+			selection_csr_values, selection_JA, selection_IA,
+			selection_nnz, selection_rows, selection_columns
+		 );
+
 
 	intermediate_vector = (float*) malloc ( (intermediate_vector_rows+1) * sizeof(float));
 	bang_vector = (float*) malloc ( (quantity_columns+1) * sizeof(float));
@@ -521,6 +527,7 @@ int main( int argc, char* argv[]){
 			&projection_nnz, &projection_rows, &projection_columns
 			);
 #ifdef D_DEBUGGING
+
 	print_csr(
 			return_flag_csr_values, return_flag_JA, return_flag_IA,
 			return_flag_nnz, return_flag_rows, return_flag_columns
@@ -535,6 +542,12 @@ int main( int argc, char* argv[]){
 			projection_csc_values, projection_JA_csc, projection_IA_csc,
 			projection_nnz, projection_rows, projection_columns
 		 );
+printf("INTERESSA!!!!\n");
+	print_csr(
+			projection_csr_values, projection_JA, projection_IA,
+			projection_nnz, projection_rows, projection_columns
+		 );
+
 
 	csc_tbl_write(
 			"projection_test_csc.txt",
@@ -543,7 +556,7 @@ int main( int argc, char* argv[]){
 		     );
 
 	csr_tbl_write(
-			"projection_test.txt",
+			"projection_test_csr.txt",
 			projection_csr_values, projection_JA, projection_IA,
 			projection_nnz, projection_rows, projection_columns
 		     );

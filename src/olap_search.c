@@ -402,6 +402,7 @@ void tbl_read(
 
 
 	if ( number_rows != number_columns ){ 
+		printf("ORIGINAL ROWS %d COLUMNS %d\n", number_rows, number_columns );
 		for (MKL_INT row_pos = number_rows ; row_pos < number_columns; ++row_pos) {
 		(*A_IA)[row_pos]=element_number;
 }
@@ -509,7 +510,7 @@ void tbl_read_measure(
 
 	*A_csr_values = (float*) malloc (element_number * sizeof(float));
 	*A_JA = (MKL_INT*) malloc (element_number * sizeof(MKL_INT));
-	*A_IA = (MKL_INT*) malloc ((number_rows+1) * sizeof(MKL_INT));
+	*A_IA = (MKL_INT*) malloc ((element_number+1) * sizeof(MKL_INT));
 
 	assert(*A_csr_values != NULL);
 	assert(*A_JA != NULL);
@@ -1417,9 +1418,9 @@ void csr_measure_vector_write(
 	FILE* stream = fopen(vector_name, "w");
 
 	for ( MKL_INT at_row = 0; at_row < Vector_NNZ; ++at_row ){
-		if (Vector_csr_values[at_row] > 0 ){
+//		if (Vector_csr_values[at_row] > 0 ){
 			fprintf(stream, "%f\n", Vector_csr_values[at_row]);
-		}
+//		}
 	}
 	fclose(stream);
 }
