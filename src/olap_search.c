@@ -1178,10 +1178,11 @@ void csc_to_csc_mx_selection_and(
   int returned_strcmp ;
   int returned_strcmp2;
   int iaa = 0;
+  int at_non_zero = 0;
 
   *C_csc_values = (float*) malloc ( A_NNZ * sizeof(float));
   *C_JA1 = (int*) malloc ( A_NNZ * sizeof(int));
-  *C_IA1 = (int*) malloc ( (A_number_rows + 1) * sizeof(int));
+  *C_IA1 = (int*) malloc ( (A_NNZ + 1) * sizeof(int));
 
   for ( int at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
@@ -1216,20 +1217,19 @@ void csc_to_csc_mx_selection_and(
          ){
         non_zero = 1;
       }
-      (*C_IA1)[at_column] = A_IA1[at_column];
-      (*C_JA1)[at_column] =  A_JA1[at_column];
-      if ( non_zero == 0 ){
-        (*C_csc_values)[at_column] =  0.0;
-      }
-      else {
+
+      (*C_JA1)[at_column] =  at_non_zero;
+      if ( non_zero != 0 ){
+        (*C_IA1)[at_column] =  A_csc_values[at_column];
         (*C_csc_values)[at_column] =  A_csc_values[at_column];
+        at_non_zero++;
       }
     }
   }
   *C_number_rows = A_number_rows ;
   *C_number_columns = A_number_columns;
-  *C_NNZ = A_NNZ;
-  (*C_IA1)[A_number_columns] = A_NNZ;
+  *C_NNZ = at_non_zero;
+  (*C_IA1)[at_non_zero] = A_NNZ;
 }
 
 void csr_mx_selection_or(
