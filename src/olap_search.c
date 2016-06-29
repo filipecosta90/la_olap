@@ -175,23 +175,23 @@ void read_from_mx (
 		){
 	MKL_INT conversion_info = 0;
 
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT current_values_size = ARRAY_SIZE;
+	 MKL_INT current_values_size = ARRAY_SIZE;
 	//define COO sparse-matrix M
 	MKL_INT* aux_coo_rows;
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT* aux_coo_columns;
-	__declspec(align(MEM_LINE_SIZE)) float* aux_coo_values;
+	 MKL_INT* aux_coo_columns;
+	 float* aux_coo_values;
 
 	aux_coo_rows = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
 	aux_coo_columns = (MKL_INT*) malloc (current_values_size * sizeof(MKL_INT));
 	aux_coo_values = (float*) malloc (current_values_size * sizeof(float));
 
 	FILE* stream = fopen(filename, "r");
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT number_rows = - 1;
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT number_columns = -1 ;
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT element_number = 1;
+	 MKL_INT number_rows = - 1;
+	 MKL_INT number_columns = -1 ;
+	 MKL_INT element_number = 1;
 	MKL_INT job[8];
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT row;
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT column;
+	 MKL_INT row;
+	 MKL_INT column;
 	float value;
 	char line[1024];
 	for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
@@ -216,9 +216,9 @@ void read_from_mx (
 	number_columns = element_number;
 
 	//define COO sparse-matrix M
-	__declspec(align(MEM_LINE_SIZE)) float* coo_values;
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT* coo_rows;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* coo_columns;
+	 float* coo_values;
+	 MKL_INT* coo_rows;
+	  MKL_INT* coo_columns;
 
 	coo_values = (float*) malloc ((NNZ+1) * sizeof(float) );
 	coo_rows =  (MKL_INT*) malloc ((NNZ+1) * sizeof(MKL_INT) );
@@ -1459,9 +1459,9 @@ void csr_hadamard(
 	// If job[5]≠0, all output arrays acsc, ja1, and ia1 are filled in for the output storage.
 	job[5] = 1;
 	MKL_INT conversion_info;
-	__declspec(align(MEM_LINE_SIZE))	float* A_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
+		float* A_csc_values = NULL;
+		MKL_INT* A_JA1;
+		MKL_INT* A_IA1;
 
 	A_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
 	A_JA1 = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
@@ -1469,9 +1469,9 @@ void csr_hadamard(
 
 	mkl_scsrcsc(job, &A_NNZ, A_csr_values, A_JA, A_IA, A_csc_values, A_JA1, A_IA1, &conversion_info);
 
-	__declspec(align(MEM_LINE_SIZE))	float* B_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* B_JA1;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* B_IA1;
+		float* B_csc_values = NULL;
+		MKL_INT* B_JA1;
+		MKL_INT* B_IA1;
 
 	B_csc_values = (float*) malloc ( B_NNZ * sizeof(float));
 	B_JA1 = (MKL_INT*) malloc ( B_NNZ * sizeof(MKL_INT));
@@ -1482,26 +1482,26 @@ void csr_hadamard(
 	//   COMPUTE HADAMARD
 	/////////////////////////////////
 
-	__declspec(align(MEM_LINE_SIZE))	float* C_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* C_JA1;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
+		float* C_csc_values = NULL;
+		MKL_INT* C_JA1;
+		MKL_INT* C_IA1;
 
 	C_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
 	C_JA1 = (MKL_INT*) malloc ( A_NNZ  * sizeof(MKL_INT) );
 	C_IA1 = (MKL_INT*) malloc ( (A_number_columns+1) * sizeof(MKL_INT) );
 
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT at_column = 0;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
+		MKL_INT at_column = 0;
+		MKL_INT end_column = A_number_columns;
+		MKL_INT scalar_B = B_number_rows;
 
-	__assume_aligned(C_IA1, MEM_LINE_SIZE);
-	__assume_aligned(A_IA1, MEM_LINE_SIZE);
-	__assume_aligned(C_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(A_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_JA1, MEM_LINE_SIZE);
-	__assume_aligned(A_JA1, MEM_LINE_SIZE);
-	__assume_aligned(C_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(A_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_JA1, MEM_LINE_SIZE);
 
 	for ( MKL_INT at_column = 0; at_column < end_column; ++at_column){
 		// insert start of column int C_IA1
@@ -1599,17 +1599,17 @@ void csr_csr_krao(
 	//   DECLARE MATRICES
 	/////////////////////////////////
 
-	__declspec(align(MEM_LINE_SIZE))	float* A_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* A_JA1;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* A_IA1;
+		float* A_csc_values = NULL;
+		MKL_INT* A_JA1;
+		MKL_INT* A_IA1;
 
-	__declspec(align(MEM_LINE_SIZE))	float* B_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* B_JA1;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* B_IA1;
+		float* B_csc_values = NULL;
+		MKL_INT* B_JA1;
+		MKL_INT* B_IA1;
 
-	__declspec(align(MEM_LINE_SIZE))	float* C_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE)) 	MKL_INT* C_JA1;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT* C_IA1;
+		float* C_csc_values = NULL;
+	 	MKL_INT* C_JA1;
+		MKL_INT* C_IA1;
 
 	/////////////////////////////////
 	//   ALLOCATE MEMORY
@@ -1633,18 +1633,18 @@ void csr_csr_krao(
 	//   COMPUTE KRAO
 	/////////////////////////////////
 
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
+		MKL_INT end_column = A_number_columns;
+		MKL_INT scalar_B = B_number_rows;
 
 	// n=16 for SSE, n=32 for AV
-	__assume_aligned(C_IA1, MEM_LINE_SIZE);
-	__assume_aligned(A_IA1, MEM_LINE_SIZE);
-	__assume_aligned(C_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(A_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_JA1, MEM_LINE_SIZE);
-	__assume_aligned(A_JA1, MEM_LINE_SIZE);
-	__assume_aligned(C_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(A_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_JA1, MEM_LINE_SIZE);
 
 	/////////////////////////////////
 	//   COMPUTE KRAO
@@ -1712,9 +1712,9 @@ void csc_to_csr_and_csc_krao(
 	//   COMPUTE KRAO
 	/////////////////////////////////
 
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
-	__declspec(align(MEM_LINE_SIZE)) MKL_INT final_number_rows = A_number_rows * B_number_rows; 
+		MKL_INT end_column = A_number_columns;
+		MKL_INT scalar_B = B_number_rows;
+	 MKL_INT final_number_rows = A_number_rows * B_number_rows; 
 
 	/////////////////////////////////
 	//   ALLOCATE MEMORY
@@ -1725,14 +1725,14 @@ void csc_to_csr_and_csc_krao(
 	*C_IA1 = (MKL_INT*) malloc ( (final_number_rows+1) * sizeof(MKL_INT) );
 
 	// n=16 for SSE, n=32 for AV
-	__assume_aligned(*C_IA1, MEM_LINE_SIZE);
-	__assume_aligned(A_IA1, MEM_LINE_SIZE);
-	__assume_aligned(*C_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(A_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_JA1, MEM_LINE_SIZE);
-	__assume_aligned(A_JA1, MEM_LINE_SIZE);
-	__assume_aligned(*C_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(*C_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(*C_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(A_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(*C_JA1, MEM_LINE_SIZE);
 
 	/////////////////////////////////
 	//   COMPUTE KRAO
@@ -1816,18 +1816,18 @@ void csc_csc_krao(
 	/////////////////////////////////
 	//   COMPUTE KRAO
 	/////////////////////////////////
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT end_column = A_number_columns;
-	__declspec(align(MEM_LINE_SIZE))	MKL_INT scalar_B = B_number_rows;
+		MKL_INT end_column = A_number_columns;
+		MKL_INT scalar_B = B_number_rows;
 
 	// n=16 for SSE, n=32 for AV
-	__assume_aligned(C_IA1, MEM_LINE_SIZE);
-	__assume_aligned(A_IA1, MEM_LINE_SIZE);
-	__assume_aligned(C_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(A_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_JA1, MEM_LINE_SIZE);
-	__assume_aligned(A_JA1, MEM_LINE_SIZE);
-	__assume_aligned(C_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(A_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_JA1, MEM_LINE_SIZE);
 
 	/////////////////////////////////
 	//   COMPUTE KRAO
@@ -1929,14 +1929,14 @@ void csr_kron(
 	MKL_INT scalar_B = B_number_rows;
 	float value;
 	// n=16 for SSE, n=32 for AV
-	__assume_aligned(C_IA1, MEM_LINE_SIZE);
-	__assume_aligned(A_IA1, MEM_LINE_SIZE);
-	__assume_aligned(C_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(A_csc_values, MEM_LINE_SIZE);
-	__assume_aligned(B_JA1, MEM_LINE_SIZE);
-	__assume_aligned(A_JA1, MEM_LINE_SIZE);
-	__assume_aligned(C_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_IA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(A_csc_values, MEM_LINE_SIZE);
+	//__assume_aligned(B_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(A_JA1, MEM_LINE_SIZE);
+	//__assume_aligned(C_JA1, MEM_LINE_SIZE);
 
 #pragma vector always aligned
 #pragma ivdep
