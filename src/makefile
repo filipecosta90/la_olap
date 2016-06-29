@@ -2,12 +2,12 @@ CC = icc
 LIBLDIR= 
 
 #include
-INCLUDE= -I${MKLROOT}/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include 
+INCLUDE= -I${MKLROOT}/include -L/${MKLROOT}/lib/intel64 -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include 
 
 #flags
-LIB= -lglib-2.0 -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_core.a ${MKLROOT}/lib/intel64/libmkl_sequential.a -Wl,--end-group -lpthread -lm 
+LIB= -lglib-2.0 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lm -ldl
 
-CFLAGS=  -openmp  -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) -vec-report7
+CFLAGS=  -openmp  -g -ggdb -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) -vec-report7
 DEBUGFLAGS= -fopenmp -I${MKLROOT}/include -g -ggdb -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) 
 
 v0: olap_search.o querie1_search.o
