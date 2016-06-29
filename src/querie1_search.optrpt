@@ -1,0 +1,41 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at querie1_search.c(464,2)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at querie1_search.c(464,2)
+   remark #15388: vectorization support: reference bang_vector has aligned access   [ querie1_search.c(465,3) ]
+   remark #15305: vectorization support: vector length 8
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 1.667
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 4 
+   remark #15477: vector loop cost: 0.370 
+   remark #15478: estimated potential speedup: 7.220 
+   remark #15488: --- end vector loop cost summary ---
+LOOP END
+
+LOOP BEGIN at querie1_search.c(464,2)
+<Remainder loop for vectorization>
+   remark #15388: vectorization support: reference bang_vector has aligned access   [ querie1_search.c(465,3) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 3.333
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at querie1_search.c(464,2)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================

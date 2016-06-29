@@ -311,12 +311,12 @@ int main( int argc, char* argv[]){
 #ifdef D_DEBUGGING
 	printf("going to reshape quantity table\n");
 #endif
-	csr_csr_square_reshape (
-			&quantity_csr_values, &quantity_JA, &quantity_IA,
-			&quantity_nnz, &quantity_rows, &quantity_columns,
-			line_status_columns    
-			);
-
+	/*	csr_csr_square_reshape (
+		&quantity_csr_values, &quantity_JA, &quantity_IA,
+		&quantity_nnz, &quantity_rows, &quantity_columns,
+		line_status_columns    
+		);
+		*/
 #ifdef D_DEBUGGING
 	csr_tbl_write(
 			"quantity_test.txt",
@@ -347,12 +347,12 @@ int main( int argc, char* argv[]){
 #ifdef D_DEBUGGING
 	printf("going to reshape quantity table\n");
 #endif
-	csr_csr_square_reshape (
-			&shipdate_csr_values, &shipdate_JA, &shipdate_IA,
-			&shipdate_nnz, &shipdate_rows, &shipdate_columns,
-			line_status_columns    
-			);
-
+	/*	csr_csr_square_reshape (
+		&shipdate_csr_values, &shipdate_JA, &shipdate_IA,
+		&shipdate_nnz, &shipdate_rows, &shipdate_columns,
+		line_status_columns    
+		);
+		*/
 #ifdef D_DEBUGGING
 	csr_tbl_write(
 			"shipdate_test_csr.txt",
@@ -436,17 +436,17 @@ int main( int argc, char* argv[]){
 	 ** ---------------------------------------------------------------------------
 	 ** -------------------------------------------------------------------------*/
 
-	mkl_sparse_optimize(quantity_matrix);
+	/*	mkl_sparse_optimize(quantity_matrix);
 
-	MKL_INT max_threads;
-	max_threads = mkl_get_max_threads();
-	mkl_set_num_threads(max_threads);
-
+		MKL_INT max_threads;
+		max_threads = mkl_get_max_threads();
+		mkl_set_num_threads(max_threads);
+		*/
 	//	printf("** Setted max thread on MKL to %d\n", max_threads);
 #ifdef D_DEBUGGING
 	printf("** START TIME MEASUREMENT\n");
 #endif
-	sleep(5);
+//	sleep(5);
 	GET_TIME(global_time_start);
 
 	csc_to_csr_mx_selection_and(
@@ -461,11 +461,9 @@ int main( int argc, char* argv[]){
 
 	intermediate_vector = (float*) malloc ( (intermediate_vector_rows+1) * sizeof(float));
 	bang_vector = (float*) malloc ( (quantity_columns+1) * sizeof(float));
-	memset(bang_vector, 1.0, (quantity_columns+1) * sizeof(float) );
-	/*	for (int pos =0; pos < line_status_columns ; pos++){
+	for (int pos =0; pos < line_status_columns ; pos++){
 		bang_vector[pos] = 1.0; 
-		}
-		*/
+	}
 #ifdef D_DEBUGGING
 	csr_tbl_write(
 			"selection_test.txt",
