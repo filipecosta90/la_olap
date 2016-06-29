@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
  <rdmgr>
-  <timestamp type="u64_t">1465228969</timestamp>
+  <timestamp type="u64_t">1467158420</timestamp>
   <hostname type="string">compute-652-1.local</hostname>
   <os type="string">linux</os>
   <product type="string">Intel® VTune™ Amplifier XE 2016</product>
   <buildNumber type="s32_t">424694</buildNumber>
   <logicalCPUCount type="s32_t">40</logicalCPUCount>
   <CPUFrequency type="s64_t">2500000000</CPUFrequency>
-  <collectionTimeBegin type="u64_t">1465228969</collectionTimeBegin>
-  <collectionTimeEnd type="u64_t">1465229063</collectionTimeEnd>
+  <collectionTimeBegin type="u64_t">1467158420</collectionTimeBegin>
+  <collectionTimeEnd type="u64_t">1467158420</collectionTimeEnd>
   <variables>
    <at type="string">cc</at>
   </variables>
