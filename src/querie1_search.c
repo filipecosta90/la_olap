@@ -63,7 +63,7 @@ void writeResults ( char* dataset ) {
 	strcat(file_write, ".csv");
 
 	FILE* stream = fopen(file_write, "a+");
-	fprintf(stream, "%s, %f, %f, %f, %f, %f, %f\n",dataset, selection_time, selection_quantity_time, selection_aggregation_time, projection_time, projection_selection_aggregation_time , total_time);
+	fprintf(stream, "%s, %lf, %lf, %lf, %lf, %lf, %lf\n",dataset, selection_time, selection_quantity_time, selection_aggregation_time, projection_time, projection_selection_aggregation_time , total_time);
 	fclose(stream);
 }
 
