@@ -526,6 +526,77 @@ void tbl_read_csc (
 }
 
 
+void tbl_read_csc_measure (
+    char* table_name, int tbl_column, int number_elements,
+    int* nnz, int* rows, int* columns,
+    float** A_csc_values, int** A_JA, int** A_IA
+    ){
+#ifdef D_DEBUGGING
+  printf("going to read column %d\n", tbl_column);
+#endif
+
+  //define CSC auxiliar sparse-matrix
+  // values will contain only ones
+  float* aux_csc_values;
+  aux_csc_values = (float*) _mm_malloc ((number_elements+1) * sizeof(float) , MEM_LINE_SIZE );
+
+  // JA  points to column starts in A
+  int* aux_csc_ja;
+  aux_csc_ja = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
+
+  // IA splits the array A into rows
+  int* aux_csc_ia;
+  aux_csc_ia = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
+
+#ifdef D_DEBUGGING
+  assert(aux_csc_values != NULL);
+  assert(aux_csc_ja != NULL);
+  assert(aux_csc_ia != NULL);
+#endif
+
+  FILE* stream = fopen(table_name, "r");
+  int element_number = 0;
+
+  float value;
+  char line[1024];
+
+
+  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
+
+    value = atof(field);
+    aux_csc_ja[element_number] = element_number;
+    aux_csc_ia[element_number] = element_number;
+    aux_csc_values[element_number] = value;
+  }
+
+  fclose(stream);
+
+
+  aux_csc_ja[element_number+1] = number_elements;
+
+  // will contain only ones
+  *A_csc_values = aux_csc_values;
+  // JA  points to column starts in A
+  *A_JA = aux_csc_ja;
+  // IA splits the array A into rows
+  *A_IA = aux_csc_ia;
+
+  *rows = number_elements;
+  *columns = number_elements;
+  *nnz = number_elements;
+
+#ifdef D_DEBUGGING
+  print_csc(
+      *A_csc_values, *A_JA, *A_IA,
+      *nnz, *rows, *columns
+      );
+  printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
+#endif
+
+}
+
+
+
 
 void tbl_read_measure(
     char* table_name, int tbl_column,
