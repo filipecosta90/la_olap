@@ -245,7 +245,7 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   //read shipdate
   //bitmap matrix
-  tbl_read(
+  tbl_read_csc(
       table_file , 11, number_elements,
       &shipdate_nnz, &shipdate_rows, &shipdate_columns ,
       &shipdate_csc_values, &shipdate_JA_csc, &shipdate_IA_csc
