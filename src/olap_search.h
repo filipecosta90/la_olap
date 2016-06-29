@@ -78,6 +78,15 @@ void tbl_read(
     float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
     );
 
+
+int tbl_get_number_elements (char* table_name);
+
+void tbl_read_csc (
+    char* table_name, int tbl_column, int number_elements,
+    int* nnz, int* rows, int* columns,
+    float** A_csr_values, int** A_JA, int** A_IA
+    );
+
 void tbl_read_measure(
     char* table_name, MKL_INT tbl_column,
     MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
