@@ -511,24 +511,29 @@ Begin optimization report for: csr_hadamard(float *__restrict__, int *__restrict
 
 
 LOOP BEGIN at olap_search.c(1506,2)
-   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap_search.c(1513,3) ]
-   remark #15388: vectorization support: reference A_IA1 has aligned access   [ olap_search.c(1508,17) ]
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at olap_search.c(1506,2)
+   remark #15389: vectorization support: reference C_JA1 has unaligned access   [ olap_search.c(1513,3) ]
+   remark #15389: vectorization support: reference A_IA1 has unaligned access   [ olap_search.c(1508,17) ]
    remark #15389: vectorization support: reference B_IA1 has unaligned access   [ olap_search.c(1509,17) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap_search.c(1512,3) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap_search.c(1512,3) ]
-   remark #15388: vectorization support: reference C_IA1 has aligned access   [ olap_search.c(1514,3) ]
+   remark #15389: vectorization support: reference B_csc_values has unaligned access   [ olap_search.c(1512,3) ]
+   remark #15389: vectorization support: reference A_csc_values has unaligned access   [ olap_search.c(1512,3) ]
+   remark #15389: vectorization support: reference C_IA1 has unaligned access   [ olap_search.c(1514,3) ]
    remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap_search.c(1519,3) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 8
-   remark #15309: vectorization support: normalized vectorization overhead 0.148
+   remark #15309: vectorization support: normalized vectorization overhead 0.402
    remark #15300: LOOP WAS VECTORIZED
-   remark #15448: unmasked aligned unit stride loads: 3 
-   remark #15449: unmasked aligned unit stride stores: 3 
-   remark #15450: unmasked unaligned unit stride loads: 1 
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 4 
+   remark #15451: unmasked unaligned unit stride stores: 2 
    remark #15475: --- begin vector loop cost summary ---
    remark #15476: scalar loop cost: 41 
-   remark #15477: vector loop cost: 6.750 
-   remark #15478: estimated potential speedup: 5.660 
+   remark #15477: vector loop cost: 10.250 
+   remark #15478: estimated potential speedup: 3.530 
    remark #15488: --- end vector loop cost summary ---
 LOOP END
 
@@ -543,29 +548,30 @@ Begin optimization report for: csr_csr_krao(float *__restrict__, int *__restrict
 
 
 LOOP BEGIN at olap_search.c(1653,10)
-   remark #15388: vectorization support: reference C_IA1 has aligned access
-   remark #15388: vectorization support: reference A_IA1 has aligned access
-   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap_search.c(1655,17) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap_search.c(1655,17) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap_search.c(1655,17) ]
-   remark #15388: vectorization support: reference C_JA1 has aligned access   [ olap_search.c(1656,10) ]
-   remark #15388: vectorization support: reference B_JA1 has aligned access   [ olap_search.c(1656,10) ]
-   remark #15388: vectorization support: reference A_JA1 has aligned access   [ olap_search.c(1656,10) ]
-   remark #15305: vectorization support: vector length 8
-   remark #15309: vectorization support: normalized vectorization overhead 0.200
+   remark #15389: vectorization support: reference C_IA1 has unaligned access
+   remark #15389: vectorization support: reference A_IA1 has unaligned access
+   remark #15389: vectorization support: reference C_csc_values has unaligned access   [ olap_search.c(1655,17) ]
+   remark #15389: vectorization support: reference B_csc_values has unaligned access   [ olap_search.c(1655,17) ]
+   remark #15389: vectorization support: reference A_csc_values has unaligned access   [ olap_search.c(1655,17) ]
+   remark #15389: vectorization support: reference C_JA1 has unaligned access   [ olap_search.c(1656,10) ]
+   remark #15389: vectorization support: reference B_JA1 has unaligned access   [ olap_search.c(1656,10) ]
+   remark #15389: vectorization support: reference A_JA1 has unaligned access   [ olap_search.c(1656,10) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.397
    remark #15300: LOOP WAS VECTORIZED
-   remark #15448: unmasked aligned unit stride loads: 5 
-   remark #15449: unmasked aligned unit stride stores: 3 
+   remark #15450: unmasked unaligned unit stride loads: 5 
+   remark #15451: unmasked unaligned unit stride stores: 3 
    remark #15475: --- begin vector loop cost summary ---
    remark #15476: scalar loop cost: 18 
-   remark #15477: vector loop cost: 3.120 
-   remark #15478: estimated potential speedup: 5.380 
+   remark #15477: vector loop cost: 8.500 
+   remark #15478: estimated potential speedup: 2.060 
    remark #15488: --- end vector loop cost summary ---
 LOOP END
 
 LOOP BEGIN at olap_search.c(1653,10)
 <Remainder loop for vectorization>
-   remark #15313: remainder loop was not vectorized: unsupported data type
 LOOP END
 ===========================================================================
 
@@ -575,32 +581,26 @@ Begin optimization report for: csc_to_csr_and_csc_krao(float *__restrict__, int 
 
 
 LOOP BEGIN at olap_search.c(1748,2)
-   remark #15389: vectorization support: reference C_csc_values has unaligned access   [ olap_search.c(1749,5) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap_search.c(1749,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap_search.c(1749,5) ]
-   remark #15381: vectorization support: unaligned access used inside loop body
-   remark #15305: vectorization support: vector length 8
-   remark #15399: vectorization support: unroll factor set to 2
-   remark #15309: vectorization support: normalized vectorization overhead 0.115
-   remark #15300: LOOP WAS VECTORIZED
-   remark #15448: unmasked aligned unit stride loads: 2 
-   remark #15451: unmasked unaligned unit stride stores: 1 
-   remark #15475: --- begin vector loop cost summary ---
-   remark #15476: scalar loop cost: 9 
-   remark #15477: vector loop cost: 1.620 
-   remark #15478: estimated potential speedup: 4.660 
-   remark #15488: --- end vector loop cost summary ---
+<Peeled loop for vectorization>
 LOOP END
 
 LOOP BEGIN at olap_search.c(1748,2)
-<Remainder loop for vectorization>
-   remark #15389: vectorization support: reference C_csc_values has unaligned access   [ olap_search.c(1749,5) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap_search.c(1749,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap_search.c(1749,5) ]
+   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap_search.c(1749,5) ]
+   remark #15389: vectorization support: reference B_csc_values has unaligned access   [ olap_search.c(1749,5) ]
+   remark #15389: vectorization support: reference A_csc_values has unaligned access   [ olap_search.c(1749,5) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
-   remark #15309: vectorization support: normalized vectorization overhead 1.625
-   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.889
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 9 
+   remark #15477: vector loop cost: 2.250 
+   remark #15478: estimated potential speedup: 3.760 
+   remark #15488: --- end vector loop cost summary ---
 LOOP END
 
 LOOP BEGIN at olap_search.c(1748,2)
@@ -634,32 +634,26 @@ LOOP BEGIN at olap_search.c(1836,2)
 LOOP END
 
 LOOP BEGIN at olap_search.c(1840,2)
-   remark #15389: vectorization support: reference C_csc_values has unaligned access   [ olap_search.c(1841,5) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap_search.c(1841,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap_search.c(1841,5) ]
-   remark #15381: vectorization support: unaligned access used inside loop body
-   remark #15305: vectorization support: vector length 8
-   remark #15399: vectorization support: unroll factor set to 2
-   remark #15309: vectorization support: normalized vectorization overhead 0.115
-   remark #15300: LOOP WAS VECTORIZED
-   remark #15448: unmasked aligned unit stride loads: 2 
-   remark #15451: unmasked unaligned unit stride stores: 1 
-   remark #15475: --- begin vector loop cost summary ---
-   remark #15476: scalar loop cost: 9 
-   remark #15477: vector loop cost: 1.620 
-   remark #15478: estimated potential speedup: 4.660 
-   remark #15488: --- end vector loop cost summary ---
+<Peeled loop for vectorization>
 LOOP END
 
 LOOP BEGIN at olap_search.c(1840,2)
-<Remainder loop for vectorization>
-   remark #15389: vectorization support: reference C_csc_values has unaligned access   [ olap_search.c(1841,5) ]
-   remark #15388: vectorization support: reference B_csc_values has aligned access   [ olap_search.c(1841,5) ]
-   remark #15388: vectorization support: reference A_csc_values has aligned access   [ olap_search.c(1841,5) ]
+   remark #15388: vectorization support: reference C_csc_values has aligned access   [ olap_search.c(1841,5) ]
+   remark #15389: vectorization support: reference B_csc_values has unaligned access   [ olap_search.c(1841,5) ]
+   remark #15389: vectorization support: reference A_csc_values has unaligned access   [ olap_search.c(1841,5) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
-   remark #15309: vectorization support: normalized vectorization overhead 1.625
-   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.889
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 1 
+   remark #15450: unmasked unaligned unit stride loads: 2 
+   remark #15475: --- begin vector loop cost summary ---
+   remark #15476: scalar loop cost: 9 
+   remark #15477: vector loop cost: 2.250 
+   remark #15478: estimated potential speedup: 3.760 
+   remark #15488: --- end vector loop cost summary ---
 LOOP END
 
 LOOP BEGIN at olap_search.c(1840,2)
@@ -703,14 +697,14 @@ LOOP BEGIN at olap_search.c(1943,2)
       remark #15389: vectorization support: reference B_IA1 has unaligned access
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
-      remark #15309: vectorization support: normalized vectorization overhead 1.000
+      remark #15309: vectorization support: normalized vectorization overhead 0.900
       remark #15300: LOOP WAS VECTORIZED
       remark #15450: unmasked unaligned unit stride loads: 1 
       remark #15451: unmasked unaligned unit stride stores: 1 
       remark #15475: --- begin vector loop cost summary ---
       remark #15476: scalar loop cost: 9 
-      remark #15477: vector loop cost: 2.250 
-      remark #15478: estimated potential speedup: 3.940 
+      remark #15477: vector loop cost: 2.500 
+      remark #15478: estimated potential speedup: 3.550 
       remark #15488: --- end vector loop cost summary ---
    LOOP END
 
@@ -740,28 +734,17 @@ LOOP BEGIN at olap_search.c(1951,2)
       remark #15389: vectorization support: reference B_csc_values has unaligned access
       remark #15389: vectorization support: reference A_csc_values has unaligned access
       remark #15381: vectorization support: unaligned access used inside loop body
-      remark #15305: vectorization support: vector length 8
+      remark #15305: vectorization support: vector length 4
       remark #15399: vectorization support: unroll factor set to 2
-      remark #15309: vectorization support: normalized vectorization overhead 0.346
+      remark #15309: vectorization support: normalized vectorization overhead 0.375
       remark #15300: LOOP WAS VECTORIZED
       remark #15450: unmasked unaligned unit stride loads: 2 
       remark #15451: unmasked unaligned unit stride stores: 1 
       remark #15475: --- begin vector loop cost summary ---
       remark #15476: scalar loop cost: 6 
-      remark #15477: vector loop cost: 1.620 
-      remark #15478: estimated potential speedup: 3.270 
+      remark #15477: vector loop cost: 3.000 
+      remark #15478: estimated potential speedup: 1.950 
       remark #15488: --- end vector loop cost summary ---
-   LOOP END
-
-   LOOP BEGIN at olap_search.c(1953,26)
-   <Remainder loop for vectorization>
-      remark #15389: vectorization support: reference C_csc_values has unaligned access
-      remark #15389: vectorization support: reference B_csc_values has unaligned access
-      remark #15389: vectorization support: reference A_csc_values has unaligned access
-      remark #15381: vectorization support: unaligned access used inside loop body
-      remark #15305: vectorization support: vector length 4
-      remark #15309: vectorization support: normalized vectorization overhead 2.111
-      remark #15301: REMAINDER LOOP WAS VECTORIZED
    LOOP END
 
    LOOP BEGIN at olap_search.c(1953,26)
@@ -791,14 +774,14 @@ LOOP BEGIN at olap_search.c(1958,2)
       remark #15389: vectorization support: reference A_JA1 has unaligned access
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
-      remark #15309: vectorization support: normalized vectorization overhead 1.091
+      remark #15309: vectorization support: normalized vectorization overhead 0.857
       remark #15300: LOOP WAS VECTORIZED
       remark #15450: unmasked unaligned unit stride loads: 2 
       remark #15451: unmasked unaligned unit stride stores: 1 
       remark #15475: --- begin vector loop cost summary ---
       remark #15476: scalar loop cost: 8 
-      remark #15477: vector loop cost: 2.750 
-      remark #15478: estimated potential speedup: 2.860 
+      remark #15477: vector loop cost: 3.500 
+      remark #15478: estimated potential speedup: 2.250 
       remark #15488: --- end vector loop cost summary ---
    LOOP END
 
