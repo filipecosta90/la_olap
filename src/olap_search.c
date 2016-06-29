@@ -830,9 +830,9 @@ void csr_csr_square_reshape (
 	printf("reshaping form %d x %d (%d) to %d x %d (%d)\n", current_row, current_column, current_nnz, new_rows, new_cols, new_nnz );
 #endif
 
-	new_csr_values = (float*) malloc ( new_nnz * sizeof(float), MEM_LINE_SIZE );
-	new_ja = (MKL_INT*) malloc ( new_nnz * sizeof(MKL_INT), MEM_LINE_SIZE );
-	new_ia = (MKL_INT*) malloc ( (new_rows + 1) * sizeof(MKL_INT), MEM_LINE_SIZE );
+	new_csr_values = (float*) malloc ( new_nnz * sizeof(float));
+	new_ja = (MKL_INT*) malloc ( new_nnz * sizeof(MKL_INT));
+	new_ia = (MKL_INT*) malloc ( (new_rows + 1) * sizeof(MKL_INT));
 
 	memcpy(new_csr_values, *A_csr_values, current_nnz * sizeof(float));
 	memcpy(new_ja, *A_JA, current_nnz * sizeof(MKL_INT));
@@ -1784,9 +1784,9 @@ void csc_to_csr_and_csc_krao(
 	//   ALLOCATE MEMORY
 	/////////////////////////////////
 
-	*C_csr_values = (float*) malloc ( A_NNZ * sizeof(float) , MEM_LINE_SIZE );
-	*C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) , MEM_LINE_SIZE );
-	*C_IA = (MKL_INT*) malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT) , MEM_LINE_SIZE );
+	*C_csr_values = (float*) malloc ( A_NNZ * sizeof(float) );
+	*C_JA = (MKL_INT*) malloc ( A_NNZ * sizeof(MKL_INT) );
+	*C_IA = (MKL_INT*) malloc ( ( final_number_rows + 1 ) * sizeof(MKL_INT) );
 
 	MKL_INT conversion_info;
 	mkl_scsrcsc(job, &A_NNZ, *C_csr_values, *C_JA, *C_IA, *C_csc_values, *C_JA1, *C_IA1, &conversion_info);

@@ -41,6 +41,9 @@
 #include "mkl.h"
 #include "olap_search.h"
 #include "timer.h"
+//sleep
+#include <unistd.h>
+
 
 double global_time_start, global_time_stop;
 // intermediate timers
