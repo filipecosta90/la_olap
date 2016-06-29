@@ -102,13 +102,13 @@ int main( int argc, char* argv[]){
 	 ** Return Flag Matrix
 	 ** -------------------------------------------------------------------------*/
 	//CSR
-	__declspec(align(MEM_LINE_SIZE))  float* return_flag_csr_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_JA;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_IA;
+	float* return_flag_csr_values = NULL;
+	MKL_INT* return_flag_JA;
+	MKL_INT* return_flag_IA;
 	//CSC
-	__declspec(align(MEM_LINE_SIZE))  float* return_flag_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_JA_csc;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* return_flag_IA_csc;
+	float* return_flag_csc_values = NULL;
+	MKL_INT* return_flag_JA_csc;
+	MKL_INT* return_flag_IA_csc;
 	//COMMON
 	MKL_INT return_flag_rows;
 	MKL_INT return_flag_columns;
@@ -118,13 +118,13 @@ int main( int argc, char* argv[]){
 	 ** Line Status Matrix
 	 ** -------------------------------------------------------------------------*/
 	//CSR
-	__declspec(align(MEM_LINE_SIZE))  float* line_status_csr_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_JA;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_IA;
+	float* line_status_csr_values = NULL;
+	MKL_INT* line_status_JA;
+	MKL_INT* line_status_IA;
 	//CSC
-	__declspec(align(MEM_LINE_SIZE))  float* line_status_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_JA_csc;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* line_status_IA_csc;
+	float* line_status_csc_values = NULL;
+	MKL_INT* line_status_JA_csc;
+	MKL_INT* line_status_IA_csc;
 	//COMMON
 	MKL_INT line_status_rows;
 	MKL_INT line_status_columns;
@@ -134,13 +134,13 @@ int main( int argc, char* argv[]){
 	 ** Quantity Matrix
 	 ** -------------------------------------------------------------------------*/
 	//CSR
-	__declspec(align(MEM_LINE_SIZE))  float* quantity_csr_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_JA;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_IA;
+	float* quantity_csr_values = NULL;
+	MKL_INT* quantity_JA;
+	MKL_INT* quantity_IA;
 	//CSC
-	__declspec(align(MEM_LINE_SIZE))  float* quantity_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_JA_csc;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* quantity_IA_csc;
+	float* quantity_csc_values = NULL;
+	MKL_INT* quantity_JA_csc;
+	MKL_INT* quantity_IA_csc;
 	//COMMON
 	MKL_INT quantity_rows;
 	MKL_INT quantity_columns;
@@ -151,13 +151,13 @@ int main( int argc, char* argv[]){
 	 ** Shipdate Matrix
 	 ** -------------------------------------------------------------------------*/
 	//CSR
-	__declspec(align(MEM_LINE_SIZE))  float* shipdate_csr_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_JA;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_IA;
+	float* shipdate_csr_values = NULL;
+	MKL_INT* shipdate_JA;
+	MKL_INT* shipdate_IA;
 	//CSC
-	__declspec(align(MEM_LINE_SIZE))  float* shipdate_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_JA_csc;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* shipdate_IA_csc;
+	float* shipdate_csc_values = NULL;
+	MKL_INT* shipdate_JA_csc;
+	MKL_INT* shipdate_IA_csc;
 	//COMMON
 	MKL_INT shipdate_rows;
 	MKL_INT shipdate_columns;
@@ -168,13 +168,13 @@ int main( int argc, char* argv[]){
 	 ** Projection Matrix
 	 ** -------------------------------------------------------------------------*/
 	//CSR
-	__declspec(align(MEM_LINE_SIZE))  float* projection_csr_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_JA;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_IA;
+	float* projection_csr_values = NULL;
+	MKL_INT* projection_JA;
+	MKL_INT* projection_IA;
 	//CSC
-	__declspec(align(MEM_LINE_SIZE))  float* projection_csc_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_JA_csc;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* projection_IA_csc;
+	float* projection_csc_values = NULL;
+	MKL_INT* projection_JA_csc;
+	MKL_INT* projection_IA_csc;
 
 	//COMMON
 	MKL_INT projection_rows;
@@ -186,9 +186,9 @@ int main( int argc, char* argv[]){
 	 ** Selection Matrix
 	 ** -------------------------------------------------------------------------*/
 	//CSR
-	__declspec(align(MEM_LINE_SIZE))  float* selection_csr_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* selection_JA;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* selection_IA;
+	float* selection_csr_values = NULL;
+	MKL_INT* selection_JA;
+	MKL_INT* selection_IA;
 	//COMMON
 	MKL_INT selection_rows;
 	MKL_INT selection_columns;
@@ -199,9 +199,9 @@ int main( int argc, char* argv[]){
 	 ** Aggregation Matrix
 	 ** -------------------------------------------------------------------------*/
 	//CSR
-	__declspec(align(MEM_LINE_SIZE)) float* aggregation_csr_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* aggregation_JA;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* aggregation_IA;
+	float* aggregation_csr_values = NULL;
+	MKL_INT* aggregation_JA;
+	MKL_INT* aggregation_IA;
 	//COMMON
 	MKL_INT aggregation_rows;
 
@@ -211,9 +211,9 @@ int main( int argc, char* argv[]){
 	 ** Intermediate Matrix
 	 ** -------------------------------------------------------------------------*/
 	//CSR
-	__declspec(align(MEM_LINE_SIZE)) float* intermediate_csr_values = NULL;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* intermediate_JA;
-	__declspec(align(MEM_LINE_SIZE))  MKL_INT* intermediate_IA;
+	float* intermediate_csr_values = NULL;
+	MKL_INT* intermediate_JA;
+	MKL_INT* intermediate_IA;
 	//COMMON
 	MKL_INT intermediate_rows;
 	MKL_INT intermediate_columns;
@@ -223,14 +223,14 @@ int main( int argc, char* argv[]){
 	/* ---------------------------------------------------------------------------
 	 ** Vectors
 	 ** -------------------------------------------------------------------------*/
-	__declspec(align(MEM_LINE_SIZE))  float* bang_vector;
-	__declspec(align(MEM_LINE_SIZE))  float* aggregation_vector;
+	float* bang_vector;
+	float* aggregation_vector;
 	MKL_INT aggregation_vector_rows;
 
 
-	__declspec(align(MEM_LINE_SIZE))  float* intermediate_vector;
+	float* intermediate_vector;
 	MKL_INT intermediate_vector_rows;
-	__declspec(align(MEM_LINE_SIZE))  float* final_vector;
+	float* final_vector;
 
 
 	//conversion status from csr arrays into mkl sparse_matrix_t 
@@ -251,9 +251,9 @@ int main( int argc, char* argv[]){
 #endif
 
 	// Memory Allocation
-	return_flag_csc_values = (float*) _mm_malloc ( return_flag_nnz * sizeof(float) ,MEM_LINE_SIZE);
-	return_flag_JA_csc = (MKL_INT*) _mm_malloc ( return_flag_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
-	return_flag_IA_csc = (MKL_INT*) _mm_malloc (( return_flag_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
+	return_flag_csc_values = (float*) malloc ( return_flag_nnz * sizeof(float) );
+	return_flag_JA_csc = (MKL_INT*) malloc ( return_flag_nnz * sizeof(MKL_INT) );
+	return_flag_IA_csc = (MKL_INT*) malloc (( return_flag_nnz+1) * sizeof(MKL_INT));
 
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &return_flag_nnz, return_flag_csr_values, return_flag_JA, return_flag_IA, return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc, &conversion_info);
@@ -278,9 +278,9 @@ int main( int argc, char* argv[]){
 		);
 
 	// Memory Allocation
-	line_status_csc_values = (float*) _mm_malloc ( line_status_nnz * sizeof(float) ,MEM_LINE_SIZE);
-	line_status_JA_csc = (MKL_INT*) _mm_malloc ( line_status_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
-	line_status_IA_csc = (MKL_INT*) _mm_malloc (( line_status_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
+	line_status_csc_values = (float*) malloc ( line_status_nnz * sizeof(float) );
+	line_status_JA_csc = (MKL_INT*) malloc ( line_status_nnz * sizeof(MKL_INT) );
+	line_status_IA_csc = (MKL_INT*) malloc (( line_status_nnz+1) * sizeof(MKL_INT));
 
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &line_status_nnz, line_status_csr_values, line_status_JA, line_status_IA, line_status_csc_values, line_status_JA_csc, line_status_IA_csc, &conversion_info);
@@ -323,13 +323,13 @@ int main( int argc, char* argv[]){
 #endif
 
 	// Memory Allocation
-	quantity_csc_values = (float*) _mm_malloc ( quantity_nnz * sizeof(float) ,MEM_LINE_SIZE);
-	quantity_JA_csc = (MKL_INT*) _mm_malloc ( quantity_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
-	quantity_IA_csc = (MKL_INT*) _mm_malloc (( quantity_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
+	quantity_csc_values = (float*) malloc ( quantity_nnz * sizeof(float) );
+	quantity_JA_csc = (MKL_INT*) malloc ( quantity_nnz * sizeof(MKL_INT) );
+	quantity_IA_csc = (MKL_INT*) malloc (( quantity_nnz+1) * sizeof(MKL_INT));
 
-	intermediate_csr_values = (float*) _mm_malloc ( (quantity_nnz) * sizeof(float) ,MEM_LINE_SIZE);
-	intermediate_JA = (MKL_INT*) _mm_malloc ((quantity_nnz) * sizeof(MKL_INT) ,MEM_LINE_SIZE);
-	intermediate_IA = (MKL_INT*) _mm_malloc (( quantity_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
+	intermediate_csr_values = (float*) malloc ( (quantity_nnz) * sizeof(float) );
+	intermediate_JA = (MKL_INT*) malloc ((quantity_nnz) * sizeof(MKL_INT) );
+	intermediate_IA = (MKL_INT*) malloc (( quantity_nnz+1) * sizeof(MKL_INT));
 
 	/** ---------------------------------------------------------------------------
 	 ** Populate Shipdate Matrix
@@ -359,9 +359,9 @@ int main( int argc, char* argv[]){
 #endif
 
 	// Memory Allocation
-	shipdate_csc_values = (float*) _mm_malloc ( shipdate_nnz * sizeof(float),MEM_LINE_SIZE );
-	shipdate_JA_csc = (MKL_INT*) _mm_malloc ( shipdate_nnz * sizeof(MKL_INT) ,MEM_LINE_SIZE);
-	shipdate_IA_csc = (MKL_INT*) _mm_malloc ((shipdate_nnz+1) * sizeof(MKL_INT),MEM_LINE_SIZE);
+	shipdate_csc_values = (float*) malloc ( shipdate_nnz * sizeof(float));
+	shipdate_JA_csc = (MKL_INT*) malloc ( shipdate_nnz * sizeof(MKL_INT) );
+	shipdate_IA_csc = (MKL_INT*) malloc ((shipdate_nnz+1) * sizeof(MKL_INT));
 
 	// Convert from CSR to CSC
 	mkl_scsrcsc(job_csr_csc, &shipdate_nnz, shipdate_csr_values, shipdate_JA, shipdate_IA, shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc, &conversion_info);
@@ -393,7 +393,7 @@ int main( int argc, char* argv[]){
 #endif
 
 	aggregation_vector_rows = quantity_columns;
-	aggregation_vector = (float*) _mm_malloc ((aggregation_vector_rows+1) * sizeof(float),MEM_LINE_SIZE);
+	aggregation_vector = (float*) malloc ((aggregation_vector_rows+1) * sizeof(float));
 
 	//        convert via sparseBLAS API to Handle containing internal data for 
 	//        subsequent Inspector-executor Sparse BLAS operations.
@@ -418,7 +418,7 @@ int main( int argc, char* argv[]){
 	 ** Populate Vectors
 	 ** -------------------------------------------------------------------------*/
 
-	final_vector = (float*) _mm_malloc ( (quantity_columns+1) * sizeof(float),MEM_LINE_SIZE);
+	final_vector = (float*) malloc ( (quantity_columns+1) * sizeof(float));
 
 	/** ---------------------------------------------------------------------------
 	 ** ---------------------------------------------------------------------------
@@ -435,7 +435,7 @@ int main( int argc, char* argv[]){
 
 	mkl_sparse_optimize(quantity_matrix);
 
-		MKL_INT max_threads;
+	MKL_INT max_threads;
 	max_threads = mkl_get_max_threads();
 	mkl_set_num_threads(max_threads);
 
@@ -455,13 +455,13 @@ int main( int argc, char* argv[]){
 
 	intermediate_vector_rows = selection_columns;
 
-	intermediate_vector = (float*) _mm_malloc ( (intermediate_vector_rows+1) * sizeof(float),MEM_LINE_SIZE);
-	bang_vector = (float*) _mm_malloc ( (quantity_columns+1) * sizeof(float),MEM_LINE_SIZE);
+	intermediate_vector = (float*) malloc ( (intermediate_vector_rows+1) * sizeof(float));
+	bang_vector = (float*) malloc ( (quantity_columns+1) * sizeof(float));
 	memset(bang_vector, 1.0, (quantity_columns+1) * sizeof(float) );
-/*	for (int pos =0; pos < line_status_columns ; pos++){
+	/*	for (int pos =0; pos < line_status_columns ; pos++){
 		bang_vector[pos] = 1.0; 
-	}
-*/
+		}
+		*/
 #ifdef D_DEBUGGING
 	csr_tbl_write(
 			"selection_test.txt",
