@@ -435,9 +435,9 @@ int main( int argc, char* argv[]){
 
 	mkl_sparse_optimize(quantity_matrix);
 
-	//	MKL_INT max_threads;
-	//max_threads = mkl_get_max_threads();
-	//mkl_set_num_threads(max_threads);
+		MKL_INT max_threads;
+	max_threads = mkl_get_max_threads();
+	mkl_set_num_threads(max_threads);
 
 	//	printf("** Setted max thread on MKL to %d\n", max_threads);
 #ifdef D_DEBUGGING
