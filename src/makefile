@@ -7,7 +7,7 @@ INCLUDE= -I${MKLROOT}/include -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/incl
 #flags
 LIB=  -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm -ldl -lglib-2.0 
 
-CFLAGS= -qopenmp -I${MKLROOT}/include -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) 
+CFLAGS= -qopenmp -I${MKLROOT}/include -g -ggdb -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) 
 DEBUGFLAGS= -qopenmp -I${MKLROOT}/include -g -ggdb -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX $(INCLUDE) 
 
 v0: olap_search.o querie1_search.o

@@ -443,6 +443,7 @@ int main( int argc, char* argv[]){
 #ifdef D_DEBUGGING
 	printf("** START TIME MEASUREMENT\n");
 #endif
+	sleep(5);
 	GET_TIME(global_time_start);
 
 	csc_to_csr_mx_selection_and(
