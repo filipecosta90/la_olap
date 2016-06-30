@@ -51,31 +51,31 @@
 char* getfield( char* line, int num, char* return_string );
 
 void print_csc(
-    float* csc_values, MKL_INT* A_row_ind, MKL_INT* A_col_ptr, 
-    MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns 
+    float* csc_values, int* A_row_ind, int* A_col_ptr, 
+    int NNZ, int number_rows, int number_columns 
     );
 
 void print_csr( 
-    float* csr_values, MKL_INT* JA, MKL_INT* IA, 
-    MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns 
+    float* csr_values, int* JA, int* IA, 
+    int NNZ, int number_rows, int number_columns 
     );
 
 void convert_and_write_to_csv (
     char* filename,
-    float* csr_values, MKL_INT* JA, MKL_INT* IA,
-    MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns
+    float* csr_values, int* JA, int* IA,
+    int NNZ, int number_rows, int number_columns
     );
 
 void read_from_mx (
     char* filename,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
-    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns
+    float** A_csr_values, int** A_JA, int** A_IA,
+    int* nnz, int* rows, int* columns
     );
 
 void tbl_read(
-    char* table_name, MKL_INT tbl_column,
-    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    char* table_name, int tbl_column,
+    int* nnz, int* rows, int* columns,
+    float** A_csr_values, int** A_JA, int** A_IA
     );
 
 
@@ -94,86 +94,86 @@ void tbl_read_csc_measure (
     );
 
 void tbl_read_measure(
-    char* table_name, MKL_INT tbl_column,
-    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns,
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA
+    char* table_name, int tbl_column,
+    int* nnz, int* rows, int* columns,
+    float** A_csr_values, int** A_JA, int** A_IA
     );
 
 void tbl_read_filter(
-    char* table_name, MKL_INT tbl_column, int opp_code, char* comparation_key,
-    MKL_INT* nnz, MKL_INT* rows, MKL_INT* columns, 
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
-    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
+    char* table_name, int tbl_column, int opp_code, char* comparation_key,
+    int* nnz, int* rows, int* columns, 
+    float** A_csr_values, int** A_JA, int** A_IA,
+    int **quark_start_end, int* quark_global_pos
     );
 
 void csr_csr_square_reshape (
-    float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
-    MKL_INT *A_n_nnz, MKL_INT *A_rows, MKL_INT *A_columns,
-    MKL_INT reshape_square
+    float** A_csr_values, int** A_JA, int** A_IA,
+    int *A_n_nnz, int *A_rows, int *A_columns,
+    int reshape_square
     );
 
 void check_errors( sparse_status_t stat );
 
 void csc_tbl_write(
     char* table_name,
-    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    float* A_csc_values, int* A_JA1, int* A_IA1,
+    int A_NNZ, int A_number_rows, int A_number_columns
     );
 
 void csr_tbl_write(
     char* table_name,
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    float* A_csr_values, int* A_JA, int* A_IA,
+    int A_NNZ, int A_number_rows, int A_number_columns
     );
 
 void csr_measure_tbl_write(
     char* table_name,
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns
+    float* A_csr_values, int* A_JA, int* A_IA,
+    int A_NNZ, int A_number_rows, int A_number_columns
     );
 
 void csr_vector_write(
     char* vector_name,
-    float* Vector_csr_values, MKL_INT Vector_NNZ
+    float* Vector_csr_values, int Vector_NNZ
     );
 
 void csr_measure_vector_write(
     char* vector_name,
-    float* Vector_csr_values, MKL_INT Vector_NNZ
+    float* Vector_csr_values, int Vector_NNZ
     );
 
 void csc_to_csr_mx_selection_and(
-    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float* A_csc_values, int* A_JA1, int* A_IA1,
+    int A_NNZ, int A_number_rows, int A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    float** C_csr_values, int** C_JA, int** C_IA,
+    int* C_NNZ, int* C_number_rows, int* C_number_columns
     );
 
 void csc_to_csc_mx_selection_and(
-    float* A_csc_values, MKL_INT* A_row_ind, MKL_INT* A_col_ptr,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float* A_csc_values, int* A_row_ind, int* A_col_ptr,
+    int A_NNZ, int A_number_rows, int A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    float** C_csc_values, MKL_INT** C_row_ind, MKL_INT** C_col_ptr,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    float** C_csc_values, int** C_row_ind, int** C_col_ptr,
+    int* C_NNZ, int* C_number_rows, int* C_number_columns
     );
 
 void csr_mx_selection_or(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float* A_csr_values, int* A_JA, int* A_IA,
+    int A_NNZ, int A_number_rows, int A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns,
-    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
+    float** C_csr_values, int** C_JA, int** C_IA,
+    int* C_NNZ, int* C_number_rows, int* C_number_columns,
+    int **quark_start_end, int* quark_global_pos
     );
 
 void csr_mx_selection(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
+    float* A_csr_values, int* A_JA, int* A_IA,
+    int A_NNZ, int A_number_rows, int A_number_columns,
     int opp_code, char* comparation_key,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns,
-    MKL_INT **quark_start_end, MKL_INT* quark_global_pos
+    float** C_csr_values, int** C_JA, int** C_IA,
+    int* C_NNZ, int* C_number_rows, int* C_number_columns,
+    int **quark_start_end, int* quark_global_pos
     );
 
 ///////////////////////////////////// OPS /////////////////////////////////////
@@ -186,12 +186,12 @@ void csr_mx_selection(
 //
 /////////////////////////////////
 void csr_hadamard(
-    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA,
-    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    float *restrict A_csr_values, int *restrict A_JA, int *restrict A_IA,
+    int A_NNZ, int A_number_rows, int A_number_columns,
+    float *restrict B_csr_values, int *restrict B_JA, int *restrict B_IA,
+    int B_NNZ, int B_number_rows, int B_number_columns,
+    float **restrict C_csr_values, int **restrict C_JA, int **restrict C_IA,
+    int* C_NNZ, int* C_number_rows, int* C_number_columns
     );
 
 /////////////////////////////////
@@ -200,31 +200,31 @@ void csr_hadamard(
 //
 /////////////////////////////////
 void csr_csr_krao(
-    float *restrict A_csr_values, MKL_INT *restrict A_JA, MKL_INT *restrict A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float *restrict B_csr_values, MKL_INT *restrict B_JA, MKL_INT *restrict B_IA ,
-    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    float *restrict A_csr_values, int *restrict A_JA, int *restrict A_IA,
+    int A_NNZ, int A_number_rows, int A_number_columns,
+    float *restrict B_csr_values, int *restrict B_JA, int *restrict B_IA ,
+    int B_NNZ, int B_number_rows, int B_number_columns,
+    float **restrict C_csr_values, int **restrict C_JA, int **restrict C_IA,
+    int* C_NNZ, int* C_number_rows, int* C_number_columns
     );
 
 void csc_to_csr_and_csc_krao(
-    float *restrict A_csc_values, MKL_INT *restrict A_JA1, MKL_INT *restrict A_IA1,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float *restrict B_csc_values, MKL_INT *restrict B_JA1, MKL_INT *restrict B_IA1 ,
-    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float **restrict C_csr_values, MKL_INT **restrict C_JA, MKL_INT **restrict C_IA,
-    float **restrict C_csc_values, MKL_INT **restrict C_JA1, MKL_INT **restrict C_IA1,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    int A_NNZ, int A_number_rows, int A_number_columns,
+    float *restrict B_csc_values, int *restrict B_JA1, int *restrict B_IA1 ,
+    int B_NNZ, int B_number_rows, int B_number_columns,
+    float **restrict C_csr_values, int **restrict C_JA, int **restrict C_IA,
+    float **restrict C_csc_values, int **restrict C_JA1, int **restrict C_IA1,
+    int* C_NNZ, int* C_number_rows, int* C_number_columns
     );
 
 void csc_csc_krao(
-    float *restrict A_csc_values, MKL_INT *restrict A_JA1, MKL_INT *restrict A_IA1,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float *restrict B_csc_values, MKL_INT *restrict B_JA1, MKL_INT *restrict B_IA1 ,
-    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float **restrict C_csc_values, MKL_INT **restrict C_JA1, MKL_INT **restrict C_IA1,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    int A_n_nnz, int A_n_rows, int A_n_cols,
+    float *restrict B_csc_values, int *restrict B_row_ind, int *restrict B_col_ptr,
+    int B_n_nnz, int B_n_rows, int B_n_cols,
+    float **C_csc_values, int **C_row_ind, int **C_col_ptr,
+    int* C_n_nnz, int* C_n_rows, int *C_n_cols,
     );
 
 /////////////////////////////////
@@ -234,12 +234,12 @@ void csc_csc_krao(
 /////////////////////////////////
 
 void csr_kron(
-    float* A_csr_values, MKL_INT* A_JA, MKL_INT* A_IA,
-    MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
-    float* B_csr_values, MKL_INT* B_JA, MKL_INT* B_IA ,
-    MKL_INT B_NNZ, MKL_INT B_number_rows, MKL_INT B_number_columns,
-    float** C_csr_values, MKL_INT** C_JA, MKL_INT** C_IA,
-    MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
+    float* A_csr_values, int* A_JA, int* A_IA,
+    int A_NNZ, int A_number_rows, int A_number_columns,
+    float* B_csr_values, int* B_JA, int* B_IA ,
+    int B_NNZ, int B_number_rows, int B_number_columns,
+    float** C_csr_values, int** C_JA, int** C_IA,
+    int* C_NNZ, int* C_number_rows, int* C_number_columns
     );
 
 #endif

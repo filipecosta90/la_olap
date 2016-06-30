@@ -562,8 +562,8 @@ void tbl_read_csc_measure (
 
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-    
-char* tmp_field = strdup(line);
+
+    char* tmp_field = strdup(line);
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char));
     field = getfield(tmp_field, tbl_column, field);
     value = atof(field);
@@ -1253,9 +1253,9 @@ void csc_to_csc_mx_selection_and(
   int returned_strcmp2;
   int iaa = 0;
   int at_non_zero = 0;
-int at_column = 0;
-int at_row = 0;
-int max_row = -1;
+  int at_column = 0;
+  int at_row = 0;
+  int max_row = -1;
   *C_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float), MEM_LINE_SIZE );
   *C_row_ind = (int*) _mm_malloc ( A_NNZ * sizeof(int), MEM_LINE_SIZE );
   *C_col_ptr = (int*) _mm_malloc ( (A_NNZ + 1) * sizeof(int), MEM_LINE_SIZE);
@@ -1296,7 +1296,7 @@ int max_row = -1;
 
       (*C_col_ptr)[at_column] =  at_non_zero;
       if ( non_zero != 0 ){
-	at_row = A_row_ind[at_column];
+        at_row = A_row_ind[at_column];
         max_row = at_row > max_row ? at_row : max_row; 
         (*C_row_ind)[at_non_zero] =  at_row;
         (*C_csc_values)[at_non_zero] =  A_csc_values[at_column];
@@ -2017,58 +2017,54 @@ void csc_to_csr_and_csc_krao(
 
 
 void csc_csc_krao(
-    float *restrict A_csc_values, int *restrict A_JA1, int *restrict A_IA1,
-    int A_NNZ, int A_number_rows, int A_number_columns,
-    float *restrict B_csc_values, int *restrict B_JA1, int *restrict B_IA1 ,
-    int B_NNZ, int B_number_rows, int B_number_columns,
-    float **restrict C_csc_values, int **restrict C_JA1, int **restrict C_IA1,
-    int* C_NNZ, int* C_number_rows, int* C_number_columns
+    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    int A_n_nnz, int A_n_rows, int A_n_cols,
+    float *restrict B_csc_values, int *restrict B_row_ind, int *restrict B_col_ptr,
+    int B_n_nnz, int B_n_rows, int B_n_cols,
+    float **C_csc_values, int **C_row_ind, int **C_col_ptr,
+    int *C_n_nnz, int *C_n_rows, int *C_n_cols,
     ){
   /////////////////////////////////
   //   ALLOCATE MEMORY
   /////////////////////////////////
 
-  *C_csc_values = (float*) malloc ( A_NNZ * sizeof(float) );
-  *C_JA1 = (int*) malloc ( A_NNZ  * sizeof(int) );
-  *C_IA1 = (int*) malloc ( (A_number_columns+1) * sizeof(int) );
+  float * aux_csc_values;
+  int* aux_row_ind;
+  int* aux_col_ptr;
+
+  aux_csc_values = (float*) _mm_malloc ( A_n_nnz * sizeof(float) , MEM_LINE_SIZE );
+  aux_row_ind = (int*) _mm_malloc ( A_n_nnz  * sizeof(int) , MEM_LINE_SIZE);
+  aux_col_ptr = (int*) _mm_malloc ( (A_n_cols+1) * sizeof(int) , MEM_LINE_SIZE);
 
   /////////////////////////////////
   //   COMPUTE KRAO
   /////////////////////////////////
-  int end_column = A_number_columns;
-  int scalar_B = B_number_rows;
+  int end_column = A_n_cols;
+  int scalar_B = B_n_rows;
+  int current_row = 0;
+  int max_row = 0;
 
-  // n=16 for SSE, n=32 for AV
-  //__assume_aligned(C_IA1, MEM_LINE_SIZE);
-  //__assume_aligned(A_IA1, MEM_LINE_SIZE);
-  //__assume_aligned(C_csc_values, MEM_LINE_SIZE);
-  //__assume_aligned(B_csc_values, MEM_LINE_SIZE);
-  //__assume_aligned(A_csc_values, MEM_LINE_SIZE);
-  //__assume_aligned(B_JA1, MEM_LINE_SIZE);
-  //__assume_aligned(A_JA1, MEM_LINE_SIZE);
-  //__assume_aligned(C_JA1, MEM_LINE_SIZE);
+  for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+    aux_col_ptr[at_column] = A_col_ptr[at_column];
+    aux_csc_values[at_column] = A_csc_values[at_column] * B_csc_values[at_column];
 
-  /////////////////////////////////
-  //   COMPUTE KRAO
-  /////////////////////////////////
-
-  for ( int at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-    (*C_IA1)[at_column] = A_IA1[at_column];
+  }
+  for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+    current_row = B_row_ind[at_column] + ( A_row_ind[at_column] * scalar_B );
+    aux_row_ind[at_column] = current_row;
+    max_row = current_row > max_row ? current_row : max_row;
   }
 
-  for ( int at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-    (*C_csc_values)[at_column] =  B_csc_values[at_column] *  A_csc_values[at_column];
-  }
+  aux_col_ptr[A_n_nnz] = A_n_nnz;
+  *C_n_rows = (max_row+1);
 
-  for ( int at_column = 0 ; at_column < A_number_columns ; ++at_column ){
-    (*C_JA1)[at_column] = B_JA1[at_column] + ( A_JA1[at_column] * scalar_B );
-  }
-  (*C_IA1)[A_number_columns] = A_NNZ;
+  *C_n_cols = A_n_cols;
+  *C_n_nnz = A_n_nnz;
 
-  int final_number_rows = A_number_rows + B_number_rows;
-  *C_number_rows = final_number_rows;
-  *C_number_columns = A_number_columns;
-  *C_NNZ = A_NNZ;
+  *C_csc_values = aux_csc_values;
+  *C_row_ind = aux_row_ind;
+  *C_col_ptr = aux_col_ptr;
+
 }
 
 /////////////////////////////////

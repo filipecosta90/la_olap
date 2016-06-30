@@ -517,15 +517,6 @@ printf("#######selecao\n");
 #endif
 	// compute projection = return_flag krao line_status
 
-	csc_to_csr_and_csc_krao(
-			return_flag_csc_values, return_flag_JA_csc, return_flag_IA_csc,
-			return_flag_nnz, return_flag_rows, return_flag_columns,
-			line_status_csc_values, line_status_JA_csc, line_status_IA_csc ,
-			line_status_nnz, line_status_rows, line_status_columns,
-			&projection_csr_values, &projection_JA, &projection_IA,
-			&projection_csc_values, &projection_JA_csc, &projection_IA_csc,
-			&projection_nnz, &projection_rows, &projection_columns
-			);
 #ifdef D_DEBUGGING
 
 	print_csr(
