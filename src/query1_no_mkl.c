@@ -174,32 +174,18 @@ int main( int argc, char* argv[]){
   int  projection_selection_n_nnz;
   int projection_selection_n_rows;
   int  projection_selection_n_cols;
-
-  /* ---------------------------------------------------------------------------
-   ** Intermediate Matrix
-   ** -------------------------------------------------------------------------*/
-  //CSR
-  float* intermediate_csc_values = NULL;
-  int* intermediate_JA;
-  int* intermediate_IA;
-  //COMMON
-  int intermediate_n_rows;
-  int intermediate_n_cols;
-  int intermediate_n_nnz;
-  sparse_matrix_t  intermediate_matrix;
-
-  /* ---------------------------------------------------------------------------
-   ** Vectors
-   ** -------------------------------------------------------------------------*/
-  float* bang_vector;
-  float* aggregation_vector;
-  int aggregation_vector_n_rows;
-
-
-  float* intermediate_vector;
-  int intermediate_vector_n_rows;
-
-  float* final_vector;
+    
+    /* ---------------------------------------------------------------------------
+     ** ( Projection . Selection ) . Quantity Matrix
+     ** -------------------------------------------------------------------------*/
+    //CSC
+    float* projection_selection_quantity_csc_values;
+    int* projection_selection_quantity_row_ind;
+    int* projection_selection_quantity_col_ptr;
+    //COMMON
+    int  projection_selection_quantity_n_nnz;
+    int projection_selection_quantity_n_rows;
+    int  projection_selection_quantity_n_cols;
 
   int number_elements = tbl_get_number_elements (table_file);
 
@@ -351,6 +337,27 @@ int main( int argc, char* argv[]){
 
 
   GET_TIME(global_time_projection_selection);
+    
+    
+    csc_csc_mm(
+               projection_selection_csc_values, projection_selection_row_ind, projection_selection_col_ptr,
+               projection_selection_n_nnz, projection_selection_n_rows, projection_selection_n_cols,
+               
+               quantity_csc_values, quantity_row_ind, quantity_col_ptr,
+               quantity_n_nnz,  quantity_n_rows, quantity_n_cols ,
+
+               &projection_selection_quantity_csc_values, &projection_selection_quantity_row_ind, &projection_selection_quantity_col_ptr,
+               &projection_selection_quantity_n_nnz, &projection_selection_quantity_n_rows, &projection_selection_quantity_n_cols
+               );
+    
+#ifdef D_DEBUGGING
+    printf("( projection . selection ) . quantity rows %d columns %d nnz %d\n", projection_selection_quantity_n_rows, projection_selection_quantity_n_cols, projection_selection_quantity_n_nnz);
+    
+    print_csc (
+               projection_selection_quantity_csc_values, projection_selection_quantity_row_ind, projection_selection_quantity_col_ptr,
+               projection_selection_quantity_n_nnz, projection_selection_quantity_n_rows, projection_selection_quantity_n_cols
+               );
+#endif
 
   GET_TIME(global_time_projection_selection_aggregation);
 
