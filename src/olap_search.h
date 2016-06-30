@@ -51,7 +51,7 @@
 char* getfield( char* line, int num, char* return_string );
 
 void print_csc(
-    float* csc_values, MKL_INT* JA1, MKL_INT* IA1, 
+    float* csc_values, MKL_INT* A_row_ind, MKL_INT* A_col_ptr, 
     MKL_INT NNZ, MKL_INT number_rows, MKL_INT number_columns 
     );
 
@@ -84,7 +84,13 @@ int tbl_get_number_elements (char* table_name);
 void tbl_read_csc (
     char* table_name, int tbl_column, int number_elements,
     int* nnz, int* rows, int* columns,
-    float** A_csr_values, int** A_JA, int** A_IA
+    float** A_csr_values, int** A_row_ind, int** A_col_ptr
+    );
+
+void tbl_read_csc_measure (
+    char* table_name, int tbl_column, int number_elements,
+    int* nnz, int* rows, int* columns,
+    float** A_csr_values, int** A_row_ind, int** A_col_ptr
     );
 
 void tbl_read_measure(
@@ -102,7 +108,7 @@ void tbl_read_filter(
 
 void csr_csr_square_reshape (
     float** A_csr_values, MKL_INT** A_JA, MKL_INT** A_IA,
-    MKL_INT *A_nnz, MKL_INT *A_rows, MKL_INT *A_columns,
+    MKL_INT *A_n_nnz, MKL_INT *A_rows, MKL_INT *A_columns,
     MKL_INT reshape_square
     );
 
@@ -145,10 +151,10 @@ void csc_to_csr_mx_selection_and(
     );
 
 void csc_to_csc_mx_selection_and(
-    float* A_csc_values, MKL_INT* A_JA1, MKL_INT* A_IA1,
+    float* A_csc_values, MKL_INT* A_row_ind, MKL_INT* A_col_ptr,
     MKL_INT A_NNZ, MKL_INT A_number_rows, MKL_INT A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    float** C_csc_values, MKL_INT** C_JA1, MKL_INT** C_IA1,
+    float** C_csc_values, MKL_INT** C_row_ind, MKL_INT** C_col_ptr,
     MKL_INT* C_NNZ, MKL_INT* C_number_rows, MKL_INT* C_number_columns
     );
 

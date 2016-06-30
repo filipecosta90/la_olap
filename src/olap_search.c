@@ -62,28 +62,28 @@ char* getfield( char* line, int num, char* return_string ){
 
 
 void print_csc(
-    float* csc_values, int* JA1, int* IA1,
+    float* csc_values, int* row_ind, int* col_ptr,
     int NNZ, int number_rows, int number_columns
     ){
   printf("N NONZ: %d\t", NNZ);
   printf("N ROWS: %d\t", number_rows);
   printf("N COLS: %d\n", number_columns);
   if (number_columns <= 100){
-    printf("CSC VALUES(%llu):\t", sizeof(csc_values));
+    printf("CSC VALUES(%llu): [\t", sizeof(csc_values));
     for (int pos = 0; pos < NNZ; pos++){
       printf("%f, ", csc_values[pos]);
     }
-    printf("\nJA1:\t");
+    printf("] \n row_ind:\t");
 
     for (int pos = 0; pos < NNZ; pos++){
-      printf("%d, ", JA1[pos]);
+      printf("%d, ", row_ind[pos]);
     }
 
-    printf("\nIA1:\t");
+    printf("] \ncol_ptr:\t");
     for (int pos = 0; pos <= number_columns; pos++){
-      printf("%d, ", IA1[pos]);
+      printf("%d, ", col_ptr[pos]);
     }
-    printf("\n");
+    printf("]\n");
   }
 }
 
@@ -437,8 +437,8 @@ int tbl_get_number_elements (char* table_name){
 
 void tbl_read_csc (
     char* table_name, int tbl_column, int number_elements,
-    int* nnz, int* rows, int* columns,
-    float** A_csc_values, int** A_JA, int** A_IA
+    int* n_nnz, int* n_rows, int* n_cols,
+    float** A_csc_values, int** A_row_ind, int** A_col_ptr
     ){
 #ifdef D_DEBUGGING
   printf("going to read column %d\n", tbl_column);
@@ -450,17 +450,17 @@ void tbl_read_csc (
   aux_csc_values = (float*) _mm_malloc ((number_elements+1) * sizeof(float) , MEM_LINE_SIZE );
 
   // JA  points to column starts in A
-  int* aux_csc_ja;
-  aux_csc_ja = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
+  int* aux_csc_row_ind;
+  aux_csc_row_ind = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
 
   // IA splits the array A into rows
-  int* aux_csc_ia;
-  aux_csc_ia = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
+  int* aux_csc_col_ptr;
+  aux_csc_col_ptr = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
 
 #ifdef D_DEBUGGING
   assert(aux_csc_values != NULL);
-  assert(aux_csc_ja != NULL);
-  assert(aux_csc_ia != NULL);
+  assert(aux_csc_row_ind != NULL);
+  assert(aux_csc_col_ptr != NULL);
 #endif
 
   FILE* stream = fopen(table_name, "r");
@@ -494,33 +494,33 @@ void tbl_read_csc (
     if (current_major_row < row_of_element ){
       current_major_row = row_of_element ;
     }
-    aux_csc_ja[element_number] = element_number;
-    aux_csc_ia[element_number] = row_of_element;
+    aux_csc_col_ptr[element_number] = element_number;
+    aux_csc_row_ind[element_number] = row_of_element;
     aux_csc_values[element_number] = 1.0f;
   }
 
   fclose(stream);
 
 
-  aux_csc_ja[element_number+1] = number_elements;
+  aux_csc_col_ptr[number_elements] = number_elements;
 
   // will contain only ones
   *A_csc_values = aux_csc_values;
   // JA  points to column starts in A
-  *A_JA = aux_csc_ja;
+  *A_col_ptr = aux_csc_col_ptr;
   // IA splits the array A into rows
-  *A_IA = aux_csc_ia;
+  *A_row_ind = aux_csc_row_ind;
 
-  *rows = current_major_row + 1;
-  *columns = number_elements;
-  *nnz = number_elements;
+  *n_rows = current_major_row + 1;
+  *n_cols = number_elements;
+  *n_nnz = number_elements;
 
 #ifdef D_DEBUGGING
   print_csc(
-      *A_csc_values, *A_JA, *A_IA,
-      *nnz, *rows, *columns
+      *A_csc_values, *A_row_ind, *A_col_ptr,
+      *n_nnz, *n_rows, *n_cols
       );
-  printf("readed matrix %d %d : NNZ %d\n", *rows, *columns, *nnz);
+  printf("readed matrix %d >< %d : NNZ %d\n", *n_rows, *n_cols, *n_nnz);
 #endif
 
 }
@@ -562,7 +562,10 @@ void tbl_read_csc_measure (
 
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-
+    
+char* tmp_field = strdup(line);
+    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char));
+    field = getfield(tmp_field, tbl_column, field);
     value = atof(field);
     aux_csc_ja[element_number] = element_number;
     aux_csc_ia[element_number] = element_number;
@@ -572,7 +575,7 @@ void tbl_read_csc_measure (
   fclose(stream);
 
 
-  aux_csc_ja[element_number+1] = number_elements;
+  aux_csc_ja[number_elements] = number_elements;
 
   // will contain only ones
   *A_csc_values = aux_csc_values;
@@ -1232,10 +1235,10 @@ void csc_to_csr_mx_selection_and(
 
 
 void csc_to_csc_mx_selection_and(
-    float* A_csc_values, int* A_JA1, int* A_IA1,
+    float* A_csc_values, int* A_row_ind, int* A_col_ptr,
     int A_NNZ, int A_number_rows, int A_number_columns,
     int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    float** C_csc_values, int** C_JA1, int** C_IA1,
+    float** C_csc_values, int** C_row_ind, int** C_col_ptr,
     int* C_NNZ, int* C_number_rows, int* C_number_columns
     ){
 
@@ -1250,20 +1253,22 @@ void csc_to_csc_mx_selection_and(
   int returned_strcmp2;
   int iaa = 0;
   int at_non_zero = 0;
+int at_column = 0;
+int at_row = 0;
+int max_row = -1;
+  *C_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float), MEM_LINE_SIZE );
+  *C_row_ind = (int*) _mm_malloc ( A_NNZ * sizeof(int), MEM_LINE_SIZE );
+  *C_col_ptr = (int*) _mm_malloc ( (A_NNZ + 1) * sizeof(int), MEM_LINE_SIZE);
 
-  *C_csc_values = (float*) malloc ( A_NNZ * sizeof(float));
-  *C_JA1 = (int*) malloc ( A_NNZ * sizeof(int));
-  *C_IA1 = (int*) malloc ( (A_NNZ + 1) * sizeof(int));
-
-  for ( int at_column = 0; at_column < A_number_columns; ++at_column){
+  for ( at_column = 0; at_column < A_number_columns; ++at_column){
     // insert start of column int C_IA1
 
     //printf("%d\n", at_column);
-    iaa = A_JA1[at_column];
+    iaa = A_row_ind[at_column];
     non_zero = 0;
     iaa++; // due to quarks start in 1
     field = (char*) g_quark_to_string ( iaa );
-    if ( field != NULL   ){
+    if ( field != NULL ){
       returned_strcmp = strcmp( field, comparation_key);
       returned_strcmp2 = strcmp( field, comparation_key2);
       if (
@@ -1289,18 +1294,20 @@ void csc_to_csc_mx_selection_and(
         non_zero = 1;
       }
 
-      (*C_JA1)[at_column] =  at_non_zero;
+      (*C_col_ptr)[at_column] =  at_non_zero;
       if ( non_zero != 0 ){
-        (*C_IA1)[at_column] =  A_csc_values[at_column];
-        (*C_csc_values)[at_column] =  A_csc_values[at_column];
+	at_row = A_row_ind[at_column];
+        max_row = at_row > max_row ? at_row : max_row; 
+        (*C_row_ind)[at_non_zero] =  at_row;
+        (*C_csc_values)[at_non_zero] =  A_csc_values[at_column];
         at_non_zero++;
       }
     }
   }
-  *C_number_rows = A_number_rows ;
+  *C_number_rows = (max_row+1) ;
   *C_number_columns = A_number_columns;
   *C_NNZ = at_non_zero;
-  (*C_IA1)[at_non_zero] = A_NNZ;
+  (*C_col_ptr)[at_column] = at_non_zero;
 }
 
 void csr_mx_selection_or(

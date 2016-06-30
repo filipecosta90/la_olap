@@ -95,85 +95,85 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   //CSC
   float* return_flag_csc_values = NULL;
-  int* return_flag_JA_csc;
-  int* return_flag_IA_csc;
+  int* return_flag_row_ind;
+  int* return_flag_col_ptr;
   //COMMON
-  int return_flag_rows;
-  int return_flag_columns;
-  int return_flag_nnz;
+  int return_flag_n_rows;
+  int return_flag_n_cols;
+  int return_flag_n_nnz;
 
   /** ---------------------------------------------------------------------------
    ** Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
   float* line_status_csc_values = NULL;
-  int* line_status_JA_csc;
-  int* line_status_IA_csc;
+  int* line_status_row_ind;
+  int* line_status_col_ptr;
   //COMMON
-  int line_status_rows;
-  int line_status_columns;
-  int line_status_nnz;
+  int line_status_n_rows;
+  int line_status_n_cols;
+  int line_status_n_nnz;
 
   /** ---------------------------------------------------------------------------
    ** Quantity Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
   float* quantity_csc_values = NULL;
-  int* quantity_JA_csc;
-  int* quantity_IA_csc;
+  int* quantity_row_ind;
+  int* quantity_col_ptr;
   //COMMON
-  int quantity_rows;
-  int quantity_columns;
-  int quantity_nnz;
+  int quantity_n_rows;
+  int quantity_n_cols;
+  int quantity_n_nnz;
 
   /** ---------------------------------------------------------------------------
    ** Shipdate Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
   float* shipdate_csc_values = NULL;
-  int* shipdate_JA_csc;
-  int* shipdate_IA_csc;
+  int* shipdate_row_ind;
+  int* shipdate_col_ptr;
   //COMMON
-  int shipdate_rows;
-  int shipdate_columns;
-  int shipdate_nnz;
+  int shipdate_n_rows;
+  int shipdate_n_cols;
+  int shipdate_n_nnz;
 
   /* ---------------------------------------------------------------------------
    ** Projection Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
   float* projection_csc_values = NULL;
-  int* projection_JA_csc;
-  int* projection_IA_csc;
+  int* projection_row_ind;
+  int* projection_col_ptr;
 
   //COMMON
-  int projection_rows;
-  int projection_columns;
-  int projection_nnz;
+  int projection_n_rows;
+  int projection_n_cols;
+  int projection_n_nnz;
 
   /* ---------------------------------------------------------------------------
    ** Selection Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
   float* selection_csc_values = NULL;
-  int* selection_JA_csc;
-  int* selection_IA_csc;
+  int* selection_row_ind;
+  int* selection_col_ptr;
   //COMMON
-  int selection_rows;
-  int selection_columns;
-  int selection_nnz;
+  int selection_n_rows;
+  int selection_n_cols;
+  int selection_n_nnz;
 
   /* ---------------------------------------------------------------------------
    ** Aggregation Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
   float* aggregation_csc_values = NULL;
-  int* aggregation_JA_csc;
-  int* aggregation_IA_csc;
+  int* aggregation_row_ind;
+  int* aggregation_col_ptr;
   //COMMON
-  int aggregation_rows;
+  int aggregation_n_rows;
 
-  int aggregation_nnz;
+  int aggregation_n_nnz;
 
   /* ---------------------------------------------------------------------------
    ** Intermediate Matrix
@@ -183,9 +183,9 @@ int main( int argc, char* argv[]){
   int* intermediate_JA;
   int* intermediate_IA;
   //COMMON
-  int intermediate_rows;
-  int intermediate_columns;
-  int intermediate_nnz;
+  int intermediate_n_rows;
+  int intermediate_n_cols;
+  int intermediate_n_nnz;
   sparse_matrix_t  intermediate_matrix;
 
   /* ---------------------------------------------------------------------------
@@ -193,16 +193,19 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   float* bang_vector;
   float* aggregation_vector;
-  int aggregation_vector_rows;
+  int aggregation_vector_n_rows;
 
 
   float* intermediate_vector;
-  int intermediate_vector_rows;
+  int intermediate_vector_n_rows;
 
   float* final_vector;
 
   int number_elements = tbl_get_number_elements (table_file);
-
+  
+#ifdef D_DEBUGGING
+printf("tbl file has %d elements\n", number_elements);
+#endif
   /** ---------------------------------------------------------------------------
    ** =========================== END OF DECLARATIONS ===========================
    ** -------------------------------------------------------------------------*/
@@ -214,8 +217,8 @@ int main( int argc, char* argv[]){
   //bitmap matrix
   tbl_read_csc(
       table_file , 9, number_elements,
-      &return_flag_nnz, &return_flag_rows, &return_flag_columns, 
-      &return_flag_csc_values, &return_flag_JA_csc, &return_flag_IA_csc
+      &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols, 
+      &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
       );
 
   /** ---------------------------------------------------------------------------
@@ -225,8 +228,8 @@ int main( int argc, char* argv[]){
   //bitmap matrix
   tbl_read_csc(
       table_file , 10, number_elements,
-      &line_status_nnz, &line_status_rows, &line_status_columns , 
-      &line_status_csc_values, &line_status_JA_csc, &line_status_IA_csc
+      &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols , 
+      &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
       );
 
   /** ---------------------------------------------------------------------------
@@ -236,8 +239,8 @@ int main( int argc, char* argv[]){
   // measure
   tbl_read_csc_measure(
       table_file , 5, number_elements,
-      &quantity_nnz,  &quantity_rows, &quantity_columns , 
-      &quantity_csc_values, &quantity_JA_csc, &quantity_IA_csc
+      &quantity_n_nnz,  &quantity_n_rows, &quantity_n_cols , 
+      &quantity_csc_values, &quantity_row_ind, &quantity_col_ptr
       );
 
   /** ---------------------------------------------------------------------------
@@ -247,20 +250,20 @@ int main( int argc, char* argv[]){
   //bitmap matrix
   tbl_read_csc(
       table_file , 11, number_elements,
-      &shipdate_nnz, &shipdate_rows, &shipdate_columns ,
-      &shipdate_csc_values, &shipdate_JA_csc, &shipdate_IA_csc
+      &shipdate_n_nnz, &shipdate_n_rows, &shipdate_n_cols ,
+      &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
       );
 
 
-  aggregation_vector_rows = quantity_columns;
-  aggregation_vector = (float*) _mm_malloc ((aggregation_vector_rows+1) * sizeof(float), MEM_LINE_SIZE );
+  aggregation_vector_n_rows = quantity_n_cols;
+  aggregation_vector = (float*) _mm_malloc ((aggregation_vector_n_rows+1) * sizeof(float), MEM_LINE_SIZE );
 
 
   /** ---------------------------------------------------------------------------
    ** Populate Vectors
    ** -------------------------------------------------------------------------*/
 
-  final_vector = (float*) malloc ( (quantity_columns+1) * sizeof(float));
+  final_vector = (float*) malloc ( (quantity_n_cols+1) * sizeof(float));
 
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
@@ -288,19 +291,19 @@ int main( int argc, char* argv[]){
 
 
   csc_to_csc_mx_selection_and(
-      shipdate_csc_values, shipdate_JA_csc, shipdate_IA_csc,
-      shipdate_nnz, shipdate_rows, shipdate_columns,
+      shipdate_csc_values, shipdate_row_ind, shipdate_col_ptr,
+      shipdate_n_nnz, shipdate_n_rows, shipdate_n_cols,
       GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01",
-      &selection_csc_values, &selection_JA_csc, &selection_IA_csc,
-      &selection_nnz, &selection_rows, &selection_columns
+      &selection_csc_values, &selection_row_ind, &selection_col_ptr,
+      &selection_n_nnz, &selection_n_rows, &selection_n_cols
       );
 
 #ifdef D_DEBUGGING
-  printf("selection rows %d columns %d nnz %d\n", selection_rows, selection_columns, selection_nnz);
+  printf("selection rows %d columns %d nnz %d\n", selection_n_rows, selection_n_cols, selection_n_nnz);
 
   print_csc (
-      selection_csc_values, selection_JA_csc, selection_IA_csc,
-      selection_nnz, selection_rows, selection_columns
+      selection_csc_values, selection_row_ind, selection_col_ptr,
+      selection_n_nnz, selection_n_rows, selection_n_cols
       );
 #endif
 
