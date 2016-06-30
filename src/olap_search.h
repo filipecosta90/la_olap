@@ -224,7 +224,7 @@ void csc_csc_krao(
     float *restrict B_csc_values, int *restrict B_row_ind, int *restrict B_col_ptr,
     int B_n_nnz, int B_n_rows, int B_n_cols,
     float **C_csc_values, int **C_row_ind, int **C_col_ptr,
-    int* C_n_nnz, int* C_n_rows, int *C_n_cols,
+    int* C_n_nnz, int* C_n_rows, int *C_n_cols
     );
 
 /////////////////////////////////
