@@ -242,5 +242,14 @@ void csr_kron(
     int* C_NNZ, int* C_number_rows, int* C_number_columns
     );
 
+void csc_csc_mm(
+    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    int A_n_nnz, int A_n_rows, int A_n_cols,
+    float *restrict B_csc_values, int *restrict B_row_ind, int *restrict B_col_ptr,
+    int B_n_nnz, int B_n_rows, int B_n_cols,
+    float **C_csc_values, int **C_row_ind, int **C_col_ptr,
+    int *C_n_nnz, int *C_n_rows, int *C_n_cols
+    );
+
 #endif
 

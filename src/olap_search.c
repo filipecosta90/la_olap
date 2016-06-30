@@ -2217,18 +2217,53 @@ void csr_kron(
 //
 /////////////////////////////////
 
-csc_csc_mm(
-           projection_csc_values, projection_row_ind, projection_col_ind,
-           projection_n_nnz, projection_n_rows, projection_n_columns,
-           
-           selection_csc_values, selection_row_ind, selection_col_ptr,
-           selection_n_nnz, selection_n_rows, selection_n_cols,
-           
-           &projection_selection_csc_values, &projection_selection_row_ind, &projection_selection_col_ind,
-           &projection_selection_n_nnz, &projection_selection_n_rows, &projection_selection_n_columns
-           );
+void csc_csc_mm(
+    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    int A_n_nnz, int A_n_rows, int A_n_cols,
+    float *restrict B_csc_values, int *restrict B_row_ind, int *restrict B_col_ptr,
+    int B_n_nnz, int B_n_rows, int B_n_cols,
+    float **C_csc_values, int **C_row_ind, int **C_col_ptr,
+    int *C_n_nnz, int *C_n_rows, int *C_n_cols
+    ){
+
+  float * aux_csc_values;
+  int* aux_row_ind;
+  int* aux_col_ptr;
+  int b_row_pos;
+  int max_row = 0;
+
+  int nnz = A_n_nnz > B_n_nnz ? A_n_nnz : B_n_nnz;
+  int nnz_aux;
+  aux_csc_values = (float*) _mm_malloc ( nnz * sizeof(float) , MEM_LINE_SIZE );
+  aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE);
+  aux_col_ptr = (int*) _mm_malloc ( (B_n_cols+1) * sizeof(int) , MEM_LINE_SIZE);
 
 
+  for ( int at_column = 0 ; at_column < B_n_cols ; ++at_column ){
 
+    b_row = B_row_ind[at_column];
+
+    for ( int at_column_in = 0 ; at_column_in < A_n_cols && (b_row != a_row) ; ++at_column_in ){
+      a_row = B_row_ind[at_column_in];
+      if (b_row == a_row ){
+        aux_row_ind[nnz_aux] = b_row;
+        max_row = b_row > max_row ? b_row : max_row;
+        aux_csc_values+= A_csc_values[at_column_in]*B_csc_values[at_column];
+        nnz_aux++;
+      }
+    }
+    aux_col_ptr[at_column] = nnz_aux;
+  }
+
+  aux_col_ptr[nnz_aux] = nnz_aux;
+  *C_n_rows = (max_row+1);
+  *C_n_cols = B_n_cols;
+  *C_n_nnz = nnz_aux;
+
+  *C_csc_values = aux_csc_values;
+  *C_row_ind = aux_row_ind;
+  *C_col_ptr = aux_col_ptr;
+
+}
 
 #endif
