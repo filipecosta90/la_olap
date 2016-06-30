@@ -2229,33 +2229,39 @@ void csc_csc_mm(
   float * aux_csc_values;
   int* aux_row_ind;
   int* aux_col_ptr;
-  int b_row_pos;
+  int b_row = -1;
+int a_row = -1 ;
+
   int max_row = 0;
 
   int nnz = A_n_nnz > B_n_nnz ? A_n_nnz : B_n_nnz;
-  int nnz_aux;
+  int nnz_aux = 0 ;
   aux_csc_values = (float*) _mm_malloc ( nnz * sizeof(float) , MEM_LINE_SIZE );
   aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE);
   aux_col_ptr = (int*) _mm_malloc ( (B_n_cols+1) * sizeof(int) , MEM_LINE_SIZE);
 
-
   for ( int at_column = 0 ; at_column < B_n_cols ; ++at_column ){
 
-    b_row = B_row_ind[at_column];
 
-    for ( int at_column_in = 0 ; at_column_in < A_n_cols && (b_row != a_row) ; ++at_column_in ){
-      a_row = B_row_ind[at_column_in];
-      if (b_row == a_row ){
+    aux_col_ptr[at_column] = nnz_aux;
+	int flag_B = B_col_ptr[at_column+1] - B_col_ptr[at_column];
+if ( flag_B > 0 ) {  
+ b_row = B_row_ind[B_col_ptr[at_column]];
+ 
+for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
+	int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
+	if ( (at_column_in == b_row ) && (flag>0) ){
         aux_row_ind[nnz_aux] = b_row;
         max_row = b_row > max_row ? b_row : max_row;
-        aux_csc_values+= A_csc_values[at_column_in]*B_csc_values[at_column];
+        aux_csc_values[nnz_aux] += A_csc_values[A_col_ptr[at_column_in]] * B_csc_values[B_col_ptr[at_column]];
         nnz_aux++;
       }
     }
-    aux_col_ptr[at_column] = nnz_aux;
+
+}
   }
 
-  aux_col_ptr[nnz_aux] = nnz_aux;
+  aux_col_ptr[B_n_cols] = nnz_aux;
   *C_n_rows = (max_row+1);
   *C_n_cols = B_n_cols;
   *C_n_nnz = nnz_aux;

@@ -857,7 +857,7 @@ Begin optimization report for: csr_kron(float *, int *, int *, int, int, int, fl
 
 
 LOOP BEGIN at olap_search.c(2158,25)
-   remark #15388: vectorization support: reference at_column_A.14467 has aligned access
+   remark #15388: vectorization support: reference at_column_A.14468 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
@@ -894,7 +894,7 @@ LOOP BEGIN at olap_search.c(2158,3)
 LOOP END
 
 LOOP BEGIN at olap_search.c(2166,25)
-   remark #15388: vectorization support: reference at_column_A.14471 has aligned access
+   remark #15388: vectorization support: reference at_column_A.14472 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
@@ -933,7 +933,7 @@ LOOP BEGIN at olap_search.c(2166,3)
 LOOP END
 
 LOOP BEGIN at olap_search.c(2173,25)
-   remark #15388: vectorization support: reference at_column_A.14475 has aligned access
+   remark #15388: vectorization support: reference at_column_A.14476 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
@@ -966,6 +966,66 @@ LOOP BEGIN at olap_search.c(2173,3)
    LOOP END
 
    LOOP BEGIN at olap_search.c(2175,21)
+   <Remainder loop for vectorization>
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: csc_csc_mm(float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float **, int **, int **, int *, int *, int *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at olap_search.c(2243,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at olap_search.c(2251,1)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2251,1)
+      remark #15388: vectorization support: reference A_col_ptr has aligned access   [ olap_search.c(2252,41) ]
+      remark #15389: vectorization support: reference A_col_ptr has unaligned access   [ olap_search.c(2252,41) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 1.429
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15475: --- begin vector loop cost summary ---
+      remark #15476: scalar loop cost: 8 
+      remark #15477: vector loop cost: 1.750 
+      remark #15478: estimated potential speedup: 4.280 
+      remark #15488: --- end vector loop cost summary ---
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2251,1)
+   <Remainder loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2251,1)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2251,1)
+      remark #15388: vectorization support: reference A_col_ptr has aligned access   [ olap_search.c(2252,41) ]
+      remark #15389: vectorization support: reference A_col_ptr has unaligned access   [ olap_search.c(2252,41) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 1.429
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15442: entire loop may be executed in remainder
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15475: --- begin vector loop cost summary ---
+      remark #15476: scalar loop cost: 8 
+      remark #15477: vector loop cost: 1.750 
+      remark #15478: estimated potential speedup: 4.280 
+      remark #15488: --- end vector loop cost summary ---
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2251,1)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END

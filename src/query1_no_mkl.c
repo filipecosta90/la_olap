@@ -169,11 +169,11 @@ int main( int argc, char* argv[]){
   //CSC
   float* projection_selection_csc_values;
   int* projection_selection_row_ind;
-  int* projection_selection_col_ind;
+  int* projection_selection_col_ptr;
   //COMMON
   int  projection_selection_n_nnz;
   int projection_selection_n_rows;
-  int  projection_selection_n_columns;
+  int  projection_selection_n_cols;
 
   /* ---------------------------------------------------------------------------
    ** Intermediate Matrix
@@ -297,6 +297,16 @@ int main( int argc, char* argv[]){
       &projection_n_nnz, &projection_n_rows, &projection_n_cols
       );
 
+#ifdef D_DEBUGGING
+  printf("projection rows %d columns %d nnz %d\n", projection_n_rows, projection_n_cols, projection_n_nnz);
+
+  print_csc (
+      projection_csc_values, projection_row_ind, projection_col_ptr,
+      projection_n_nnz, projection_n_rows, projection_n_cols
+      );
+#endif
+
+
 
   GET_TIME(global_time_projection);
 
@@ -320,15 +330,25 @@ int main( int argc, char* argv[]){
   GET_TIME(global_time_selection);
 
   csc_csc_mm(
-      projection_csc_values, projection_row_ind, projection_col_ind,
-      projection_n_nnz, projection_n_rows, projection_n_columns,
+      projection_csc_values, projection_row_ind, projection_col_ptr,
+      projection_n_nnz, projection_n_rows, projection_n_cols,
 
       selection_csc_values, selection_row_ind, selection_col_ptr,
       selection_n_nnz, selection_n_rows, selection_n_cols,
 
-      &projection_selection_csc_values, &projection_selection_row_ind, &projection_selection_col_ind,
-      &projection_selection_n_nnz, &projection_selection_n_rows, &projection_selection_n_columns
+      &projection_selection_csc_values, &projection_selection_row_ind, &projection_selection_col_ptr,
+      &projection_selection_n_nnz, &projection_selection_n_rows, &projection_selection_n_cols
       );
+
+#ifdef D_DEBUGGING
+  printf("projection . selection rows %d columns %d nnz %d\n", projection_selection_n_rows, projection_selection_n_cols, projection_selection_n_nnz);
+
+  print_csc (
+      projection_selection_csc_values, projection_selection_row_ind, projection_selection_col_ptr,
+      projection_selection_n_nnz, projection_selection_n_rows, projection_selection_n_cols
+      );
+#endif
+
 
   GET_TIME(global_time_projection_selection);
 
