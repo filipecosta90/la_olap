@@ -287,14 +287,14 @@ int main( int argc, char* argv[]){
 
 
   csc_csc_krao(
-      return_flag_csc_values, return_flag_row_ind, return_flag_col_ind,
+      return_flag_csc_values, return_flag_row_ind, return_flag_col_ptr,
       return_flag_n_nnz, return_flag_n_rows, return_flag_n_cols,
 
-      line_status_csc_values, line_status_row_ind, line_status_col_ind ,
+      line_status_csc_values, line_status_row_ind, line_status_col_ptr ,
       line_status_n_nnz, line_status_n_rows, line_status_n_cols,
 
-      &projection_csc_values, &projection_row_ind, &projection_col_ind,
-      &projection_n_nnz, &projection_n_rows, &projection_n_columns
+      &projection_csc_values, &projection_row_ind, &projection_col_ptr,
+      &projection_n_nnz, &projection_n_rows, &projection_n_cols
       );
 
 
