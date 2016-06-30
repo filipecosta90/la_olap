@@ -2022,7 +2022,7 @@ void csc_csc_krao(
     float *restrict B_csc_values, int *restrict B_row_ind, int *restrict B_col_ptr,
     int B_n_nnz, int B_n_rows, int B_n_cols,
     float **C_csc_values, int **C_row_ind, int **C_col_ptr,
-    int *C_n_nnz, int *C_n_rows, int *C_n_cols,
+    int *C_n_nnz, int *C_n_rows, int *C_n_cols
     ){
   /////////////////////////////////
   //   ALLOCATE MEMORY
@@ -2208,5 +2208,27 @@ void csr_kron(
   *C_number_columns = C_ncols;
   *C_NNZ = C_nnz;
 }
+
+
+
+/////////////////////////////////
+//
+//   COMPUTE DOT PRODUCT
+//
+/////////////////////////////////
+
+csc_csc_mm(
+           projection_csc_values, projection_row_ind, projection_col_ind,
+           projection_n_nnz, projection_n_rows, projection_n_columns,
+           
+           selection_csc_values, selection_row_ind, selection_col_ptr,
+           selection_n_nnz, selection_n_rows, selection_n_cols,
+           
+           &projection_selection_csc_values, &projection_selection_row_ind, &projection_selection_col_ind,
+           &projection_selection_n_nnz, &projection_selection_n_rows, &projection_selection_n_columns
+           );
+
+
+
 
 #endif
