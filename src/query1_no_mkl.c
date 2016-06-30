@@ -240,17 +240,6 @@ int main( int argc, char* argv[]){
       &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
       );
 
-
-  aggregation_vector_n_rows = quantity_n_cols;
-  aggregation_vector = (float*) _mm_malloc ((aggregation_vector_n_rows+1) * sizeof(float), MEM_LINE_SIZE );
-
-
-  /** ---------------------------------------------------------------------------
-   ** Populate Vectors
-   ** -------------------------------------------------------------------------*/
-
-  final_vector = (float*) malloc ( (quantity_n_cols+1) * sizeof(float));
-
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------

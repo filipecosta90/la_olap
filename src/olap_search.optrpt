@@ -139,21 +139,6 @@ LOOP END
 LOOP BEGIN at olap_search.c(405,5)
 <Remainder loop for vectorization>
 LOOP END
-
-LOOP BEGIN at olap_search.c(100,5) inlined into olap_search.c(415,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(101,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(105,5) inlined into olap_search.c(415,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(106,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(110,5) inlined into olap_search.c(415,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(111,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
 ===========================================================================
 
 Begin optimization report for: tbl_get_number_elements(char *)
@@ -178,21 +163,6 @@ LOOP BEGIN at olap_search.c(478,30)
       remark #15527: loop was not vectorized: function call to strtok(char *__restrict__, const char *__restrict__) cannot be vectorized   [ olap_search.c(58,21) ]
    LOOP END
 LOOP END
-
-LOOP BEGIN at olap_search.c(73,5) inlined into olap_search.c(519,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(74,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(78,5) inlined into olap_search.c(519,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(79,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(83,5) inlined into olap_search.c(519,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(84,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
 ===========================================================================
 
 Begin optimization report for: tbl_read_csc_measure(char *, int, int, int *, int *, int *, float **, int **, int **)
@@ -207,21 +177,6 @@ LOOP BEGIN at olap_search.c(564,30)
       remark #15527: loop was not vectorized: function call to strtok(char *__restrict__, const char *__restrict__) cannot be vectorized   [ olap_search.c(58,21) ]
    LOOP END
 LOOP END
-
-LOOP BEGIN at olap_search.c(73,5) inlined into olap_search.c(592,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(74,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(78,5) inlined into olap_search.c(592,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(79,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(83,5) inlined into olap_search.c(592,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(84,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
 ===========================================================================
 
 Begin optimization report for: tbl_read_measure(char *, int, int *, int *, int *, float **, int **, int **)
@@ -235,21 +190,6 @@ LOOP BEGIN at olap_search.c(642,30)
    LOOP BEGIN at olap_search.c(57,3) inlined into olap_search.c(645,13)
       remark #15527: loop was not vectorized: function call to strtok(char *__restrict__, const char *__restrict__) cannot be vectorized   [ olap_search.c(58,21) ]
    LOOP END
-LOOP END
-
-LOOP BEGIN at olap_search.c(100,5) inlined into olap_search.c(702,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(101,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(105,5) inlined into olap_search.c(702,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(106,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(110,5) inlined into olap_search.c(702,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(111,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
 LOOP END
 ===========================================================================
 
