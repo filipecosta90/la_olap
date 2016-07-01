@@ -251,5 +251,12 @@ void csc_csc_mm(
     int *C_n_nnz, int *C_n_rows, int *C_n_cols
     );
 
+void csc_bang(
+    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    int A_n_nnz, int A_n_rows, int A_n_cols,
+    float **C_csc_values, int **C_row_ind,
+    int *C_n_nnz, int *C_n_rows
+    );
+
 #endif
 

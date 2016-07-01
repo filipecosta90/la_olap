@@ -60,7 +60,6 @@ char* getfield( char* line, int num, char* return_string ){
   return return_string;
 }
 
-
 void print_csc(
     float* csc_values, int* row_ind, int* col_ptr,
     int NNZ, int number_rows, int number_columns
@@ -213,8 +212,6 @@ void read_from_mx (
     aux_coo_columns[element_number] = column;
     aux_coo_values[element_number] = value;
   }
-
-
   fclose(stream);
 
   int NNZ = element_number;
@@ -2230,7 +2227,7 @@ void csc_csc_mm(
   int* aux_row_ind;
   int* aux_col_ptr;
   int b_row = -1;
-int a_row = -1 ;
+  int a_row = -1 ;
 
   int max_row = 0;
 
@@ -2244,22 +2241,22 @@ int a_row = -1 ;
 
 
     aux_col_ptr[at_column] = nnz_aux;
-	int flag_B = B_col_ptr[at_column+1] - B_col_ptr[at_column];
-if ( flag_B > 0 ) {  
- b_row = B_row_ind[B_col_ptr[at_column]];
- 
-for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
-	int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
-	if ( (at_column_in == b_row ) && (flag>0) ){
- a_row = A_row_ind[A_col_ptr[at_column_in]];
-        aux_row_ind[nnz_aux] = a_row;
-        max_row = a_row > max_row ? a_row : max_row;
-        aux_csc_values[nnz_aux] += A_csc_values[A_col_ptr[at_column_in]] * B_csc_values[B_col_ptr[at_column]];
-        nnz_aux++;
-      }
-    }
+    int flag_B = B_col_ptr[at_column+1] - B_col_ptr[at_column];
+    if ( flag_B > 0 ) {  
+      b_row = B_row_ind[B_col_ptr[at_column]];
 
-}
+      for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
+        int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
+        if ( (at_column_in == b_row ) && (flag>0) ){
+          a_row = A_row_ind[A_col_ptr[at_column_in]];
+          aux_row_ind[nnz_aux] = a_row;
+          max_row = a_row > max_row ? a_row : max_row;
+          aux_csc_values[nnz_aux] += A_csc_values[A_col_ptr[at_column_in]] * B_csc_values[B_col_ptr[at_column]];
+          nnz_aux++;
+        }
+      }
+
+    }
   }
 
   aux_col_ptr[B_n_cols] = nnz_aux;
@@ -2270,6 +2267,57 @@ for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
   *C_csc_values = aux_csc_values;
   *C_row_ind = aux_row_ind;
   *C_col_ptr = aux_col_ptr;
+
+}
+
+
+void csc_bang(
+    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    int A_n_nnz, int A_n_rows, int A_n_cols,
+    float **C_csc_values, int **C_row_ind,
+    int *C_n_nnz, int *C_n_rows
+    ){
+
+  float * aux_csc_values;
+  int* aux_row_ind;
+
+  int a_row = -1 ;
+  int max_row = 0;
+
+  int nnz = A_n_rows;
+  int nnz_aux = 0 ;
+  int flag_found = 0;
+  aux_csc_values = (float*) _mm_malloc ( nnz * sizeof(float) , MEM_LINE_SIZE );
+  aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE );
+
+
+  for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
+    int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
+    if (  flag>0 ){
+      a_row = A_row_ind[A_col_ptr[at_column_in]];
+      flag_found = -1;
+      for ( int at_nnz = 0; ( at_nnz < nnz_aux ) && (flag_found < 0 ); at_nnz++){
+        if (aux_row_ind[at_nnz] == a_row){
+          flag_found = at_nnz;
+        }
+      }
+      if (flag_found < 0){
+        aux_row_ind[nnz_aux] = a_row;
+        max_row = a_row > max_row ? a_row : max_row;
+        aux_csc_values[nnz_aux] = A_csc_values[A_col_ptr[at_column_in]];
+        nnz_aux++;
+      }
+      else {
+        aux_csc_values[flag_found] += A_csc_values[A_col_ptr[at_column_in]];
+      }
+    }
+  }
+
+  *C_n_rows = (max_row+1);
+  *C_n_nnz = nnz_aux;
+
+  *C_csc_values = aux_csc_values;
+  *C_row_ind = aux_row_ind;
 
 }
 
