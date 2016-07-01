@@ -2269,8 +2269,6 @@ void csc_csc_mm(
   aux_col_ptr = (int*) _mm_malloc ( (B_n_cols+1) * sizeof(int) , MEM_LINE_SIZE);
 
   for ( int at_column = 0 ; at_column < B_n_cols ; ++at_column ){
-
-
     aux_col_ptr[at_column] = nnz_aux;
     int flag_B = B_col_ptr[at_column+1] - B_col_ptr[at_column];
     if ( flag_B > 0 ) {  
@@ -2279,7 +2277,7 @@ void csc_csc_mm(
         int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
         if ( (at_column_in == b_row ) && (flag>0) ){
           a_row = A_row_ind[A_col_ptr[at_column_in]];
-          aux_row_ind[nnz_aux] = a_row;
+          aux_row_ind[nnz_aux] = b_row;
           max_row = a_row > max_row ? a_row : max_row;
           aux_csc_values[nnz_aux] += A_csc_values[A_col_ptr[at_column_in]] * B_csc_values[B_col_ptr[at_column]];
           nnz_aux++;
