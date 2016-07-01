@@ -2073,19 +2073,19 @@ void csc_csc_krao(
 
 #pragma omp parallel 
   {
-#pragma omp parallel for simd nowait shared(aux_col_ptr,A_col_ptr)
+#pragma omp for simd nowait shared(aux_col_ptr,A_col_ptr)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
 
-#pragma omp parallel for simd nowait private(a_pos, b_pos)  shared(A_col_ptr,B_col_ptr,aux_csc_values,A_csc_values,B_csc_values)
+#pragma omp for simd nowait private(a_pos, b_pos)  shared(A_col_ptr,B_col_ptr,aux_csc_values,A_csc_values,B_csc_values)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const int b_pos = B_col_ptr[at_column];
       aux_csc_values[a_pos] = A_csc_values[a_pos] * B_csc_values[b_pos];
     }
 
-#pragma omp parallel for simd nowait private(a_pos, b_pos, current_row) shared(A_col_ptr,B_col_ptr,B_row_ind,A_row_ind,max_row)
+#pragma omp for simd nowait private(a_pos, b_pos, current_row) shared(A_col_ptr,B_col_ptr,B_row_ind,A_row_ind,max_row)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const  int b_pos = B_col_ptr[at_column];
@@ -2323,7 +2323,7 @@ void csc_bang(
 
   float * aux_csc_values;
   int* aux_row_ind;
-
+    int a_pos;
   int a_row = -1 ;
   int max_row = 0;
 
@@ -2333,7 +2333,7 @@ void csc_bang(
   aux_csc_values = (float*) _mm_malloc ( nnz * sizeof(float) , MEM_LINE_SIZE );
   aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE );
 
-  for ( int at_column_a = 0 ; at_column_a < A_n_cols ; ++at_column_in ){
+  for ( int at_column_a = 0 ; at_column_a < A_n_cols ; ++at_column_a ){
     a_pos = A_col_ptr[at_column_a];
     int flag = A_col_ptr[at_column_a+1] - a_pos;
 
