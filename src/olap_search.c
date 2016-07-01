@@ -1328,7 +1328,7 @@ void csc_to_csc_mx_selection_and(
       at_non_zero++;
     }
 }
-aux_csc_col_ptr[at_column] = at_non_zero;
+aux_csc_col_ptr[A_number_columns] = at_non_zero;
 *C_n_rows = (max_row+1) ;
 *C_n_cols = A_number_columns;
 *C_n_nnz = at_non_zero;
@@ -2077,16 +2077,16 @@ void csc_csc_krao(
     
   for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
     aux_col_ptr[at_column] = A_col_ptr[at_column];
-    aux_csc_values[at_column] = A_csc_values[A_col_ptr[at_column]] * B_csc_values[B_col_ptr[at_column]];
+    aux_csc_values[A_col_ptr[at_column]] = A_csc_values[A_col_ptr[at_column]] * B_csc_values[B_col_ptr[at_column]];
   }
 
   for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
     current_row = B_row_ind[B_col_ptr[at_column]] + ( A_row_ind[A_col_ptr[at_column]] * scalar_B );
-    aux_row_ind[at_column] = current_row;
+    aux_row_ind[A_col_ptr[at_column]] = current_row;
     max_row = current_row > max_row ? current_row : max_row;
   }
 
-  aux_col_ptr[A_n_nnz] = A_n_nnz;
+  aux_col_ptr[A_n_cols] = A_n_nnz;
 
   *C_n_rows = (max_row+1);
   *C_n_cols = A_n_cols;
@@ -2278,7 +2278,7 @@ void csc_csc_mm(
       for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
         int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
           a_row = A_row_ind[A_col_ptr[at_column_in]];
-        if ( (a_row = at_column) && (flag>0) ){
+        if ( (a_row == at_column) && (flag>0) ){
           aux_row_ind[nnz_aux] = a_row;
           max_row = b_row > max_row ? b_row : max_row;
           aux_csc_values[nnz_aux] += A_csc_values[A_col_ptr[at_column_in]] * B_csc_values[B_col_ptr[at_column]];
