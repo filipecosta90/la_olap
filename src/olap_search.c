@@ -1323,7 +1323,7 @@ void csc_to_csc_mx_selection_and(
     if ( non_zero == 1 ){
       at_row = iaa;
       max_row = at_row > max_row ? at_row : max_row;
-      aux_csc_row_ind[at_non_zero] =  A_col_ptr[at_column];
+      aux_csc_row_ind[at_non_zero] =  at_column;
       aux_csc_values[at_non_zero] =  A_csc_values[A_col_ptr[at_column]];
       at_non_zero++;
     }
