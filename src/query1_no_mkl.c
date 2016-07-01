@@ -341,8 +341,8 @@ int main( int argc, char* argv[]){
       );
 
   csc_bang(
-      projection_selection_csc_values, &projection_selection_row_ind, &projection_selection_col_ptr,
-      projection_selection_n_nnz, &projection_selection_n_rows, &projection_selection_n_cols,
+      projection_selection_csc_values, projection_selection_row_ind, projection_selection_col_ptr,
+      projection_selection_n_nnz, projection_selection_n_rows, projection_selection_n_cols,
       &debug_vector_csc_values, &debug_vector_row_ind,
       &debug_vector_n_nnz,  &debug_vector_n_rows
       );
