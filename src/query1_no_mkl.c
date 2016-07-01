@@ -199,6 +199,12 @@ int main( int argc, char* argv[]){
     int *debug1_vector_row_ind;
     int debug1_vector_n_nnz;
     int debug1_vector_n_rows;
+    
+    
+    float *debug2_vector_csc_values;
+    int *debug2_vector_row_ind;
+    int debug2_vector_n_nnz;
+    int debug2_vector_n_rows;
 
   /* ---------------------------------------------------------------------------
    ** Final Vector
@@ -316,7 +322,7 @@ int main( int argc, char* argv[]){
                      debug1_vector_n_nnz,  debug1_vector_n_rows
                      );
     
-    printf(" tuples and count(*)\n", debug1_vector_n_rows, debug1_vector_n_nnz );
+    printf(" tuples and count(*)\n" );
     produce_tuple_from_krao_csc(
                                 debug1_vector_csc_values, debug1_vector_row_ind,
                                 debug1_vector_n_nnz,  debug1_vector_n_rows,
@@ -377,11 +383,22 @@ int main( int argc, char* argv[]){
       &debug_vector_n_nnz,  &debug_vector_n_rows
       );
 
-  printf("( projection . selection ) . bang || final vector rows %d nnz %d\n", debug_vector_n_rows, debug_vector_n_nnz );
+  printf("( projection . selection ) . bang || debug vector rows %d nnz %d\n", debug_vector_n_rows, debug_vector_n_nnz );
   print_csc_vector(
       debug_vector_csc_values, debug_vector_row_ind,
       debug_vector_n_nnz,  debug_vector_n_rows
       );
+    
+    printf(" tuples and count(*)\n");
+    produce_tuple_from_krao_csc(
+                                debug_vector_csc_values, debug_vector_row_ind,
+                                debug_vector_n_nnz,  debug_vector_n_rows,
+                                return_flag_n_rows,
+                                line_status_n_rows
+    );
+    
+    
+    
 
 #endif
 
