@@ -2280,7 +2280,7 @@ void csc_csc_mm(
           a_row = A_row_ind[A_col_ptr[at_column_in]];
         if ( (a_row == at_column) && (flag>0) ){
           aux_row_ind[nnz_aux] = a_row;
-          max_row = b_row > max_row ? b_row : max_row;
+          max_row = a_row > max_row ? a_row : max_row;
           aux_csc_values[nnz_aux] += A_csc_values[A_col_ptr[at_column_in]] * B_csc_values[B_col_ptr[at_column]];
           nnz_aux++;
         }
