@@ -2071,21 +2071,21 @@ void csc_csc_krao(
   int current_row = 0;
   int max_row = 0;
 
-#pragma omp parallel 
+#pragma omp parallel private(a_pos, b_pos, current_row) shared(A_csc_values,B_csc_values,A_row_ind,B_row_ind,A_col_ptr,B_col_ptr,aux_csc_values,aux_row_ind,aux_col_ptr)
   {
-#pragma omp for simd nowait shared(aux_col_ptr,A_col_ptr)
+#pragma omp for simd nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
 
-#pragma omp for simd nowait private(a_pos, b_pos)  shared(A_col_ptr,B_col_ptr,aux_csc_values,A_csc_values,B_csc_values)
+#pragma omp for simd nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const int b_pos = B_col_ptr[at_column];
       aux_csc_values[a_pos] = A_csc_values[a_pos] * B_csc_values[b_pos];
     }
 
-#pragma omp for simd nowait private(a_pos, b_pos, current_row) shared(A_col_ptr,B_col_ptr,B_row_ind,A_row_ind,max_row)
+#pragma omp for simd nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const  int b_pos = B_col_ptr[at_column];
