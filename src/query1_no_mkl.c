@@ -220,6 +220,30 @@ int main( int argc, char* argv[]){
 #ifdef D_DEBUGGING
   printf("tbl file has %d elements\n", number_elements);
 #endif
+  
+    /** ---------------------------------------------------------------------------
+     ** Populate Return Flag Matrix
+     ** -------------------------------------------------------------------------*/
+    //read return flag
+    //bitmap matrix
+    tbl_read_csc(
+                 table_file , 9, number_elements,
+                 &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
+                 &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
+                 );
+    
+    /** ---------------------------------------------------------------------------
+     ** Populate Line Status Matrix
+     ** -------------------------------------------------------------------------*/
+    //read line status
+    //bitmap matrix
+    tbl_read_csc(
+                 table_file , 10, number_elements,
+                 &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
+                 &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
+                 );
+
+
   /** ---------------------------------------------------------------------------
    ** =========================== END OF DECLARATIONS ===========================
    ** -------------------------------------------------------------------------*/
@@ -246,28 +270,7 @@ int main( int argc, char* argv[]){
       &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
       );
     
-    /** ---------------------------------------------------------------------------
-     ** Populate Return Flag Matrix
-     ** -------------------------------------------------------------------------*/
-    //read return flag
-    //bitmap matrix
-    tbl_read_csc(
-                 table_file , 9, number_elements,
-                 &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
-                 &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
-                 );
     
-    /** ---------------------------------------------------------------------------
-     ** Populate Line Status Matrix
-     ** -------------------------------------------------------------------------*/
-    //read line status
-    //bitmap matrix
-    tbl_read_csc(
-                 table_file , 10, number_elements,
-                 &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
-                 &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
-                 );
-
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
