@@ -368,17 +368,17 @@ int main( int argc, char* argv[]){
 
 #ifdef D_DEBUGGING
   printf(" final vector rows %d nnz %d\n", final_vector_n_rows, final_vector_n_nnz );
- print_csc_vector(
-       final_vector_csc_values, final_vector_row_ind,
+  print_csc_vector(
+      final_vector_csc_values, final_vector_row_ind,
       final_vector_n_nnz,  final_vector_n_rows
-    );
-printf("going to produce tuples\n");
-produce_tuple_from_krao_csc(
-       final_vector_csc_values, final_vector_row_ind,
+      );
+  printf("going to produce tuples\n");
+  produce_tuple_from_krao_csc(
+      final_vector_csc_values, final_vector_row_ind,
       final_vector_n_nnz,  final_vector_n_rows,
-return_flag_n_rows, 
-     line_status_n_rows
-);
+      return_flag_n_rows, 
+      line_status_n_rows
+      );
 
 #endif
 

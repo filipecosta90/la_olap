@@ -264,10 +264,10 @@ void csc_bang(
     );
 
 void produce_tuple_from_krao_csc(
-  float *restrict C_csc_values, int *restrict C_row_ind, 
+    float *restrict C_csc_values, int *restrict C_row_ind, 
     int C_n_nnz, int C_n_rows, 
-	int A_n_rows, int B_n_rows    
-);
+    int A_n_rows, int B_n_rows    
+    );
 
 #endif
 
