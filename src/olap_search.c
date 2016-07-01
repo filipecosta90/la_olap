@@ -2073,13 +2073,15 @@ void csc_csc_krao(
   int current_row = 0;
   int max_row = 0;
 
+    
+    
   for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
     aux_col_ptr[at_column] = A_col_ptr[at_column];
-    aux_csc_values[at_column] = A_csc_values[at_column] * B_csc_values[at_column];
+    aux_csc_values[at_column] = A_csc_values[A_col_ptr[at_column]] * B_csc_values[B_col_ptr[at_column]];
   }
 
   for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
-    current_row = B_row_ind[at_column] + ( A_row_ind[at_column] * scalar_B );
+    current_row = B_row_ind[B_col_ptr[at_column]] + ( A_row_ind[A_col_ptr[at_column]] * scalar_B );
     aux_row_ind[at_column] = current_row;
     max_row = current_row > max_row ? current_row : max_row;
   }
