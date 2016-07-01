@@ -8,7 +8,7 @@ INCLUDE= -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include
 LIB= -lglib-2.0 -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm -vec-report7
 
 CFLAGS= $(INCLUDE)  -qopenmp -O3 -Wall -Wextra  -D_BSD_SOURCE -std=c99 
-DEBUGFLAGS=  $(INCLUDE) -qopenmp -g -ggdb -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 -xAVX 
+DEBUGFLAGS=  $(INCLUDE) -g -ggdb -O3 -Wall -Wextra -D_BSD_SOURCE -std=c99 
 
 
 nomkl: olap_search.o query1_no_mkl.o
@@ -30,4 +30,4 @@ all: v0 v1 v0debug
 
 .PHONY: clean
 clean:
-	rm  *.o  querie1_search querie1_search_v1 querie1_search_debugging
+	rm  *.o query1_no_mkl querie1_search querie1_search_v1 querie1_search

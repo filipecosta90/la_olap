@@ -1321,7 +1321,6 @@ void csc_to_csc_mx_selection_and(
        ){
       non_zero = 1;
     }
-
     aux_csc_col_ptr[at_column] =  at_non_zero;
     if ( non_zero == 1 ){
       at_row = A_row_ind[at_column];
@@ -1330,7 +1329,6 @@ void csc_to_csc_mx_selection_and(
       aux_csc_values[at_non_zero] =  A_csc_values[at_column];
       at_non_zero++;
     }
-  }
 }
 aux_csc_col_ptr[at_column] = at_non_zero;
 *C_n_rows = (max_row+1) ;
@@ -1339,7 +1337,7 @@ aux_csc_col_ptr[at_column] = at_non_zero;
 
 *C_csc_values = aux_csc_values;
 *C_col_ptr = aux_csc_col_ptr;
-*C_row_ind = aux_row_ind;
+*C_row_ind = aux_csc_row_ind;
 }
 
 
@@ -2368,7 +2366,7 @@ void produce_tuple_from_krao_csc(
   for (int at_nnz = 0; at_nnz < C_n_nnz; at_nnz++){
     row_c = C_row_ind[at_nnz];
     row_a = row_c / B_n_rows;
-    row_b = row_c - row_a;
+    row_b = row_c % B_n_rows;
     row_a++;
     row_b++;
     field_a = (char*) g_quark_to_string ( row_a );
