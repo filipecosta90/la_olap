@@ -188,6 +188,14 @@ int main( int argc, char* argv[]){
   int  projection_selection_quantity_n_cols;
 
   /* ---------------------------------------------------------------------------
+   ** Debug Vector
+   ** -------------------------------------------------------------------------*/
+  float *debug_vector_csc_values;
+  int *debug_vector_row_ind;
+  int debug_vector_n_nnz;
+  int debug_vector_n_rows;
+
+  /* ---------------------------------------------------------------------------
    ** Final Vector
    ** -------------------------------------------------------------------------*/
   float *final_vector_csc_values;
@@ -282,7 +290,7 @@ int main( int argc, char* argv[]){
       );
 
 #ifdef D_DEBUGGING
-  printf("projection rows %d columns %d nnz %d\n", projection_n_rows, projection_n_cols, projection_n_nnz);
+  printf("projection || rows %d columns %d nnz %d\n", projection_n_rows, projection_n_cols, projection_n_nnz);
 
   print_csc (
       projection_csc_values, projection_row_ind, projection_col_ptr,
@@ -303,7 +311,7 @@ int main( int argc, char* argv[]){
       );
 
 #ifdef D_DEBUGGING
-  printf("selection rows %d columns %d nnz %d\n", selection_n_rows, selection_n_cols, selection_n_nnz);
+  printf("selection || rows %d columns %d nnz %d\n", selection_n_rows, selection_n_cols, selection_n_nnz);
 
   print_csc (
       selection_csc_values, selection_row_ind, selection_col_ptr,
@@ -325,12 +333,26 @@ int main( int argc, char* argv[]){
       );
 
 #ifdef D_DEBUGGING
-  printf("projection . selection rows %d columns %d nnz %d\n", projection_selection_n_rows, projection_selection_n_cols, projection_selection_n_nnz);
+  printf("projection . selection || rows %d columns %d nnz %d\n", projection_selection_n_rows, projection_selection_n_cols, projection_selection_n_nnz);
 
   print_csc (
       projection_selection_csc_values, projection_selection_row_ind, projection_selection_col_ptr,
       projection_selection_n_nnz, projection_selection_n_rows, projection_selection_n_cols
       );
+
+  csc_bang(
+      projection_selection_csc_values, &projection_selection_row_ind, &projection_selection_col_ptr,
+      projection_selection_n_nnz, &projection_selection_n_rows, &projection_selection_n_cols,
+      &debug_vector_csc_values, &debug_vector_row_ind,
+      &debug_vector_n_nnz,  &debug_vector_n_rows
+      );
+
+  printf("( projection . selection ) . bang || final vector rows %d nnz %d\n", debug_vector_n_rows, debug_vector_n_nnz );
+  print_csc_vector(
+      debug_vector_csc_values, debug_vector_row_ind,
+      debug_vector_n_nnz,  debug_vector_n_rows
+      );
+
 #endif
 
 
@@ -349,7 +371,7 @@ int main( int argc, char* argv[]){
       );
 
 #ifdef D_DEBUGGING
-  printf("( projection . selection ) . quantity rows %d columns %d nnz %d\n", projection_selection_quantity_n_rows, projection_selection_quantity_n_cols, projection_selection_quantity_n_nnz);
+  printf("( projection . selection ) . quantity || rows %d columns %d nnz %d\n", projection_selection_quantity_n_rows, projection_selection_quantity_n_cols, projection_selection_quantity_n_nnz);
 
   print_csc (
       projection_selection_quantity_csc_values, projection_selection_quantity_row_ind, projection_selection_quantity_col_ptr,
@@ -367,7 +389,7 @@ int main( int argc, char* argv[]){
       );
 
 #ifdef D_DEBUGGING
-  printf(" final vector rows %d nnz %d\n", final_vector_n_rows, final_vector_n_nnz );
+  printf("( ( projection . selection ) . quantity ) . bang || final vector rows %d nnz %d\n", final_vector_n_rows, final_vector_n_nnz );
   print_csc_vector(
       final_vector_csc_values, final_vector_row_ind,
       final_vector_n_nnz,  final_vector_n_rows

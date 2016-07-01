@@ -1,5 +1,5 @@
 
-CREATE TABLE LINEITEM_0 ( l_orderkey    INTEGER NOT NULL,
+CREATE TABLE lineitem_1 ( l_orderkey    INTEGER NOT NULL,
                         l_partkey     INTEGER NOT NULL,
                         l_suppkey     INTEGER NOT NULL,
                         l_linenumber  INTEGER NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE LINEITEM_0 ( l_orderkey    INTEGER NOT NULL,
                         l_comment      VARCHAR(44) NOT NULL);
 
 copy LINEITEM_0 FROM '/home/a57816/postgres/data_search/lineitem_0.tbl'  with delimiter as '|';
-DONE #### copy LINEITEM_1 FROM '/home/a57816/postgres/data_search/lineitem_1.tbl'  with delimiter as '|';
+DONE #### copy LINEITEM_1 FROM '/home/a57816/CPD_PI_OLAP/src/__tbl/lineitem_1.tbl'  with delimiter as '|';
 DONE #### copy LINEITEM_2 FROM '/home/a57816/postgres/data_search/lineitem_2.tbl'  with delimiter as '|';
 DONE #### copy LINEITEM_4 FROM '/home/a57816/postgres/data_search/lineitem_4.tbl'  with delimiter as '|';
 DONE #### copy LINEITEM_8 FROM '/home/a57816/postgres/data_search/lineitem_8.tbl'  with delimiter as '|';

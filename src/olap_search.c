@@ -2064,8 +2064,8 @@ void csc_csc_krao(
   int* aux_col_ptr;
 
   aux_csc_values = (float*) _mm_malloc ( A_n_nnz * sizeof(float) , MEM_LINE_SIZE );
-  aux_row_ind = (int*) _mm_malloc ( A_n_nnz  * sizeof(int) , MEM_LINE_SIZE);
-  aux_col_ptr = (int*) _mm_malloc ( (A_n_cols+1) * sizeof(int) , MEM_LINE_SIZE);
+  aux_row_ind = (int*) _mm_malloc ( A_n_nnz  * sizeof(int) , MEM_LINE_SIZE );
+  aux_col_ptr = (int*) _mm_malloc ( (A_n_cols+1) * sizeof(int) , MEM_LINE_SIZE );
 
   /////////////////////////////////
   //   COMPUTE KRAO
@@ -2277,7 +2277,6 @@ void csc_csc_mm(
     int flag_B = B_col_ptr[at_column+1] - B_col_ptr[at_column];
     if ( flag_B > 0 ) {  
       b_row = B_row_ind[B_col_ptr[at_column]];
-
       for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
         int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
         if ( (at_column_in == b_row ) && (flag>0) ){
