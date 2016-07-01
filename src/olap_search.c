@@ -2067,24 +2067,36 @@ void csc_csc_krao(
   /////////////////////////////////
   //   COMPUTE KRAO
   /////////////////////////////////
-  int end_column = A_n_cols;
-  int scalar_B = B_n_rows;
+  const int scalar_B = B_n_rows;
   int current_row = 0;
   int max_row = 0;
 
+#pragma omp parallel 
+  {
+#pragma omp parallel for simd nowait shared(aux_col_ptr,A_col_ptr)
+    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+      aux_col_ptr[at_column] = A_col_ptr[at_column];
+    }
 
+#pragma omp parallel for simd nowait private(a_pos, b_pos)  shared(A_col_ptr,B_col_ptr,aux_csc_values,A_csc_values,B_csc_values)
+    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+      const int a_pos = A_col_ptr[at_column];
+      const int b_pos = B_col_ptr[at_column];
+      aux_csc_values[a_pos] = A_csc_values[a_pos] * B_csc_values[b_pos];
+    }
 
-  for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
-    aux_col_ptr[at_column] = A_col_ptr[at_column];
-    aux_csc_values[A_col_ptr[at_column]] = A_csc_values[A_col_ptr[at_column]] * B_csc_values[B_col_ptr[at_column]];
+#pragma omp parallel for simd nowait private(a_pos, b_pos, current_row) shared(A_col_ptr,B_col_ptr,B_row_ind,A_row_ind,max_row)
+    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+      const int a_pos = A_col_ptr[at_column];
+      const  int b_pos = B_col_ptr[at_column];
+      current_row = B_row_ind[b_pos] + ( A_row_ind[a_pos] * scalar_B );
+      aux_row_ind[a_pos] = current_row;
+      if (current_row > max_row){
+#pragma omp atomic
+        max_row = current_row;
+      }
+    }
   }
-
-  for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
-    current_row = B_row_ind[B_col_ptr[at_column]] + ( A_row_ind[A_col_ptr[at_column]] * scalar_B );
-    aux_row_ind[A_col_ptr[at_column]] = current_row;
-    max_row = current_row > max_row ? current_row : max_row;
-  }
-
   aux_col_ptr[A_n_cols] = A_n_nnz;
 
   *C_n_rows = (max_row+1);
@@ -2262,7 +2274,7 @@ void csc_csc_mm(
   int a_row = -1 ;
   int flag_a, flag_b;
   int a_pos, b_pos;
-	int max_row = 0;
+  int max_row = 0;
   int nnz_aux = 0;
 
   int nnz = A_n_nnz > B_n_nnz ? A_n_nnz : B_n_nnz;
@@ -2278,10 +2290,10 @@ void csc_csc_mm(
     if ( flag_b > 0 ) {  
       b_row = B_row_ind[b_pos];
       for ( int at_column_a = 0 ; at_column_a < A_n_cols ; ++at_column_a ){
-	a_pos = A_col_ptr[at_column_a]; 
+        a_pos = A_col_ptr[at_column_a]; 
         flag_a = A_col_ptr[at_column_a+1] - a_pos;
         if ( ( b_row == at_column_a ) && (flag_a > 0) ){
-        a_row = A_row_ind[a_pos];
+          a_row = A_row_ind[a_pos];
           aux_row_ind[nnz_aux] = a_row;
           max_row = a_row > max_row ? a_row : max_row;
           aux_csc_values[nnz_aux] += A_csc_values[a_pos] * B_csc_values[b_pos];
@@ -2321,10 +2333,12 @@ void csc_bang(
   aux_csc_values = (float*) _mm_malloc ( nnz * sizeof(float) , MEM_LINE_SIZE );
   aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE );
 
-  for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
-    int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
+  for ( int at_column_a = 0 ; at_column_a < A_n_cols ; ++at_column_in ){
+    a_pos = A_col_ptr[at_column_a];
+    int flag = A_col_ptr[at_column_a+1] - a_pos;
+
     if (  flag>0 ){
-      a_row = A_row_ind[A_col_ptr[at_column_in]];
+      a_row = A_row_ind[a_pos];
       flag_found = -1;
       for ( int at_nnz = 0; ( at_nnz <= nnz_aux ) && (flag_found < 0 ); at_nnz++){
         if (aux_row_ind[at_nnz] == a_row){
@@ -2334,18 +2348,18 @@ void csc_bang(
       if (flag_found < 0){
         aux_row_ind[nnz_aux] = a_row;
         max_row = a_row > max_row ? a_row : max_row;
-        aux_csc_values[nnz_aux] = A_csc_values[A_col_ptr[at_column_in]];
+        aux_csc_values[nnz_aux] = A_csc_values[a_pos];
         nnz_aux++;
       }
       else {
-        aux_csc_values[flag_found] += A_csc_values[A_col_ptr[at_column_in]];
+        aux_csc_values[flag_found] += A_csc_values[a_pos];
       }
     }
+
   }
 
   *C_n_rows = (max_row+1);
   *C_n_nnz = nnz_aux;
-
   *C_csc_values = aux_csc_values;
   *C_row_ind = aux_row_ind;
 
