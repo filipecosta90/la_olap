@@ -2071,7 +2071,7 @@ void csc_csc_krao(
   int current_row = 0;
   int max_row = 0;
 
-#pragma omp parallel private(a_pos, b_pos, current_row) shared(A_csc_values,B_csc_values,A_row_ind,B_row_ind,A_col_ptr,B_col_ptr,aux_csc_values,aux_row_ind,aux_col_ptr)
+#pragma omp parallel private(a_pos, b_pos, current_row) shared(A_csc_values,B_csc_values,A_row_ind,B_row_ind,A_col_ptr,B_col_ptr,aux_csc_values,aux_row_ind,aux_col_ptr,max_row)
   {
 #pragma omp for simd nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
@@ -2092,7 +2092,6 @@ void csc_csc_krao(
       current_row = B_row_ind[b_pos] + ( A_row_ind[a_pos] * scalar_B );
       aux_row_ind[a_pos] = current_row;
       if (current_row > max_row){
-#pragma omp atomic
         max_row = current_row;
       }
     }
