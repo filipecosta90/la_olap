@@ -55,6 +55,11 @@ void print_csc(
     int NNZ, int number_rows, int number_columns 
     );
 
+void print_csc_vector(
+    float* csc_values, int* row_ind, 
+    int NNZ, int number_rows
+    );
+
 void print_csr( 
     float* csr_values, int* JA, int* IA, 
     int NNZ, int number_rows, int number_columns 
@@ -257,6 +262,12 @@ void csc_bang(
     float **C_csc_values, int **C_row_ind,
     int *C_n_nnz, int *C_n_rows
     );
+
+void produce_tuple_from_krao_csc(
+  float *restrict C_csc_values, int *restrict C_row_ind, 
+    int C_n_nnz, int C_n_rows, 
+	int A_n_rows, int B_n_rows    
+);
 
 #endif
 

@@ -72,19 +72,37 @@ void print_csc(
     for (int pos = 0; pos < NNZ; pos++){
       printf("%f, ", csc_values[pos]);
     }
-    printf("] \n row_ind:\t");
-
+  printf("] \n row_ind:\t");
     for (int pos = 0; pos < NNZ; pos++){
       printf("%d, ", row_ind[pos]);
     }
-
     printf("] \ncol_ptr:\t");
     for (int pos = 0; pos <= number_columns; pos++){
       printf("%d, ", col_ptr[pos]);
     }
     printf("]\n");
+ }
+}
+
+void print_csc_vector(
+    float* csc_values, int* row_ind, 
+    int NNZ, int number_rows
+    ){
+  printf("N NONZ: %d\t", NNZ);
+  printf("N ROWS: %d\n", number_rows);
+  if (number_rows <= 100){
+    printf("CSC values: [\t");
+    for (int pos = 0; pos < NNZ; pos++){
+      printf("%f, ", csc_values[pos]);
+    }
+    printf("]\nrow_ind: [\t");
+    for (int pos = 0; pos < NNZ; pos++){
+      printf("%d, ", row_ind[pos]);
+    }
+    printf("]\n");
   }
 }
+
 
 void print_csr(
     float* csr_values, int* JA, int* IA,
@@ -473,8 +491,6 @@ void tbl_read_csc (
   int row_of_element;
 
   for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-
-
     char* tmp_field = strdup(line);
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char));
     field = getfield(tmp_field, tbl_column, field);
@@ -508,7 +524,7 @@ void tbl_read_csc (
   // IA splits the array A into rows
   *A_row_ind = aux_csc_row_ind;
 
-  *n_rows = current_major_row + 1;
+  *n_rows = (current_major_row + 1);
   *n_cols = number_elements;
   *n_nnz = number_elements;
 
@@ -535,11 +551,11 @@ void tbl_read_csc_measure (
   //define CSC auxiliar sparse-matrix
   // values will contain only ones
   float* aux_csc_values;
-  aux_csc_values = (float*) _mm_malloc ((number_elements+1) * sizeof(float) , MEM_LINE_SIZE );
+  aux_csc_values = (float*) _mm_malloc (number_elements * sizeof(float) , MEM_LINE_SIZE );
 
   // JA  points to column starts in A
   int* aux_csc_ja;
-  aux_csc_ja = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
+  aux_csc_ja = (int*) _mm_malloc ((number_elements) * sizeof(int) , MEM_LINE_SIZE );
 
   // IA splits the array A into rows
   int* aux_csc_ia;
@@ -1252,7 +1268,7 @@ void csc_to_csc_mx_selection_and(
   int at_non_zero = 0;
   int at_column = 0;
   int at_row = 0;
-  int max_row = -1;
+  int max_row = 0;
   *C_csc_values = (float*) _mm_malloc ( A_NNZ * sizeof(float), MEM_LINE_SIZE );
   *C_row_ind = (int*) _mm_malloc ( A_NNZ * sizeof(int), MEM_LINE_SIZE );
   *C_col_ptr = (int*) _mm_malloc ( (A_NNZ + 1) * sizeof(int), MEM_LINE_SIZE);
@@ -1265,7 +1281,6 @@ void csc_to_csc_mx_selection_and(
     non_zero = 0;
     iaa++; // due to quarks start in 1
     field = (char*) g_quark_to_string ( iaa );
-    if ( field != NULL ){
       returned_strcmp = strcmp( field, comparation_key);
       returned_strcmp2 = strcmp( field, comparation_key2);
       if (
@@ -1292,7 +1307,7 @@ void csc_to_csc_mx_selection_and(
       }
 
       (*C_col_ptr)[at_column] =  at_non_zero;
-      if ( non_zero != 0 ){
+      if ( non_zero == 1 ){
         at_row = A_row_ind[at_column];
         max_row = at_row > max_row ? at_row : max_row; 
         (*C_row_ind)[at_non_zero] =  at_row;
@@ -2044,7 +2059,6 @@ void csc_csc_krao(
   for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
     aux_col_ptr[at_column] = A_col_ptr[at_column];
     aux_csc_values[at_column] = A_csc_values[at_column] * B_csc_values[at_column];
-
   }
   for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
     current_row = B_row_ind[at_column] + ( A_row_ind[at_column] * scalar_B );
@@ -2053,11 +2067,10 @@ void csc_csc_krao(
   }
 
   aux_col_ptr[A_n_nnz] = A_n_nnz;
-  *C_n_rows = (max_row+1);
-
+  
+*C_n_rows = (max_row+1);
   *C_n_cols = A_n_cols;
   *C_n_nnz = A_n_nnz;
-
   *C_csc_values = aux_csc_values;
   *C_row_ind = aux_row_ind;
   *C_col_ptr = aux_col_ptr;
@@ -2296,7 +2309,7 @@ void csc_bang(
     if (  flag>0 ){
       a_row = A_row_ind[A_col_ptr[at_column_in]];
       flag_found = -1;
-      for ( int at_nnz = 0; ( at_nnz < nnz_aux ) && (flag_found < 0 ); at_nnz++){
+      for ( int at_nnz = 0; ( at_nnz <= nnz_aux ) && (flag_found < 0 ); at_nnz++){
         if (aux_row_ind[at_nnz] == a_row){
           flag_found = at_nnz;
         }
@@ -2319,6 +2332,27 @@ void csc_bang(
   *C_csc_values = aux_csc_values;
   *C_row_ind = aux_row_ind;
 
+}
+
+void produce_tuple_from_krao_csc(
+  float *restrict C_csc_values, int *restrict C_row_ind, 
+    int C_n_nnz, int C_n_rows, 
+	int A_n_rows, int B_n_rows    
+){
+int row_a, row_b, row_c;
+char* field_a;
+char* field_b;
+    
+for (int at_nnz = 0; at_nnz < C_n_nnz; at_nnz++){
+	row_c = C_row_ind[at_nnz];
+	row_a = row_c / B_n_rows;
+	row_b = row_c % B_n_rows;
+	row_a++;
+	row_b++;
+    field_a = (char*) g_quark_to_string ( row_a );
+    field_b = (char*) g_quark_to_string ( row_b );
+      printf("(%s,%s) %f\n", field_a, field_b,  C_csc_values[at_nnz]);
+    }
 }
 
 #endif

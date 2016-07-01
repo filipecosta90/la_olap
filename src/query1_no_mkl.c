@@ -362,10 +362,25 @@ int main( int argc, char* argv[]){
   csc_bang(
       projection_selection_quantity_csc_values, projection_selection_quantity_row_ind, projection_selection_quantity_col_ptr,
       projection_selection_quantity_n_nnz, projection_selection_quantity_n_rows, projection_selection_quantity_n_cols,
-      float **final_vector_csc_values, int **final_vector_row_ind,
-      int *final_vector_n_nnz, int *final_vector_n_rows
+      &final_vector_csc_values, &final_vector_row_ind,
+      &final_vector_n_nnz,  &final_vector_n_rows
       );
 
+#ifdef D_DEBUGGING
+  printf(" final vector rows %d nnz %d\n", final_vector_n_rows, final_vector_n_nnz );
+ print_csc_vector(
+       final_vector_csc_values, final_vector_row_ind,
+      final_vector_n_nnz,  final_vector_n_rows
+    );
+printf("going to produce tuples\n");
+produce_tuple_from_krao_csc(
+       final_vector_csc_values, final_vector_row_ind,
+      final_vector_n_nnz,  final_vector_n_rows,
+return_flag_n_rows, 
+     line_status_n_rows
+);
+
+#endif
 
   GET_TIME(global_time_bang);
 
