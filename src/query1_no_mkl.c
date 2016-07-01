@@ -47,7 +47,7 @@
 
 double global_time_start, global_time_stop;
 // intermediate timers
-double global_time_projection, global_time_selection,  global_time_projection_selection, global_time_projection_selection_aggregation , global_time_bang;
+double global_time_projection, global_time_selection,  global_time_projection_selection, global_time_projection_selection_aggregation;
 
 void writeResults ( char* dataset ) {
   double total_time, projection_time, selection_time, projection_selection_time, projection_selection_aggregation_time, bang_time, final_time;
@@ -65,7 +65,7 @@ void writeResults ( char* dataset ) {
   projection_selection_aggregation_time = global_time_projection_selection_aggregation - global_time_projection_selection;
 
   //5th opp
-  bang_time = global_time_bang - global_time_projection_selection_aggregation;
+  bang_time = global_time_stop - global_time_projection_selection_aggregation;
 
   total_time = global_time_stop - global_time_start;
   char file_write[80];
@@ -194,17 +194,17 @@ int main( int argc, char* argv[]){
   int *debug_vector_row_ind;
   int debug_vector_n_nnz;
   int debug_vector_n_rows;
-    
-    float *debug1_vector_csc_values;
-    int *debug1_vector_row_ind;
-    int debug1_vector_n_nnz;
-    int debug1_vector_n_rows;
-    
-    
-    float *debug2_vector_csc_values;
-    int *debug2_vector_row_ind;
-    int debug2_vector_n_nnz;
-    int debug2_vector_n_rows;
+
+  float *debug1_vector_csc_values;
+  int *debug1_vector_row_ind;
+  int debug1_vector_n_nnz;
+  int debug1_vector_n_rows;
+
+
+  float *debug2_vector_csc_values;
+  int *debug2_vector_row_ind;
+  int debug2_vector_n_nnz;
+  int debug2_vector_n_rows;
 
   /* ---------------------------------------------------------------------------
    ** Final Vector
@@ -214,35 +214,33 @@ int main( int argc, char* argv[]){
   int final_vector_n_nnz;
   int final_vector_n_rows;
 
-
   int number_elements = tbl_get_number_elements (table_file);
 
 #ifdef D_DEBUGGING
   printf("tbl file has %d elements\n", number_elements);
 #endif
-  
-    /** ---------------------------------------------------------------------------
-     ** Populate Return Flag Matrix
-     ** -------------------------------------------------------------------------*/
-    //read return flag
-    //bitmap matrix
-    tbl_read_csc(
-                 table_file , 9, number_elements,
-                 &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
-                 &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
-                 );
-    
-    /** ---------------------------------------------------------------------------
-     ** Populate Line Status Matrix
-     ** -------------------------------------------------------------------------*/
-    //read line status
-    //bitmap matrix
-    tbl_read_csc(
-                 table_file , 10, number_elements,
-                 &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
-                 &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
-                 );
 
+  /** ---------------------------------------------------------------------------
+   ** Populate Return Flag Matrix
+   ** -------------------------------------------------------------------------*/
+  //read return flag
+  //bitmap matrix
+  tbl_read_csc(
+      table_file , 9, number_elements,
+      &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
+      &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
+      );
+
+  /** ---------------------------------------------------------------------------
+   ** Populate Line Status Matrix
+   ** -------------------------------------------------------------------------*/
+  //read line status
+  //bitmap matrix
+  tbl_read_csc(
+      table_file , 10, number_elements,
+      &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
+      &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
+      );
 
   /** ---------------------------------------------------------------------------
    ** =========================== END OF DECLARATIONS ===========================
@@ -269,8 +267,7 @@ int main( int argc, char* argv[]){
       &shipdate_n_nnz, &shipdate_n_rows, &shipdate_n_cols ,
       &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
       );
-    
-    
+
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
@@ -283,14 +280,12 @@ int main( int argc, char* argv[]){
    ** ---------------------------------------------------------------------------
    ** -------------------------------------------------------------------------*/
 
-
 #ifdef D_DEBUGGING
   printf("** START TIME MEASUREMENT\n");
   //sleep(5);
 #endif
 
   GET_TIME(global_time_start);
-
 
   csc_csc_krao(
       return_flag_csc_values, return_flag_row_ind, return_flag_col_ptr,
@@ -310,41 +305,38 @@ int main( int argc, char* argv[]){
       projection_csc_values, projection_row_ind, projection_col_ptr,
       projection_n_nnz, projection_n_rows, projection_n_cols
       );
-    
-    
-    csc_bang(
-             projection_csc_values, projection_row_ind, projection_col_ptr,
-             projection_n_nnz, projection_n_rows, projection_n_cols,
-             &debug1_vector_csc_values, &debug1_vector_row_ind,
-             &debug1_vector_n_nnz,  &debug1_vector_n_rows
-             );
-    
-    printf(" projection . bang || final vector rows %d nnz %d\n", debug1_vector_n_rows, debug1_vector_n_nnz );
-    print_csc_vector(
-                     debug1_vector_csc_values, debug1_vector_row_ind,
-                     debug1_vector_n_nnz,  debug1_vector_n_rows
-                     );
-    
-    printf(" tuples and count(*)\n" );
-    produce_tuple_from_krao_csc(
-                                debug1_vector_csc_values, debug1_vector_row_ind,
-                                debug1_vector_n_nnz,  debug1_vector_n_rows,
-                                return_flag_n_rows,
-                                line_status_n_rows
-                                );
-    
-    
-    
+
+  csc_bang(
+      projection_csc_values, projection_row_ind, projection_col_ptr,
+      projection_n_nnz, projection_n_rows, projection_n_cols,
+
+      &debug1_vector_csc_values, &debug1_vector_row_ind,
+      &debug1_vector_n_nnz,  &debug1_vector_n_rows
+      );
+
+  printf(" projection . bang || final vector rows %d nnz %d\n", debug1_vector_n_rows, debug1_vector_n_nnz );
+  print_csc_vector(
+      debug1_vector_csc_values, debug1_vector_row_ind,
+      debug1_vector_n_nnz,  debug1_vector_n_rows
+      );
+
+  printf(" tuples and count(*)\n" );
+  produce_tuple_from_krao_csc(
+      debug1_vector_csc_values, debug1_vector_row_ind,
+      debug1_vector_n_nnz,  debug1_vector_n_rows,
+      return_flag_n_rows,
+      line_status_n_rows
+      );
 #endif
-
-
 
   GET_TIME(global_time_projection);
 
   csc_to_csc_mx_selection_and(
       shipdate_csc_values, shipdate_row_ind, shipdate_col_ptr,
       shipdate_n_nnz, shipdate_n_rows, shipdate_n_cols,
+
       GREATER_EQ , "1998-08-28", LESS_EQ , "1998-12-01",
+
       &selection_csc_values, &selection_row_ind, &selection_col_ptr,
       &selection_n_nnz, &selection_n_rows, &selection_n_cols
       );
@@ -391,23 +383,17 @@ int main( int argc, char* argv[]){
       debug_vector_csc_values, debug_vector_row_ind,
       debug_vector_n_nnz,  debug_vector_n_rows
       );
-    
-    printf(" tuples and count(*)\n");
-    produce_tuple_from_krao_csc(
-                                debug_vector_csc_values, debug_vector_row_ind,
-                                debug_vector_n_nnz,  debug_vector_n_rows,
-                                return_flag_n_rows,
-                                line_status_n_rows
-    );
-    
-    
-    
 
+  printf(" tuples and count(*)\n");
+  produce_tuple_from_krao_csc(
+      debug_vector_csc_values, debug_vector_row_ind,
+      debug_vector_n_nnz,  debug_vector_n_rows,
+      return_flag_n_rows,
+      line_status_n_rows
+      );
 #endif
 
-
   GET_TIME(global_time_projection_selection);
-
 
   csc_csc_mm(
       projection_selection_csc_values, projection_selection_row_ind, projection_selection_col_ptr,
@@ -438,6 +424,16 @@ int main( int argc, char* argv[]){
       &final_vector_n_nnz,  &final_vector_n_rows
       );
 
+  ////////////////////////
+  // STOP TIME MEASUREMENT
+  ////////////////////////
+  GET_TIME(global_time_stop);
+
+  ////////////////////////
+  // WRITE EXPERIMENT DATA
+  ////////////////////////
+  writeResults( argv[1] );
+
 #ifdef D_DEBUGGING
   printf("( ( projection . selection ) . quantity ) . bang || final vector rows %d nnz %d\n", final_vector_n_rows, final_vector_n_nnz );
   print_csc_vector(
@@ -451,20 +447,64 @@ int main( int argc, char* argv[]){
       return_flag_n_rows, 
       line_status_n_rows
       );
-
-#endif
-
-  GET_TIME(global_time_bang);
-
-  ////////////////////////
-  // STOP TIME MEASUREMENT
-  ////////////////////////
-  GET_TIME(global_time_stop);
-
-#ifdef D_DEBUGGING
   printf("** STOP TIME MEASUREMENT\n");
 #endif
-  writeResults( argv[1] );
+
+  ////////////////////////
+  // CLEAN UP
+  ////////////////////////
+
+  // FREE Return Flag Matrix
+  free( return_flag_csc_values );
+  free( return_flag_row_ind );
+  free( return_flag_col_ptr );
+
+  // FREE Line Status Matrix
+  free( line_status_csc_values );
+  free( line_status_row_ind );
+  free( line_status_col_ptr );
+
+  // FREE Quantity Matrix
+  free( quantity_csc_values );
+  free( quantity_row_ind );
+  free( quantity_col_ptr );
+
+  // FREE Shipdate Matrix
+  free( shipdate_csc_values = NULL );
+  free( shipdate_row_ind );
+  free( shipdate_col_ptr );
+
+  // FREE Projection Matrix
+  free( projection_csc_values = NULL );
+  free( projection_row_ind );
+  free( projection_col_ptr );
+
+  // FREE Selection Matrix
+  free( selection_csc_values );
+  free( selection_row_ind );
+  free( selection_col_ptr );
+
+  // FREE Projection Selection Matrix
+  free( projection_selection_csc_values );
+  free( projection_selection_row_ind );
+  free( projection_selection_col_ptr );
+
+  // FREE ( Projection . Selection ) . Quantity Matrix
+  free( projection_selection_quantity_csc_values );
+  free( projection_selection_quantity_row_ind );
+  free( projection_selection_quantity_col_ptr );
+
+  // FREE Debug Vectors
+  free( debug_vector_csc_values );
+  free( debug_vector_row_ind );
+  free( debug1_vector_csc_values );
+  free( debug1_vector_row_ind );
+  free( debug2_vector_csc_values );
+  free( debug2_vector_row_ind );
+
+  // FREE Final Vector
+  free( final_vector_csc_values );
+  free( final_vector_row_ind );
 
   return 0;
 }
