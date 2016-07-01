@@ -3,7 +3,7 @@
  **
  **     License: This file is part of OLAP PROJECT.
  **
- **              OLAP PROJECT is free software: you can redistribute it
+ **              OLAP PROJECT is _mm_free software: you can redistribute it
  **              and/or modify it under the terms of the GNU General Public
  **              License as published by the Free Software Foundation,
  **              either version 3 of the License, or (at your option)
@@ -455,56 +455,56 @@ int main( int argc, char* argv[]){
   ////////////////////////
 
   // FREE Return Flag Matrix
-  free( return_flag_csc_values );
-  free( return_flag_row_ind );
-  free( return_flag_col_ptr );
+  _mm_free( return_flag_csc_values );
+  _mm_free( return_flag_row_ind );
+  _mm_free( return_flag_col_ptr );
 
   // FREE Line Status Matrix
-  free( line_status_csc_values );
-  free( line_status_row_ind );
-  free( line_status_col_ptr );
+  _mm_free( line_status_csc_values );
+  _mm_free( line_status_row_ind );
+  _mm_free( line_status_col_ptr );
 
   // FREE Quantity Matrix
-  free( quantity_csc_values );
-  free( quantity_row_ind );
-  free( quantity_col_ptr );
+  _mm_free( quantity_csc_values );
+  _mm_free( quantity_row_ind );
+  _mm_free( quantity_col_ptr );
 
   // FREE Shipdate Matrix
-  free( shipdate_csc_values = NULL );
-  free( shipdate_row_ind );
-  free( shipdate_col_ptr );
+  _mm_free( shipdate_csc_values = NULL );
+  _mm_free( shipdate_row_ind );
+  _mm_free( shipdate_col_ptr );
 
   // FREE Projection Matrix
-  free( projection_csc_values = NULL );
-  free( projection_row_ind );
-  free( projection_col_ptr );
+  _mm_free( projection_csc_values = NULL );
+  _mm_free( projection_row_ind );
+  _mm_free( projection_col_ptr );
 
   // FREE Selection Matrix
-  free( selection_csc_values );
-  free( selection_row_ind );
-  free( selection_col_ptr );
+  _mm_free( selection_csc_values );
+  _mm_free( selection_row_ind );
+  _mm_free( selection_col_ptr );
 
   // FREE Projection Selection Matrix
-  free( projection_selection_csc_values );
-  free( projection_selection_row_ind );
-  free( projection_selection_col_ptr );
+  _mm_free( projection_selection_csc_values );
+  _mm_free( projection_selection_row_ind );
+  _mm_free( projection_selection_col_ptr );
 
   // FREE ( Projection . Selection ) . Quantity Matrix
-  free( projection_selection_quantity_csc_values );
-  free( projection_selection_quantity_row_ind );
-  free( projection_selection_quantity_col_ptr );
+  _mm_free( projection_selection_quantity_csc_values );
+  _mm_free( projection_selection_quantity_row_ind );
+  _mm_free( projection_selection_quantity_col_ptr );
 
   // FREE Debug Vectors
-  free( debug_vector_csc_values );
-  free( debug_vector_row_ind );
-  free( debug1_vector_csc_values );
-  free( debug1_vector_row_ind );
-  free( debug2_vector_csc_values );
-  free( debug2_vector_row_ind );
-
+/*  _mm_free( debug_vector_csc_values );
+  _mm_free( debug_vector_row_ind );
+  _mm_free( debug1_vector_csc_values );
+  _mm_free( debug1_vector_row_ind );
+  _mm_free( debug2_vector_csc_values );
+  _mm_free( debug2_vector_row_ind );
+*/
   // FREE Final Vector
-  free( final_vector_csc_values );
-  free( final_vector_row_ind );
+  _mm_free( final_vector_csc_values );
+  _mm_free( final_vector_row_ind );
 
   return 0;
 }
