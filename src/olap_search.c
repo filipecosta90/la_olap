@@ -2071,7 +2071,7 @@ void csc_csc_krao(
   int current_row = 0;
   int max_row = 0;
 
-#pragma omp parallel private(a_pos, b_pos, current_row)
+#pragma omp parallel 
   {
 #pragma omp for simd nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
