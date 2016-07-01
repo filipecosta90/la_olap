@@ -2278,7 +2278,7 @@ void csc_csc_mm(
       for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
         int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
         if ( (at_column_in == b_row ) && (flag>0) ){
-          a_row = A_row_ind[A_col_ptr[at_column_in]];
+          a_row = at_column_in;
           aux_row_ind[nnz_aux] = a_row;
           max_row = a_row > max_row ? a_row : max_row;
           aux_csc_values[nnz_aux] += A_csc_values[A_col_ptr[at_column_in]] * B_csc_values[B_col_ptr[at_column]];
