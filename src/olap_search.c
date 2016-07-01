@@ -1322,8 +1322,8 @@ void csc_to_csc_mx_selection_and(
     }
     if ( non_zero == 1 ){
       at_row = iaa;
-      max_row = at_row > max_row ? at_row : max_row; 
-      aux_csc_row_ind[at_non_zero] =  at_row;
+      max_row = at_row > max_row ? at_row : max_row;
+      aux_csc_row_ind[at_non_zero] =  A_col_ptr[at_column];
       aux_csc_values[at_non_zero] =  A_csc_values[A_col_ptr[at_column]];
       at_non_zero++;
     }
@@ -2043,7 +2043,6 @@ void csc_to_csr_and_csc_krao(
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
 }
-
 
 void csc_csc_krao(
     float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
