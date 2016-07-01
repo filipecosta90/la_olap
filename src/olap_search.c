@@ -1290,15 +1290,14 @@ void csc_to_csc_mx_selection_and(
 #endif
 
   for ( at_column = 0; at_column < A_number_columns; ++at_column){
-    // insert start of column int C_IA1
-
-    //printf("%d\n", at_column);
-    iaa = A_row_ind[at_column];
+      aux_csc_col_ptr[at_column] =  at_non_zero;
+    iaa = A_row_ind[A_col_ptr[at_column]];
     non_zero = 0;
     iaa++; // due to quarks start in 1
     field = (char*) g_quark_to_string ( iaa );
     returned_strcmp = strcmp( field, comparation_key);
     returned_strcmp2 = strcmp( field, comparation_key2);
+      iaa--;
     if (
         ( (opp_code == LESS)  && (returned_strcmp < 0 ))
         ||
@@ -1321,12 +1320,11 @@ void csc_to_csc_mx_selection_and(
        ){
       non_zero = 1;
     }
-    aux_csc_col_ptr[at_column] =  at_non_zero;
     if ( non_zero == 1 ){
-      at_row = A_row_ind[at_column];
+      at_row = iaa;
       max_row = at_row > max_row ? at_row : max_row; 
       aux_csc_row_ind[at_non_zero] =  at_row;
-      aux_csc_values[at_non_zero] =  A_csc_values[at_column];
+      aux_csc_values[at_non_zero] =  A_csc_values[A_col_ptr[at_column]];
       at_non_zero++;
     }
 }
