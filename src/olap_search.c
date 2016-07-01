@@ -2274,14 +2274,14 @@ void csc_csc_mm(
     aux_col_ptr[at_column] = nnz_aux;
     int flag_B = B_col_ptr[at_column+1] - B_col_ptr[at_column];
     if ( flag_B > 0 ) {  
-      b_row = B_row_ind[B_col_ptr[at_column]];
+        b_row = B_row_ind[B_col_ptr[at_column]];
       for ( int at_column_in = 0 ; at_column_in < A_n_cols ; ++at_column_in ){
         int flag = A_col_ptr[at_column_in+1] - A_col_ptr[at_column_in];
-          a_row = A_row_ind[at_column_in];
+          a_row = A_row_ind[A_col_ptr[at_column_in]];
         if (  ( at_column_in == b_row ) && (flag>0) ){
           aux_row_ind[nnz_aux] = b_row;
           max_row = b_row > max_row ? b_row : max_row;
-          aux_csc_values[nnz_aux] += A_csc_values[A_col_ptr[at_column_in]] * B_csc_values[B_col_ptr[at_column]];
+          aux_csc_values[nnz_aux] += A_csc_values[at_column_in] * B_csc_values[at_column];
           nnz_aux++;
         }
       }
