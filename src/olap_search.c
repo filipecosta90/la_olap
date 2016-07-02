@@ -1962,6 +1962,8 @@ void csc_to_csr_and_csc_krao(
     float **restrict C_csc_values, int **restrict C_JA1, int **restrict C_IA1,
     int* C_NNZ, int* C_number_rows, int* C_number_columns
     ){
+    
+    
 
   /////////////////////////////////
   //   COMPUTE KRAO
@@ -2059,6 +2061,16 @@ void csc_csc_krao(
     float **C_csc_values, int **C_row_ind, int **C_col_ptr,
     int *C_n_nnz, int *C_n_rows, int *C_n_cols
     ){
+    
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+    
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+    
+    
   /////////////////////////////////
   //   ALLOCATE MEMORY
   /////////////////////////////////
@@ -2266,7 +2278,8 @@ void csr_kron(
 
 void csc_csc_mm(
     float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
-    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind, int *__restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
+    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
+                int *__restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
     int A_n_nnz, int A_n_rows, int A_n_cols,
     float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_csc_values,
     int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_row_ind,
@@ -2278,6 +2291,14 @@ void csc_csc_mm(
     int *C_n_nnz, int *C_n_rows, int *C_n_cols
     ){
 
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+    
   float * aux_csc_values;
   int* aux_row_ind;
   int* aux_col_ptr;
@@ -2334,6 +2355,10 @@ void csc_bang(
     int ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_row_ind,
     int *C_n_nnz, int *C_n_rows
     ){
+
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
 
   float * aux_csc_values;
   int* aux_row_ind;

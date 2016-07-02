@@ -94,9 +94,9 @@ int main( int argc, char* argv[]){
    ** Return Flag Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
-  float* return_flag_csc_values = NULL;
-  int* return_flag_row_ind;
-  int* return_flag_col_ptr;
+  __declspec(align(MEM_LINE_SIZE))  float* return_flag_csc_values = NULL;
+ __declspec(align(MEM_LINE_SIZE)) int* return_flag_row_ind;
+ __declspec(align(MEM_LINE_SIZE)) int* return_flag_col_ptr;
   //COMMON
   int return_flag_n_rows;
   int return_flag_n_cols;
@@ -106,9 +106,9 @@ int main( int argc, char* argv[]){
    ** Line Status Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
-  float* line_status_csc_values = NULL;
-  int* line_status_row_ind;
-  int* line_status_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) float* line_status_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE)) int* line_status_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* line_status_col_ptr;
   //COMMON
   int line_status_n_rows;
   int line_status_n_cols;
@@ -118,9 +118,9 @@ int main( int argc, char* argv[]){
    ** Quantity Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
-  float* quantity_csc_values = NULL;
-  int* quantity_row_ind;
-  int* quantity_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) float* quantity_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE)) int* quantity_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* quantity_col_ptr;
   //COMMON
   int quantity_n_rows;
   int quantity_n_cols;
@@ -130,9 +130,9 @@ int main( int argc, char* argv[]){
    ** Shipdate Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
-  float* shipdate_csc_values = NULL;
-  int* shipdate_row_ind;
-  int* shipdate_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) float* shipdate_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE)) int* shipdate_row_ind;
+ __declspec(align(MEM_LINE_SIZE))  int* shipdate_col_ptr;
   //COMMON
   int shipdate_n_rows;
   int shipdate_n_cols;
@@ -142,9 +142,9 @@ int main( int argc, char* argv[]){
    ** Projection Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
-  float* projection_csc_values = NULL;
-  int* projection_row_ind;
-  int* projection_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) float* projection_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE)) int* projection_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* projection_col_ptr;
 
   //COMMON
   int projection_n_rows;
@@ -155,9 +155,9 @@ int main( int argc, char* argv[]){
    ** Selection Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
-  float* selection_csc_values = NULL;
-  int* selection_row_ind;
-  int* selection_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) float* selection_csc_values = NULL;
+  __declspec(align(MEM_LINE_SIZE)) int* selection_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* selection_col_ptr;
   //COMMON
   int selection_n_rows;
   int selection_n_cols;
@@ -167,9 +167,9 @@ int main( int argc, char* argv[]){
    ** Projection Selection Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
-  float* projection_selection_csc_values;
-  int* projection_selection_row_ind;
-  int* projection_selection_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) float* projection_selection_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) int* projection_selection_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* projection_selection_col_ptr;
   //COMMON
   int  projection_selection_n_nnz;
   int projection_selection_n_rows;
@@ -179,9 +179,9 @@ int main( int argc, char* argv[]){
    ** ( Projection . Selection ) . Quantity Matrix
    ** -------------------------------------------------------------------------*/
   //CSC
-  float* projection_selection_quantity_csc_values;
-  int* projection_selection_quantity_row_ind;
-  int* projection_selection_quantity_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) float* projection_selection_quantity_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) int* projection_selection_quantity_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* projection_selection_quantity_col_ptr;
   //COMMON
   int  projection_selection_quantity_n_nnz;
   int projection_selection_quantity_n_rows;
@@ -190,27 +190,27 @@ int main( int argc, char* argv[]){
   /* ---------------------------------------------------------------------------
    ** Debug Vectors
    ** -------------------------------------------------------------------------*/
-  float *debug_vector_csc_values;
-  int *debug_vector_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) float *debug_vector_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) int *debug_vector_row_ind;
   int debug_vector_n_nnz;
   int debug_vector_n_rows;
 
-  float *debug1_vector_csc_values;
-  int *debug1_vector_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) float *debug1_vector_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) int *debug1_vector_row_ind;
   int debug1_vector_n_nnz;
   int debug1_vector_n_rows;
 
 
-  float *debug2_vector_csc_values;
-  int *debug2_vector_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) float *debug2_vector_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) int *debug2_vector_row_ind;
   int debug2_vector_n_nnz;
   int debug2_vector_n_rows;
 
   /* ---------------------------------------------------------------------------
    ** Final Vector
    ** -------------------------------------------------------------------------*/
-  float *final_vector_csc_values;
-  int *final_vector_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) float *final_vector_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) int *final_vector_row_ind;
   int final_vector_n_nnz;
   int final_vector_n_rows;
 
