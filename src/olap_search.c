@@ -2098,31 +2098,31 @@ void csc_csc_krao(
 #pragma omp parallel
   {
 #pragma omp for nowait
-    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       __assume_aligned(aux_col_ptr, MEM_LINE_SIZE);
       __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
 
 #pragma omp for nowait
-    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
       __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
       __assume_aligned(aux_csc_values, MEM_LINE_SIZE);
       __assume_aligned(A_csc_values, MEM_LINE_SIZE);
       __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const int b_pos = B_col_ptr[at_column];
       aux_csc_values[a_pos] = A_csc_values[a_pos] * B_csc_values[b_pos];
     }
 
 #pragma omp for nowait
-    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
       __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
       __assume_aligned(A_row_ind, MEM_LINE_SIZE);
       __assume_aligned(B_row_ind, MEM_LINE_SIZE);
       __assume_aligned(aux_row_ind, MEM_LINE_SIZE);
+    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const  int b_pos = B_col_ptr[at_column];
       const int current_row = B_row_ind[b_pos] + ( A_row_ind[a_pos] * scalar_B );
