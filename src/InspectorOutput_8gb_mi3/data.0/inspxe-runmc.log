@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<log version="1.0" tool="runtool">
+
+<msg id="1" tool="runtool">
+  <type>log-start</type>
+  <arg>2016/07/02 18:49:02</arg>
+</msg>
+<msg id="2" tool="runtool">
+  <type>collector-starts</type>
+</msg>
+<msg id="3" tool="runtool">
+  <type>marker-file</type>
+  <arg>/home/a57779/CPD/PI/CPD_PI_OLAP/src/InspectorOutput_8gb_mi3/InspectorOutput_8gb_mi3.inspxe</arg>
+</msg>
+<msg id="4" tool="mc">
+  <type>EXEC_OF_INTEREST</type>
+  <arg>/home/a57779/CPD/PI/CPD_PI_OLAP/src/query1_no_mkl</arg>
+  <arg>19242</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:04 2016</timestamp>
+</msg>
+<msg id="5" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/home/a57779/CPD/PI/CPD_PI_OLAP/src/query1_no_mkl</arg>
+  <arg>0x400000</arg>
+  <arg>0x63bbd7</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:04 2016</timestamp>
+</msg>
+<msg id="6" tool="mc">
+  <type>MODULE_LOAD_NO_ANALYSIS</type>
+  <arg>/lib64/ld-linux-x86-64.so.2</arg>
+  <arg>0x328d200000</arg>
+  <arg>0x328d421187</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:04 2016</timestamp>
+</msg>
+<msg id="7" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/lib64/libglib-2.0.so.0</arg>
+  <arg>0x328f600000</arg>
+  <arg>0x328f8e4c0f</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:09 2016</timestamp>
+</msg>
+<msg id="8" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_lp64.so</arg>
+  <arg>0x2ba10f96b000</arg>
+  <arg>0x2ba1102a8eff</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="9" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_core.so</arg>
+  <arg>0x2ba110326000</arg>
+  <arg>0x2ba111c0a147</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="10" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_sequential.so</arg>
+  <arg>0x2ba111caf000</arg>
+  <arg>0x2ba112555d4f</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="11" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/lib64/libpthread.so.0</arg>
+  <arg>0x328de00000</arg>
+  <arg>0x328e01c39f</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="12" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/lib64/libm.so.6</arg>
+  <arg>0x328e200000</arg>
+  <arg>0x328e4830d7</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="13" tool="mc">
+  <type>MODULE_LOAD_NO_ANALYSIS</type>
+  <arg>/share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so</arg>
+  <arg>0x2ba1125f2000</arg>
+  <arg>0x2ba112932bdf</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="14" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/lib64/libgcc_s.so.1</arg>
+  <arg>0x328f200000</arg>
+  <arg>0x328f415cf7</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="15" tool="mc">
+  <type>MODULE_LOAD</type>
+  <arg>/lib64/libc.so.6</arg>
+  <arg>0x328d600000</arg>
+  <arg>0x328d9928a7</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="16" tool="mc">
+  <type>MODULE_LOAD_NO_ANALYSIS</type>
+  <arg>/lib64/libdl.so.2</arg>
+  <arg>0x328da00000</arg>
+  <arg>0x328dc030ff</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Jul  2 18:49:10 2016</timestamp>
+</msg>
+<msg id="17" tool="runtool">
+  <type>app-exit-code</type>
+  <arg>137</arg>
+</msg>
+<msg id="18" tool="runtool">
+  <type>marker-file</type>
+  <arg>/home/a57779/CPD/PI/CPD_PI_OLAP/src/InspectorOutput_8gb_mi3/InspectorOutput_8gb_mi3.inspxe</arg>
+</msg>
+<msg id="19" tool="runtool">
+  <type>collector-done</type>
+</msg>
+<msg id="20" tool="runtool">
+  <type>log-end</type>
+  <arg>2016/07/02 19:19:28</arg>
+</msg>
+
+</log>
+

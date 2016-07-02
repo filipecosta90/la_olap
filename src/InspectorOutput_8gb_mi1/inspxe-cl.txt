@@ -1,0 +1,6 @@
+
+=== Start: [2016/07/02 17:21:20] === 
+Warning: Encountered an issue while loading result [/home/a57779/CPD/PI/CPD_PI_OLAP/src/InspectorOutput_8gc_mi1]. Run terminated abnormally. Some data may be lost. 
+  
+0 new problem(s) found 
+=== End: [2016/07/02 17:41:19] === 

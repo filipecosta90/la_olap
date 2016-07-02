@@ -1,6 +1,0 @@
-
-=== Start: [2016/06/09 03:28:24] === 
-Warning: Encountered an issue while loading result [/home/a57816/CPD_PI_OLAP/src/InspectorOut]. Run terminated abnormally. Some data may be lost. 
-  
-0 new problem(s) found 
-=== End: [2016/06/09 03:28:30] === 
