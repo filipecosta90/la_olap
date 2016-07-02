@@ -7,7 +7,7 @@ INCLUDE= -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include
 #flags
 LIB= -lglib-2.0 -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm -vec-report7
 
-CFLAGS= $(INCLUDE)  -qopenmp -O3 -Wall -Wextra -xAVX -D_BSD_SOURCE -std=c99 
+CFLAGS= $(INCLUDE)  -qopenmp -openmp-report7 -O3 -Wall -Wextra -xAVX -D_BSD_SOURCE -std=c99 
 DEBUGFLAGS=  $(INCLUDE) -qopenmp -g -ggdb -O3 -Wall -Wextra -xAVX -D_BSD_SOURCE -std=c99 
 
 
