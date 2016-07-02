@@ -463,15 +463,15 @@ void tbl_read_csc (
 
   //define CSC auxiliar sparse-matrix
   // values will contain only ones
-  float* aux_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) float* aux_csc_values;
   aux_csc_values = (float*) _mm_malloc ((number_elements) * sizeof(float) , MEM_LINE_SIZE );
 
   // JA  points to column starts in A
-  int* aux_csc_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_csc_row_ind;
   aux_csc_row_ind = (int*) _mm_malloc ((number_elements) * sizeof(int) , MEM_LINE_SIZE );
 
   // IA splits the array A into rows
-  int* aux_csc_col_ptr;
+  __declspec(align(MEM_LINE_SIZE))  int* aux_csc_col_ptr;
   aux_csc_col_ptr = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
 
 #ifdef D_DEBUGGING
@@ -554,15 +554,15 @@ void tbl_read_csc_measure (
 
   //define CSC auxiliar sparse-matrix
   // values will contain only ones
-  float* aux_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) float* aux_csc_values;
   aux_csc_values = (float*) _mm_malloc (number_elements * sizeof(float) , MEM_LINE_SIZE );
 
   // JA  points to column starts in A
-  int* aux_csc_ja;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_csc_ja;
   aux_csc_ja = (int*) _mm_malloc ( number_elements * sizeof(int) , MEM_LINE_SIZE );
 
   // IA splits the array A into rows
-  int* aux_csc_ia;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_csc_ia;
   aux_csc_ia = (int*) _mm_malloc ((number_elements+1) * sizeof(int) , MEM_LINE_SIZE );
 
 #ifdef D_DEBUGGING
@@ -1277,15 +1277,15 @@ void csc_to_csc_mx_selection_and(
 
   //define CSC auxiliar sparse-matrix
   // values will contain only ones
-  float* aux_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) float* aux_csc_values;
   aux_csc_values = (float*) _mm_malloc ((A_NNZ) * sizeof(float) , MEM_LINE_SIZE );
 
   // JA  points to column starts in A
-  int* aux_csc_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_csc_row_ind;
   aux_csc_row_ind = (int*) _mm_malloc ((A_NNZ) * sizeof(int) , MEM_LINE_SIZE );
 
   // IA splits the array A into rows
-  int* aux_csc_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_csc_col_ptr;
   aux_csc_col_ptr = (int*) _mm_malloc ((A_number_columns+1) * sizeof(int) , MEM_LINE_SIZE );
 
 #ifdef D_DEBUGGING
@@ -1293,6 +1293,11 @@ void csc_to_csc_mx_selection_and(
   assert(aux_csc_row_ind != NULL);
   assert(aux_csc_col_ptr != NULL);
 #endif
+
+  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+  __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+
 #pragma omp parallel for
 #pragma vector aligned
   for ( int at_column = 0; at_column < A_number_columns; ++at_column){
@@ -1962,8 +1967,8 @@ void csc_to_csr_and_csc_krao(
     float **restrict C_csc_values, int **restrict C_JA1, int **restrict C_IA1,
     int* C_NNZ, int* C_number_rows, int* C_number_columns
     ){
-    
-    
+
+
 
   /////////////////////////////////
   //   COMPUTE KRAO
@@ -2061,23 +2066,23 @@ void csc_csc_krao(
     float **C_csc_values, int **C_row_ind, int **C_col_ptr,
     int *C_n_nnz, int *C_n_rows, int *C_n_cols
     ){
-    
-    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
-    __assume_aligned(A_row_ind, MEM_LINE_SIZE);
-    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
-    
-    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
-    __assume_aligned(B_row_ind, MEM_LINE_SIZE);
-    __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
-    
-    
+
+  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+  __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+
+  __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(B_row_ind, MEM_LINE_SIZE);
+  __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+
+
   /////////////////////////////////
   //   ALLOCATE MEMORY
   /////////////////////////////////
 
-  float * aux_csc_values;
-  int* aux_row_ind;
-  int* aux_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) float * aux_csc_values;
+  __declspec(align(MEM_LINE_SIZE))  int* aux_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_col_ptr;
 
   aux_csc_values = (float*) _mm_malloc ( A_n_nnz * sizeof(float) , MEM_LINE_SIZE );
   aux_row_ind = (int*) _mm_malloc ( A_n_nnz  * sizeof(int) , MEM_LINE_SIZE );
@@ -2094,11 +2099,18 @@ void csc_csc_krao(
   {
 #pragma omp for nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+      __assume_aligned(aux_col_ptr, MEM_LINE_SIZE);
+      __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
 
 #pragma omp for nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+      __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+      __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+      __assume_aligned(aux_csc_values, MEM_LINE_SIZE);
+      __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+      __assume_aligned(B_csc_values, MEM_LINE_SIZE);
       const int a_pos = A_col_ptr[at_column];
       const int b_pos = B_col_ptr[at_column];
       aux_csc_values[a_pos] = A_csc_values[a_pos] * B_csc_values[b_pos];
@@ -2106,6 +2118,11 @@ void csc_csc_krao(
 
 #pragma omp for nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+      __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+      __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+      __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+      __assume_aligned(B_row_ind, MEM_LINE_SIZE);
+      __assume_aligned(aux_row_ind, MEM_LINE_SIZE);
       const int a_pos = A_col_ptr[at_column];
       const  int b_pos = B_col_ptr[at_column];
       const int current_row = B_row_ind[b_pos] + ( A_row_ind[a_pos] * scalar_B );
@@ -2279,7 +2296,7 @@ void csr_kron(
 void csc_csc_mm(
     float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
     int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
-                int *__restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
+    int *__restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
     int A_n_nnz, int A_n_rows, int A_n_cols,
     float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_csc_values,
     int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_row_ind,
@@ -2291,17 +2308,17 @@ void csc_csc_mm(
     int *C_n_nnz, int *C_n_rows, int *C_n_cols
     ){
 
-    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
-    __assume_aligned(A_row_ind, MEM_LINE_SIZE);
-    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+  __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
 
-    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
-    __assume_aligned(B_row_ind, MEM_LINE_SIZE);
-    __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
-    
-  float * aux_csc_values;
-  int* aux_row_ind;
-  int* aux_col_ptr;
+  __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(B_row_ind, MEM_LINE_SIZE);
+  __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+
+  __declspec(align(MEM_LINE_SIZE)) float * aux_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_col_ptr;
   int b_row = -1;
   int a_row = -1 ;
   int flag_a, flag_b;
@@ -2314,6 +2331,7 @@ void csc_csc_mm(
   aux_csc_values = (float*) _mm_malloc ( nnz * sizeof(float) , MEM_LINE_SIZE );
   aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE);
   aux_col_ptr = (int*) _mm_malloc ( (B_n_cols+1) * sizeof(int) , MEM_LINE_SIZE);
+
 
   for ( int at_column_b = 0 ; at_column_b < B_n_cols ; ++at_column_b ){
     aux_col_ptr[at_column_b] = nnz_aux;
@@ -2356,13 +2374,12 @@ void csc_bang(
     int *C_n_nnz, int *C_n_rows
     ){
 
-    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
-    __assume_aligned(A_row_ind, MEM_LINE_SIZE);
-    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+  __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+  __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+  __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
 
-  float * aux_csc_values;
-  int* aux_row_ind;
-  int a_pos;
+  __declspec(align(MEM_LINE_SIZE)) float * aux_csc_values;
+  __declspec(align(MEM_LINE_SIZE)) int* aux_row_ind;
   int a_row = -1 ;
   int max_row = 0;
 
@@ -2373,7 +2390,7 @@ void csc_bang(
   aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE );
 
   for ( int at_column_a = 0 ; at_column_a < A_n_cols ; ++at_column_a ){
-    a_pos = A_col_ptr[at_column_a];
+    const int a_pos = A_col_ptr[at_column_a];
     int flag = A_col_ptr[at_column_a+1] - a_pos;
 
     if (  flag>0 ){

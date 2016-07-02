@@ -95,8 +95,8 @@ int main( int argc, char* argv[]){
    ** -------------------------------------------------------------------------*/
   //CSC
   __declspec(align(MEM_LINE_SIZE))  float* return_flag_csc_values = NULL;
- __declspec(align(MEM_LINE_SIZE)) int* return_flag_row_ind;
- __declspec(align(MEM_LINE_SIZE)) int* return_flag_col_ptr;
+  __declspec(align(MEM_LINE_SIZE)) int* return_flag_row_ind;
+  __declspec(align(MEM_LINE_SIZE)) int* return_flag_col_ptr;
   //COMMON
   int return_flag_n_rows;
   int return_flag_n_cols;
@@ -132,7 +132,7 @@ int main( int argc, char* argv[]){
   //CSC
   __declspec(align(MEM_LINE_SIZE)) float* shipdate_csc_values = NULL;
   __declspec(align(MEM_LINE_SIZE)) int* shipdate_row_ind;
- __declspec(align(MEM_LINE_SIZE))  int* shipdate_col_ptr;
+  __declspec(align(MEM_LINE_SIZE))  int* shipdate_col_ptr;
   //COMMON
   int shipdate_n_rows;
   int shipdate_n_cols;
@@ -495,13 +495,13 @@ int main( int argc, char* argv[]){
   _mm_free( projection_selection_quantity_col_ptr );
 
   // FREE Debug Vectors
-/*  _mm_free( debug_vector_csc_values );
-  _mm_free( debug_vector_row_ind );
-  _mm_free( debug1_vector_csc_values );
-  _mm_free( debug1_vector_row_ind );
-  _mm_free( debug2_vector_csc_values );
-  _mm_free( debug2_vector_row_ind );
-*/
+  /*  _mm_free( debug_vector_csc_values );
+      _mm_free( debug_vector_row_ind );
+      _mm_free( debug1_vector_csc_values );
+      _mm_free( debug1_vector_row_ind );
+      _mm_free( debug2_vector_csc_values );
+      _mm_free( debug2_vector_row_ind );
+      */
   // FREE Final Vector
   _mm_free( final_vector_csc_values );
   _mm_free( final_vector_row_ind );
