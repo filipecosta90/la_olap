@@ -1270,7 +1270,6 @@ void csc_to_csc_mx_selection_and(
   int cols;
   int returned_strcmp;
   int returned_strcmp2;
-  int iaa = 0;
   int at_non_zero = 0;
   int at_row = 0;
   int max_row = 0;
@@ -1298,18 +1297,14 @@ void csc_to_csc_mx_selection_and(
   __assume_aligned(A_row_ind, MEM_LINE_SIZE);
   __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
 
-#pragma omp parallel for
-#pragma vector aligned
+//#pragma omp parallel for
   for ( int at_column = 0; at_column < A_number_columns; ++at_column){
     aux_csc_col_ptr[at_column] =  at_non_zero;
-    const int a_pos =A_col_ptr[at_column];
-    iaa = A_row_ind[a_pos];
+    //const int a_pos =A_col_ptr[at_column];
+    const int iaa = A_row_ind[at_column] +1 ;
     non_zero = 0;
-    iaa++; // due to quarks start in 1
     field = (char*) g_quark_to_string ( iaa );
-
     returned_strcmp = strcmp( field, comparation_key);
-    returned_strcmp2 = strcmp( field, comparation_key2);
     if (
         ( (opp_code == LESS)  && (returned_strcmp < 0 ))
         ||
@@ -1319,32 +1314,27 @@ void csc_to_csc_mx_selection_and(
         ||
         ( (opp_code == GREATER_EQ)  && (returned_strcmp >= 0 ))
        ){
-      non_zero = 1;
-    }
-    if (
-        ( (opp_code2 == LESS)  && (returned_strcmp2 < 0) && (non_zero ==1) )
+    returned_strcmp2 = strcmp( field, comparation_key2);
+  if (
+        ( (opp_code2 == LESS)  && (returned_strcmp2 < 0) )
         ||
-        ( (opp_code2 == LESS_EQ)  && (returned_strcmp2 <= 0) && (non_zero ==1) )
+        ( (opp_code2 == LESS_EQ)  && (returned_strcmp2 <= 0) )
         ||
-        ( (opp_code2 == GREATER)  && (returned_strcmp2 > 0) && (non_zero ==1)  )
+        ( (opp_code2 == GREATER)  && (returned_strcmp2 > 0) )
         ||
-        ( (opp_code2 == GREATER_EQ)  && (returned_strcmp2 >= 0) && (non_zero ==1) )
+        ( (opp_code2 == GREATER_EQ)  && (returned_strcmp2 >= 0) )
        ){
-      non_zero = 1;
-    }
-    if ( non_zero == 1 ){
-      aux_csc_row_ind[at_non_zero] =  at_column;
-      aux_csc_values[at_non_zero] =  A_csc_values[a_pos];
+    aux_csc_row_ind[at_non_zero] =  at_column;
+      aux_csc_values[at_non_zero] =  A_csc_values[at_column];
       at_non_zero++;
-    }
-  }
-
+ }
+ }
+ }
   max_row =  aux_csc_row_ind[at_non_zero];
   aux_csc_col_ptr[A_number_columns] = at_non_zero;
   *C_n_rows = (max_row+1) ;
   *C_n_cols = A_number_columns;
   *C_n_nnz = at_non_zero;
-
   *C_csc_values = aux_csc_values;
   *C_col_ptr = aux_csc_col_ptr;
   *C_row_ind = aux_csc_row_ind;
@@ -2097,10 +2087,10 @@ void csc_csc_krao(
 
 #pragma omp parallel
   {
-#pragma omp for nowait
       __assume_aligned(aux_col_ptr, MEM_LINE_SIZE);
       __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
-    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+ #pragma omp for nowait
+   for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
 
@@ -2331,7 +2321,6 @@ void csc_csc_mm(
   aux_csc_values = (float*) _mm_malloc ( nnz * sizeof(float) , MEM_LINE_SIZE );
   aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE);
   aux_col_ptr = (int*) _mm_malloc ( (B_n_cols+1) * sizeof(int) , MEM_LINE_SIZE);
-
 
   for ( int at_column_b = 0 ; at_column_b < B_n_cols ; ++at_column_b ){
     aux_col_ptr[at_column_b] = nnz_aux;
