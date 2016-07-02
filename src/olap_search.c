@@ -453,7 +453,9 @@ int tbl_get_number_elements (char* table_name){
 void tbl_read_csc (
     char* table_name, int tbl_column, int number_elements,
     int* n_nnz, int* n_rows, int* n_cols,
-    float** A_csc_values, int** A_row_ind, int** A_col_ptr
+    float** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
+    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
+    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr
     ){
 #ifdef D_DEBUGGING
   printf("going to read column %d\n", tbl_column);
@@ -542,7 +544,9 @@ void tbl_read_csc (
 void tbl_read_csc_measure (
     char* table_name, int tbl_column, int number_elements,
     int* nnz, int* rows, int* columns,
-    float** A_csc_values, int** A_JA, int** A_IA
+    float** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
+    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_JA,
+    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_IA
     ){
 #ifdef D_DEBUGGING
   printf("going to read column %d\n", tbl_column);
@@ -1248,10 +1252,14 @@ void csc_to_csr_mx_selection_and(
 
 
 void csc_to_csc_mx_selection_and(
-    float* A_csc_values, int* A_row_ind, int* A_col_ptr,
+    float* __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
+    int* __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
+    int* __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
     int A_NNZ, int A_number_rows, int A_number_columns,
-    int opp_code, char* comparation_key, int opp_code2, char* comparation_key2,
-    float** C_csc_values, int** C_row_ind, int** C_col_ptr,
+    int opp_code, char *restrict comparation_key, int opp_code2, char*restrict comparation_key2,
+    float** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_csc_values,
+    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_row_ind,
+    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_col_ptr,
     int* C_n_nnz, int* C_n_rows, int* C_n_cols
     ){
 
@@ -1286,15 +1294,16 @@ void csc_to_csc_mx_selection_and(
   assert(aux_csc_col_ptr != NULL);
 #endif
 #pragma omp parallel for
+#pragma vector aligned
   for ( int at_column = 0; at_column < A_number_columns; ++at_column){
     aux_csc_col_ptr[at_column] =  at_non_zero;
-      const int a_pos =A_col_ptr[at_column];
+    const int a_pos =A_col_ptr[at_column];
     iaa = A_row_ind[a_pos];
     non_zero = 0;
     iaa++; // due to quarks start in 1
     field = (char*) g_quark_to_string ( iaa );
 
-      returned_strcmp = strcmp( field, comparation_key);
+    returned_strcmp = strcmp( field, comparation_key);
     returned_strcmp2 = strcmp( field, comparation_key2);
     if (
         ( (opp_code == LESS)  && (returned_strcmp < 0 ))
@@ -1319,13 +1328,13 @@ void csc_to_csc_mx_selection_and(
       non_zero = 1;
     }
     if ( non_zero == 1 ){
-       aux_csc_row_ind[at_non_zero] =  at_column;
+      aux_csc_row_ind[at_non_zero] =  at_column;
       aux_csc_values[at_non_zero] =  A_csc_values[a_pos];
       at_non_zero++;
     }
   }
-    
-    max_row =  aux_csc_row_ind[at_non_zero];
+
+  max_row =  aux_csc_row_ind[at_non_zero];
   aux_csc_col_ptr[A_number_columns] = at_non_zero;
   *C_n_rows = (max_row+1) ;
   *C_n_cols = A_number_columns;
@@ -2071,19 +2080,19 @@ void csc_csc_krao(
 
 #pragma omp parallel
   {
-#pragma omp for simd nowait
+#pragma omp for nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
 
-#pragma omp for simd nowait
+#pragma omp for nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const int b_pos = B_col_ptr[at_column];
       aux_csc_values[a_pos] = A_csc_values[a_pos] * B_csc_values[b_pos];
     }
 
-#pragma omp for simd nowait
+#pragma omp for nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const  int b_pos = B_col_ptr[at_column];
@@ -2256,11 +2265,16 @@ void csr_kron(
 /////////////////////////////////
 
 void csc_csc_mm(
-    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
+    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind, int *__restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
     int A_n_nnz, int A_n_rows, int A_n_cols,
-    float *restrict B_csc_values, int *restrict B_row_ind, int *restrict B_col_ptr,
+    float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_csc_values,
+    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_row_ind,
+    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_col_ptr,
     int B_n_nnz, int B_n_rows, int B_n_cols,
-    float **C_csc_values, int **C_row_ind, int **C_col_ptr,
+    float ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_csc_values,
+    int ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_row_ind,
+    int ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_col_ptr,
     int *C_n_nnz, int *C_n_rows, int *C_n_cols
     ){
 
@@ -2312,15 +2326,18 @@ void csc_csc_mm(
 }
 
 void csc_bang(
-    float *restrict A_csc_values, int *restrict A_row_ind, int *restrict A_col_ptr,
+    float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
+    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
+    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
     int A_n_nnz, int A_n_rows, int A_n_cols,
-    float **C_csc_values, int **C_row_ind,
+    float ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_csc_values,
+    int ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_row_ind,
     int *C_n_nnz, int *C_n_rows
     ){
 
   float * aux_csc_values;
   int* aux_row_ind;
-    int a_pos;
+  int a_pos;
   int a_row = -1 ;
   int max_row = 0;
 
