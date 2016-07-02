@@ -1260,13 +1260,10 @@ void csc_to_csc_mx_selection_and(
   int non_zero = 0;
   int index;
   int cols;
-  int zeroed_numbers = 0;
-  int non_zeroed = 0;
-  int returned_strcmp ;
+  int returned_strcmp;
   int returned_strcmp2;
   int iaa = 0;
   int at_non_zero = 0;
-  int at_column = 0;
   int at_row = 0;
   int max_row = 0;
 
@@ -1288,15 +1285,16 @@ void csc_to_csc_mx_selection_and(
   assert(aux_csc_row_ind != NULL);
   assert(aux_csc_col_ptr != NULL);
 #endif
-
-  for ( at_column = 0; at_column < A_number_columns; ++at_column){
+#pragma omp parallel for
+  for ( int at_column = 0; at_column < A_number_columns; ++at_column){
     aux_csc_col_ptr[at_column] =  at_non_zero;
-    iaa = A_row_ind[A_col_ptr[at_column]];
+      const int a_pos =A_col_ptr[at_column];
+    iaa = A_row_ind[a_pos];
     non_zero = 0;
     iaa++; // due to quarks start in 1
     field = (char*) g_quark_to_string ( iaa );
-    //printf("%s\n", field);
-    returned_strcmp = strcmp( field, comparation_key);
+
+      returned_strcmp = strcmp( field, comparation_key);
     returned_strcmp2 = strcmp( field, comparation_key2);
     if (
         ( (opp_code == LESS)  && (returned_strcmp < 0 ))
@@ -1321,13 +1319,13 @@ void csc_to_csc_mx_selection_and(
       non_zero = 1;
     }
     if ( non_zero == 1 ){
-      at_row = at_column;
-      max_row = at_row > max_row ? at_row : max_row;
-      aux_csc_row_ind[at_non_zero] =  at_row;
-      aux_csc_values[at_non_zero] =  A_csc_values[A_col_ptr[at_column]];
+       aux_csc_row_ind[at_non_zero] =  at_column;
+      aux_csc_values[at_non_zero] =  A_csc_values[a_pos];
       at_non_zero++;
     }
   }
+    
+    max_row =  aux_csc_row_ind[at_non_zero];
   aux_csc_col_ptr[A_number_columns] = at_non_zero;
   *C_n_rows = (max_row+1) ;
   *C_n_cols = A_number_columns;
@@ -2071,7 +2069,7 @@ void csc_csc_krao(
   int current_row = 0;
   int max_row = 0;
 
-#pragma omp parallel 
+#pragma omp parallel
   {
 #pragma omp for simd nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
