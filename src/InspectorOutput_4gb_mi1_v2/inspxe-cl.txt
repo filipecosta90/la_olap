@@ -1,0 +1,6 @@
+
+=== Start: [2016/07/03 22:12:23] === 
+Warning: Encountered an issue while loading result [/home/a57779/CPD/PI/CPD_PI_OLAP/src/r000mi1]. Run terminated abnormally. Some data may be lost. 
+  
+0 new problem(s) found 
+=== End: [2016/07/03 22:27:23] === 
