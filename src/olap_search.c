@@ -453,9 +453,9 @@ int tbl_get_number_elements (char* table_name){
 void tbl_read_csc (
     char* table_name, int tbl_column, int number_elements,
     int* n_nnz, int* n_rows, int* n_cols,
-    float** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
-    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
-    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr
+    float** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr
     ){
 #ifdef D_DEBUGGING
   printf("going to read column %d\n", tbl_column);
@@ -544,9 +544,9 @@ void tbl_read_csc (
 void tbl_read_csc_measure (
     char* table_name, int tbl_column, int number_elements,
     int* nnz, int* rows, int* columns,
-    float** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
-    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_JA,
-    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_IA
+    float** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_JA,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_IA
     ){
 #ifdef D_DEBUGGING
   printf("going to read column %d\n", tbl_column);
@@ -1252,14 +1252,14 @@ void csc_to_csr_mx_selection_and(
 
 
 void csc_to_csc_mx_selection_and(
-    float* __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
-    int* __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
-    int* __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
+    float* __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+    int* __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
+    int* __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr,
     int A_NNZ, int A_number_rows, int A_number_columns,
     int opp_code, char *restrict comparation_key, int opp_code2, char*restrict comparation_key2,
-    float** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_csc_values,
-    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_row_ind,
-    int** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_col_ptr,
+    float** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_csc_values,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_row_ind,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_col_ptr,
     int* C_n_nnz, int* C_n_rows, int* C_n_cols
     ){
 
@@ -2284,17 +2284,17 @@ void csr_kron(
 /////////////////////////////////
 
 void csc_csc_mm(
-    float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
-    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
-    int *__restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
+    float * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+    int * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
+    int *__restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr,
     int A_n_nnz, int A_n_rows, int A_n_cols,
-    float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_csc_values,
-    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_row_ind,
-    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) B_col_ptr,
+    float * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) B_csc_values,
+    int * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) B_row_ind,
+    int * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) B_col_ptr,
     int B_n_nnz, int B_n_rows, int B_n_cols,
-    float ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_csc_values,
-    int ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_row_ind,
-    int ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_col_ptr,
+    float ** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_csc_values,
+    int ** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_row_ind,
+    int ** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_col_ptr,
     int *C_n_nnz, int *C_n_rows, int *C_n_cols
     ){
 
@@ -2354,12 +2354,12 @@ void csc_csc_mm(
 }
 
 void csc_bang(
-    float * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_csc_values,
-    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_row_ind,
-    int * __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) A_col_ptr,
+    float * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+    int * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
+    int * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr,
     int A_n_nnz, int A_n_rows, int A_n_cols,
-    float ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_csc_values,
-    int ** __restrict__  __attribute__((align_value (MEM_LINE_SIZE))) C_row_ind,
+    float ** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_csc_values,
+    int ** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_row_ind,
     int *C_n_nnz, int *C_n_rows
     ){
 
