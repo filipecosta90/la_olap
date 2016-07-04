@@ -444,7 +444,7 @@ int tbl_get_number_elements (char* table_name){
   int element_number = 0;
   char line[1024];
 
-  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
+  for( element_number = 0 ; getline(&line, MAX_REG_SIZE, stream)>0  ; ++element_number ){
   }
 
   return element_number;
@@ -492,7 +492,8 @@ void tbl_read_csc (
   current_major_row = 0;
   int row_of_element;
 
-  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
+  for( element_number = 0 ; element_number < number_elements ; ++element_number ){
+    getline(&line, MAX_REG_SIZE, stream);
     char* tmp_field = strdup(line);
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char));
     field = getfield(tmp_field, tbl_column, field);
@@ -578,8 +579,8 @@ void tbl_read_csc_measure (
   char line[1024];
 
 
-  for( element_number = 0 ; (fgets(line, MAX_REG_SIZE, stream) ) ; ++element_number ){
-
+  for( element_number = 0 ; element_number < number_elements ; ++element_number ){
+    getline(&line, MAX_REG_SIZE, stream);
     char* tmp_field = strdup(line);
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char));
     field = getfield(tmp_field, tbl_column, field);
@@ -1297,7 +1298,7 @@ void csc_to_csc_mx_selection_and(
   __assume_aligned(A_row_ind, MEM_LINE_SIZE);
   __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
 
-//#pragma omp parallel for
+  //#pragma omp parallel for
   for ( int at_column = 0; at_column < A_number_columns; ++at_column){
     aux_csc_col_ptr[at_column] =  at_non_zero;
     //const int a_pos =A_col_ptr[at_column];
@@ -1314,22 +1315,22 @@ void csc_to_csc_mx_selection_and(
         ||
         ( (opp_code == GREATER_EQ)  && (returned_strcmp >= 0 ))
        ){
-    returned_strcmp2 = strcmp( field, comparation_key2);
-  if (
-        ( (opp_code2 == LESS)  && (returned_strcmp2 < 0) )
-        ||
-        ( (opp_code2 == LESS_EQ)  && (returned_strcmp2 <= 0) )
-        ||
-        ( (opp_code2 == GREATER)  && (returned_strcmp2 > 0) )
-        ||
-        ( (opp_code2 == GREATER_EQ)  && (returned_strcmp2 >= 0) )
-       ){
-    aux_csc_row_ind[at_non_zero] =  at_column;
-      aux_csc_values[at_non_zero] =  A_csc_values[at_column];
-      at_non_zero++;
- }
- }
- }
+      returned_strcmp2 = strcmp( field, comparation_key2);
+      if (
+          ( (opp_code2 == LESS)  && (returned_strcmp2 < 0) )
+          ||
+          ( (opp_code2 == LESS_EQ)  && (returned_strcmp2 <= 0) )
+          ||
+          ( (opp_code2 == GREATER)  && (returned_strcmp2 > 0) )
+          ||
+          ( (opp_code2 == GREATER_EQ)  && (returned_strcmp2 >= 0) )
+         ){
+        aux_csc_row_ind[at_non_zero] =  at_column;
+        aux_csc_values[at_non_zero] =  A_csc_values[at_column];
+        at_non_zero++;
+      }
+    }
+  }
   max_row =  aux_csc_row_ind[at_non_zero];
   aux_csc_col_ptr[A_number_columns] = at_non_zero;
   *C_n_rows = (max_row+1) ;
@@ -2087,18 +2088,18 @@ void csc_csc_krao(
 
 #pragma omp parallel
   {
-      __assume_aligned(aux_col_ptr, MEM_LINE_SIZE);
-      __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
- #pragma omp for nowait
-   for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
+    __assume_aligned(aux_col_ptr, MEM_LINE_SIZE);
+    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+#pragma omp for nowait
+    for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
 
-      __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
-      __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
-      __assume_aligned(aux_csc_values, MEM_LINE_SIZE);
-      __assume_aligned(A_csc_values, MEM_LINE_SIZE);
-      __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+    __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+    __assume_aligned(aux_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
 #pragma omp for nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
@@ -2106,11 +2107,11 @@ void csc_csc_krao(
       aux_csc_values[a_pos] = A_csc_values[a_pos] * B_csc_values[b_pos];
     }
 
-      __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
-      __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
-      __assume_aligned(A_row_ind, MEM_LINE_SIZE);
-      __assume_aligned(B_row_ind, MEM_LINE_SIZE);
-      __assume_aligned(aux_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+    __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+    __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(B_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(aux_row_ind, MEM_LINE_SIZE);
 #pragma omp for nowait
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
