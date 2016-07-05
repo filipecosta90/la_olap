@@ -306,14 +306,6 @@ int main( int argc, char* argv[]){
       projection_n_nnz, projection_n_rows, projection_n_cols
       );
 
-  csc_bang(
-      projection_csc_values, projection_row_ind, projection_col_ptr,
-      projection_n_nnz, projection_n_rows, projection_n_cols,
-
-      &debug1_vector_csc_values, &debug1_vector_row_ind,
-      &debug1_vector_n_nnz,  &debug1_vector_n_rows
-      );
-
   printf(" projection . bang || final vector rows %d nnz %d\n", debug1_vector_n_rows, debug1_vector_n_nnz );
   print_csc_vector(
       debug1_vector_csc_values, debug1_vector_row_ind,
@@ -369,13 +361,6 @@ int main( int argc, char* argv[]){
   print_csc (
       projection_selection_csc_values, projection_selection_row_ind, projection_selection_col_ptr,
       projection_selection_n_nnz, projection_selection_n_rows, projection_selection_n_cols
-      );
-
-  csc_bang(
-      projection_selection_csc_values, projection_selection_row_ind, projection_selection_col_ptr,
-      projection_selection_n_nnz, projection_selection_n_rows, projection_selection_n_cols,
-      &debug_vector_csc_values, &debug_vector_row_ind,
-      &debug_vector_n_nnz,  &debug_vector_n_rows
       );
 
   printf("( projection . selection ) . bang || debug vector rows %d nnz %d\n", debug_vector_n_rows, debug_vector_n_nnz );
@@ -494,14 +479,6 @@ int main( int argc, char* argv[]){
   _mm_free( projection_selection_quantity_row_ind );
   _mm_free( projection_selection_quantity_col_ptr );
 
-  // FREE Debug Vectors
-  /*  _mm_free( debug_vector_csc_values );
-      _mm_free( debug_vector_row_ind );
-      _mm_free( debug1_vector_csc_values );
-      _mm_free( debug1_vector_row_ind );
-      _mm_free( debug2_vector_csc_values );
-      _mm_free( debug2_vector_row_ind );
-      */
   // FREE Final Vector
   _mm_free( final_vector_csc_values );
   _mm_free( final_vector_row_ind );
