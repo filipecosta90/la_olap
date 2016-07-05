@@ -16,236 +16,91 @@ color2 = blue/255;
 color6 = yellow/255;
 color7 = magenta/255;
 color8 = brown/255;
-
 color9 = orange/255;
 
 
-
 FigHandle = figure;
-  set(FigHandle, 'Position', [0, 0, 760, 560]);
+  set(FigHandle, 'Position', [0, 0, 760, 760]);
 cd ('../../../src');
 
-dataset_1 = csvread('timing/timings_vec_1.dat');
-dataset_2 = csvread('timing/timings_vec_2.dat');
-dataset_4 = csvread('timing/timings_vec_4.dat');
-dataset_8 = csvread('timing/timings_vec_8.dat');
-dataset_16 = csvread('timing/timings_vec_16.dat');
-dataset_32 = csvread('timing/timings_vec_32.dat');
+
+csv_results_1 = readtable('timing/timings_vec_nomkl_1.csv','ReadVariableNames',true);
+csv_results_2 = readtable('timing/timings_vec_nomkl_2.csv','ReadVariableNames',true);
+csv_results_4 = readtable('timing/timings_vec_nomkl_4.csv','ReadVariableNames',true);
+csv_results_8 = readtable('timing/timings_vec_nomkl_8.csv','ReadVariableNames',true);
+csv_results_16 = readtable('timing/timings_vec_nomkl_16.csv','ReadVariableNames',true);
+%csv_results_32 = readtable('timing/timings_vec_nomkl_32.csv','ReadVariableNames',true);
 
 
-time_1 = dataset_1 ( :, 2); 
-percntiles_1 = prctile(time_1,[5 95]); %5th and 95th percentile
-outlierIndex_1 = time_1 < percntiles_1(1) | time_1 > percntiles_1(2);
-%remove outlier values
-time_1(outlierIndex_1) = [];
+time_1 = csv_results_1.total;
+time_2 = csv_results_2.total;
+time_4 = csv_results_4.total;
+time_8 = csv_results_8.total;
+time_16 = csv_results_16.total;
+%time_32 = csv_results_32.total;
+
+
+
+
+
 best_time_1 = min( time_1 );
-
-time_2 = dataset_2 ( :, 2); 
-percntiles_2 = prctile(time_2,[5 95]); %5th and 95th percentile
-outlierIndex_2 = time_2 < percntiles_2(1) | time_2 > percntiles_2(2);
-%remove outlier values
-time_2(outlierIndex_2) = [];
 best_time_2 = min( time_2 );
-
-time_4 = dataset_4 ( :, 2); 
-percntiles_4 = prctile(time_4,[5 95]); %5th and 95th percentile
-outlierIndex_4 = time_4 < percntiles_4(1) | time_4 > percntiles_4(2);
-%remove outlier values
-time_4(outlierIndex_4) = [];
 best_time_4 = min( time_4 );
-
-time_8 = dataset_8 ( :, 2); 
-percntiles_8 = prctile(time_8,[5 95]); %5th and 95th percentile
-outlierIndex_8 = time_8 < percntiles_8(1) | time_8 > percntiles_8(2);
-%remove outlier values
-time_8(outlierIndex_8) = [];
 best_time_8 = min( time_8 );
-
-time_16 = dataset_16 ( :, 2); 
-percntiles_16 = prctile(time_16,[5 95]); %5th and 95th percentile
-outlierIndex_16 = time_16 < percntiles_16(1) | time_16 > percntiles_16(2);
-%remove outlier values
-time_16(outlierIndex_16) = [];
 best_time_16 = min( time_16 );
+best_time_32 = 0; %min( time_32 );
 
-time_32 = dataset_32 ( :, 2); 
-percntiles_32 = prctile(time_32,[5 95]); %5th and 95th percentile
-outlierIndex_32 = time_32 < percntiles_32(1) | time_32 > percntiles_32(2);
-%remove outlier values
-time_32(outlierIndex_32) = [];
-best_time_32 = min( time_32 );
-
-seq_pgres_1 = csvread('timing_sql_seq_new/seq_pgres_1.csv') / 1000;
-seq_pgres_2 = csvread('timing_sql_seq_new/seq_pgres_2.csv') / 1000;
-seq_pgres_4 = csvread('timing_sql_seq_new/seq_pgres_4.csv') / 1000;
-seq_pgres_8 = csvread('timing_sql_seq_new/seq_pgres_8.csv') / 1000;
-seq_pgres_16 = csvread('timing_sql_seq_new/seq_pgres_16.csv') / 1000;
-seq_pgres_32 = csvread('timing_sql_seq/seq_pgres_32.csv') / 1000;
-
-
-percntiles_pgres_1 = prctile(seq_pgres_1,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_1 = seq_pgres_1 < percntiles_pgres_1(1) | seq_pgres_1 > percntiles_pgres_1(2);
-%remove outlier values
-seq_pgres_1(outlierIndex_pgres_1) = [];
+seq_pgres_1 = csvread('timing/pgres_seq_1.csv') / 1000;
+seq_pgres_2 = csvread('timing/pgres_seq_2.csv') / 1000;
+seq_pgres_4 = csvread('timing/pgres_seq_4.csv') / 1000;
+seq_pgres_8 = csvread('timing/pgres_seq_8.csv') / 1000;
+seq_pgres_16 = csvread('timing/pgres_seq_16.csv') / 1000;
+seq_pgres_32 = csvread('timing/pgres_seq_32.csv') / 1000;
 best_time_pgres_1 = min( seq_pgres_1 );
-
-percntiles_pgres_2 = prctile(seq_pgres_2,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_2 = seq_pgres_2 < percntiles_pgres_2(1) | seq_pgres_2 > percntiles_pgres_2(2);
-%remove outlier values
-seq_pgres_2(outlierIndex_pgres_2) = [];
 best_time_pgres_2 = min( seq_pgres_2 );
-
-percntiles_pgres_4 = prctile(seq_pgres_4,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_4 = seq_pgres_4 < percntiles_pgres_4(1) | seq_pgres_4 > percntiles_pgres_4(2);
-%remove outlier values
-seq_pgres_4(outlierIndex_pgres_4) = [];
 best_time_pgres_4 = min( seq_pgres_4 );
-
-percntiles_pgres_8 = prctile(seq_pgres_8,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_8 = seq_pgres_8 < percntiles_pgres_8(1) | seq_pgres_8 > percntiles_pgres_8(2);
-%remove outlier values
-seq_pgres_8(outlierIndex_pgres_8) = [];
 best_time_pgres_8 = min( seq_pgres_8 );
-
-percntiles_pgres_16 = prctile(seq_pgres_16,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_16 = seq_pgres_16 < percntiles_pgres_16(1) | seq_pgres_16 > percntiles_pgres_16(2);
-%remove outlier values
-seq_pgres_16(outlierIndex_pgres_16) = [];
 best_time_pgres_16 = min( seq_pgres_16 );
-
-percntiles_pgres_32 = prctile(seq_pgres_32,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_32 = seq_pgres_32 < percntiles_pgres_32(1) | seq_pgres_32 > percntiles_pgres_32(2);
-%remove outlier values
-seq_pgres_32(outlierIndex_pgres_32) = [];
 best_time_pgres_32 = min( seq_pgres_32 );
 
-par_pgres_1 = csvread('timing_sql_par/par_pgres_1.csv') / 1000;
-par_pgres_2 = csvread('timing_sql_par/par_pgres_2.csv') / 1000;
-par_pgres_4 = csvread('timing_sql_par/par_pgres_4.csv') / 1000;
-par_pgres_8 = csvread('timing_sql_par/par_pgres_8.csv') / 1000;
-par_pgres_16 = csvread('timing_sql_par/par_pgres_16.csv') / 1000;
-par_pgres_32 = csvread('timing_sql_par/par_pgres_32.csv') / 1000;
-
-percntiles_pgres_par_1 = prctile(par_pgres_1,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_par_1 = par_pgres_1 < percntiles_pgres_par_1(1) | par_pgres_1 > percntiles_pgres_par_1(2);
-%remove outlier values
-par_pgres_1(outlierIndex_pgres_par_1) = [];
+par_pgres_1 = csvread('timing/pgres_par_1.csv') / 1000;
+par_pgres_2 = csvread('timing/pgres_par_2.csv') / 1000;
+par_pgres_4 = csvread('timing/pgres_par_4.csv') / 1000;
+par_pgres_8 = csvread('timing/pgres_par_8.csv') / 1000;
+par_pgres_16 = csvread('timing/pgres_par_16.csv') / 1000;
+par_pgres_32 = csvread('timing/pgres_par_32.csv') / 1000;
 best_time_pgres_par_1 = min( par_pgres_1 );
-
-percntiles_pgres_par_2 = prctile(par_pgres_2,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_par_2 = par_pgres_2 < percntiles_pgres_par_2(1) | par_pgres_2 > percntiles_pgres_par_2(2);
-%remove outlier values
-par_pgres_2(outlierIndex_pgres_par_2) = [];
 best_time_pgres_par_2 = min( par_pgres_2 );
-
-percntiles_pgres_par_4 = prctile(par_pgres_4,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_par_4 = par_pgres_4 < percntiles_pgres_par_4(1) | par_pgres_4 > percntiles_pgres_par_4(2);
-%remove outlier values
-par_pgres_4(outlierIndex_pgres_par_4) = [];
 best_time_pgres_par_4 = min( par_pgres_4 );
-
-percntiles_pgres_par_8 = prctile(par_pgres_8,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_par_8 = par_pgres_8 < percntiles_pgres_par_8(1) | par_pgres_8 > percntiles_pgres_par_8(2);
-%remove outlier values
-par_pgres_8(outlierIndex_pgres_par_8) = [];
 best_time_pgres_par_8 = min( par_pgres_8 );
-
-percntiles_pgres_par_16 = prctile(par_pgres_16,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_par_16 = par_pgres_16 < percntiles_pgres_par_16(1) | par_pgres_16 > percntiles_pgres_par_16(2);
-%remove outlier values
-par_pgres_16(outlierIndex_pgres_par_16) = [];
 best_time_pgres_par_16 = min( par_pgres_16 );
-
-percntiles_pgres_par_32 = prctile(par_pgres_32,[5 95]); %5th and 95th percentile
-outlierIndex_pgres_par_32 = par_pgres_32 < percntiles_pgres_par_32(1) | par_pgres_32 > percntiles_pgres_par_32(2);
-%remove outlier values
-par_pgres_32(outlierIndex_pgres_par_32) = [];
 best_time_pgres_par_32 = min( par_pgres_32 );
 
-novec_1 =  csvread('timing/timings_no_vec_1.dat') ;
-novec_1 =  novec_1( :, 2);
-novec_2 = csvread('timing/timings_no_vec_2.dat');
-novec_2 =  novec_2( :, 2);
-novec_4 = csvread('timing/timings_no_vec_4.dat');
-novec_4 =  novec_4( :, 2);
-novec_8 = csvread('timing/timings_no_vec_8.dat');
-novec_8 =  novec_8( :, 2);
-novec_16 = csvread('timing/timings_no_vec_16.dat');
-novec_16 =  novec_16( :, 2);
-novec_32 = csvread('timing/timings_no_vec_32.dat');
-novec_32 =  novec_32( :, 2);
-
-
-percntiles_novec_1 = prctile(novec_1,[5 95]); %5th and 95th percentile
-outlierIndex_novec_1 = novec_1 < percntiles_novec_1(1) | novec_1 > percntiles_novec_1(2);
-%remove outlier values
-novec_1(outlierIndex_novec_1) = [];
-best_time_novec_1 = max( novec_1 );
-
-percntiles_novec_2 = prctile(novec_2,[5 95]); %5th and 95th percentile
-outlierIndex_novec_2 = novec_2 < percntiles_novec_2(1) | novec_2 > percntiles_novec_2(2);
-%remove outlier values
-novec_2(outlierIndex_novec_2) = [];
-best_time_novec_2 = max( novec_2 );
-
-percntiles_novec_4 = prctile(novec_4,[5 95]); %5th and 95th percentile
-outlierIndex_novec_4 = novec_4 < percntiles_novec_4(1) | novec_4 > percntiles_novec_4(2);
-%remove outlier values
-novec_4(outlierIndex_novec_4) = [];
-best_time_novec_4 = max( novec_4 );
-
-percntiles_novec_8 = prctile(novec_8,[5 95]); %5th and 95th percentile
-outlierIndex_novec_8 = novec_8 < percntiles_novec_8(1) | novec_8 > percntiles_novec_8(2);
-%remove outlier values
-novec_8(outlierIndex_novec_8) = [];
-best_time_novec_8 = max( novec_8 );
-
-percntiles_novec_16 = prctile(novec_16,[5 95]); %5th and 95th percentile
-outlierIndex_novec_16 = novec_16 < percntiles_novec_16(1) | novec_16 > percntiles_novec_16(2);
-%remove outlier values
-novec_16(outlierIndex_novec_16) = [];
-best_time_novec_16 = max( novec_16 );
-
-percntiles_novec_32 = prctile(novec_32,[5 95]); %5th and 95th percentile
-outlierIndex_novec_32 = novec_32 < percntiles_novec_32(1) | novec_32 > percntiles_novec_32(2);
-%remove outlier values
-novec_32(outlierIndex_novec_32) = [];
-best_time_novec_32 = max( novec_32 );
 
 
 dataset = [1 2 4 8 16 32];
-dataset_new = [1 2 ];
 
-dataset_pgres_seq = [1 2 4 8 16 32];
-dataset_pgres_par = [1 2 4 8 16 32];
-
-best_time_1new = 0.167290;
-best_time_2new = 0.336455;
-time_olap = [ best_time_1 best_time_2 best_time_4 best_time_8 best_time_16 best_time_32 ];
+%time_olap = [ best_time_1 best_time_2 best_time_4 best_time_8 best_time_16 best_time_32 ];
 
 time_pgres_seq = [ best_time_pgres_1 best_time_pgres_2 best_time_pgres_4 best_time_pgres_8 best_time_pgres_16 best_time_pgres_32  ];
 time_pgres_par = [ best_time_pgres_par_1 best_time_pgres_par_2 best_time_pgres_par_4 best_time_pgres_par_8 best_time_pgres_par_16 best_time_pgres_par_32  ];
 
-time_olap_new = [ best_time_1new best_time_2new ];
+time_olap_new = [ best_time_1 best_time_2 best_time_4 best_time_8 best_time_16 best_time_32 ];
 
 
-loglog(dataset,time_olap,'s--','Color', color0,'MarkerSize', 14);
+%loglog(dataset,time_olap,'s--','Color', color0,'MarkerSize', 14);
+%hold on;
+
+loglog(dataset,time_olap_new,'s--','Color', color7, 'MarkerEdgeColor' , color7, 'MarkerSize', 14);
 hold on;
 
-loglog(dataset_new,time_olap_new,'s--','Color', color7, 'MarkerEdgeColor' , color7, 'MarkerSize', 14);
+loglog(dataset,time_pgres_seq,'d--','Color', color2,'MarkerSize', 14);
 hold on;
 
-loglog(dataset_pgres_seq,time_pgres_seq,'d--','Color', color2,'MarkerSize', 14);
-hold on;
-
-loglog(dataset_pgres_par,time_pgres_par,'d--','Color', color6,'MarkerSize', 14);
+loglog(dataset,time_pgres_par,'d--','Color', color6,'MarkerSize', 14);
 hold on;
 
 
-
-B = [ 1 best_time_1new ; 2 best_time_2new  ];
-str = num2str([ best_time_1new ; best_time_2new ]);
-text(B(:,1)*1.10, B(:,2)*1,str);
 
 
 A = [ 1 best_time_1 ; 2 best_time_2 ; 4 best_time_4 ; 8 best_time_8 ; 16 best_time_16 ; 32 best_time_32 ];
@@ -272,7 +127,7 @@ ylim([0,164]) ;
 set(gca,'YTickLabel',num2str(get(gca,'YTick').'));
 
 
-l = legend(  'OLD Vectorized Sequential Linear Algebra Approach' , 'NEW Vectorized Sequential Linear Algebra Approach','NEW OPTIMIZED Sequential PostgreSQL', 'OLD Parallel PostgreSQL (max\_parallel\_degree = 20)' );
+l = legend(  'Parallel Linear Algebra Approach' , 'Sequential PostgreSQL', 'Parallel PostgreSQL (max\_parallel\_degree = 20)' );
 
 
   
