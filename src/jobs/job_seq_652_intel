@@ -9,7 +9,7 @@
 #          PBS directives must come first; any directives
 #          after the first executable statement are ignored.
 
-#PBS -N OLAP_VEC_NEW_32
+#PBS -N OLAP_PAR_FULL
 #PBS -l walltime=00:30:00
 #PBS -q mei
 
@@ -45,7 +45,7 @@ cd CPD_PI_OLAP/src
 
 sample_size=5
 
-for tbl_size in 32
+for tbl_size in 1 2 4 8 16 32
 do
 	for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 	do
