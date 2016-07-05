@@ -441,19 +441,19 @@ void tbl_read(
 int tbl_get_number_elements (char* table_name){
 
   FILE* stream = fopen(table_name, "r");
-    if (stream == NULL){
-        exit(EXIT_FAILURE);
-    }
-    
+  if (stream == NULL){
+    exit(EXIT_FAILURE);
+  }
+
   int element_number = 0;
-char *line = NULL;
-           size_t len = 0;
-           ssize_t read;
-   
+  char *line = NULL;
+  size_t len = 0;
+  ssize_t read;
+
   for( element_number = 0 ; ( read = getline(&line, &len, stream) ) > 0  ; ++element_number ){
-	}
-    free(line);
-    fclose(stream);
+  }
+  free(line);
+  fclose(stream);
 
   return element_number;
 }
@@ -488,10 +488,13 @@ void tbl_read_csc (
   assert(aux_csc_col_ptr != NULL);
 #endif
 
-  FILE* stream = fopen(table_name, "r");
-    if (stream == NULL){
-        exit(EXIT_FAILURE);
-    }
+  int fd;
+  fd = open(table_name, O_RDONLY | O_NONBLOCK );
+
+  FILE* stream = fdopen(fd, "r");
+  if (stream == NULL){
+    exit(EXIT_FAILURE);
+  }
   int number_rows = - 1;
   int element_number = 0;
 
@@ -502,12 +505,12 @@ void tbl_read_csc (
   current_major_row = 0;
   int row_of_element;
 
-    char *field=NULL; 
-           char *line = NULL;
-           size_t len = 0;
+  char *field=NULL; 
+  char *line = NULL;
+  size_t len = 0;
 
   for( element_number = 0 ; element_number < number_elements ; ++element_number ){
-	 getline(&line, &len, stream);
+    getline(&line, &len, stream);
     field = getfield(line, tbl_column, field);
 
 #ifdef D_DEBUGGING
@@ -525,7 +528,7 @@ void tbl_read_csc (
     aux_csc_row_ind[element_number] = row_of_element;
     aux_csc_values[element_number] = 1.0f;
   }
-    free(line);
+  free(line);
   fclose(stream);
 
 
@@ -583,26 +586,31 @@ void tbl_read_csc_measure (
   assert(aux_csc_ia != NULL);
 #endif
 
-  FILE* stream = fopen(table_name, "r");
-    if (stream == NULL){
-        exit(EXIT_FAILURE);
-    }
+
+  int fd;
+  fd = open(table_name, O_RDONLY | O_NONBLOCK );
+
+  FILE* stream = fdopen(fd, "r");
+  if (stream == NULL){
+    exit(EXIT_FAILURE);
+  }
+
   int element_number = 0;
 
   float value;
-    char *field=NULL;
-    char *line = NULL;
-    size_t len = 0;
-    
-    for( element_number = 0 ; element_number < number_elements ; ++element_number ){
-        getline(&line, &len, stream);
-        field = getfield(line, tbl_column, field);
+  char *field=NULL;
+  char *line = NULL;
+  size_t len = 0;
+
+  for( element_number = 0 ; element_number < number_elements ; ++element_number ){
+    getline(&line, &len, stream);
+    field = getfield(line, tbl_column, field);
     value = atof(field);
     aux_csc_ja[element_number] = element_number;
     aux_csc_ia[element_number] = element_number;
     aux_csc_values[element_number] = value;
   }
-    free(line);
+  free(line);
 
   fclose(stream);
 
