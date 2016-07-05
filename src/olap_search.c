@@ -33,9 +33,9 @@
 #define _olap_c
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <glib.h>
-#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "mkl_spblas.h"
@@ -442,10 +442,12 @@ int tbl_get_number_elements (char* table_name){
 
   FILE* stream = fopen(table_name, "r");
   int element_number = 0;
-  char line[1024];
-
-  for( element_number = 0 ; getline(&line, MAX_REG_SIZE, stream)>0  ; ++element_number ){
-  }
+char *line = NULL;
+           size_t len = 0;
+           ssize_t read;
+   
+  for( element_number = 0 ; ( read = getline(&line, &len, stream) ) > 0  ; ++element_number ){
+	}
 
   return element_number;
 }
@@ -485,25 +487,25 @@ void tbl_read_csc (
   int element_number = 0;
 
   float value;
-  char line[1024];
 
   int quark_field;
   int current_major_row;
   current_major_row = 0;
   int row_of_element;
 
+    char *field=NULL; 
+           char *line = NULL;
+           size_t len = 0;
+
   for( element_number = 0 ; element_number < number_elements ; ++element_number ){
-    getline(&line, MAX_REG_SIZE, stream);
-    char* tmp_field = strdup(line);
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char));
-    field = getfield(tmp_field, tbl_column, field);
+	 getline(&line, &len, stream);
+    field = getfield(line, tbl_column, field);
 
 #ifdef D_DEBUGGING
     assert(field!=NULL);
 #endif
 
     quark_field = (int) g_quark_from_string (field);
-
     // since quarks start by 1 and we want to start at line 0 and not 1 lets decrement
     row_of_element = quark_field -1;
     // for calculating the number of rows
@@ -576,11 +578,14 @@ void tbl_read_csc_measure (
   int element_number = 0;
 
   float value;
-  char line[1024];
+  //char line[1024];
 
+
+           char *line = NULL;
+           size_t len = 0;
 
   for( element_number = 0 ; element_number < number_elements ; ++element_number ){
-    getline(&line, MAX_REG_SIZE, stream);
+	 getline(&line, &len, stream);
     char* tmp_field = strdup(line);
     char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char));
     field = getfield(tmp_field, tbl_column, field);
