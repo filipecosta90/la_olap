@@ -453,6 +453,8 @@ char *line = NULL;
   for( element_number = 0 ; ( read = getline(&line, &len, stream) ) > 0  ; ++element_number ){
 	}
     free(line);
+    fclose(stream);
+
   return element_number;
 }
 
@@ -487,6 +489,9 @@ void tbl_read_csc (
 #endif
 
   FILE* stream = fopen(table_name, "r");
+    if (stream == NULL){
+        exit(EXIT_FAILURE);
+    }
   int number_rows = - 1;
   int element_number = 0;
 
@@ -579,6 +584,9 @@ void tbl_read_csc_measure (
 #endif
 
   FILE* stream = fopen(table_name, "r");
+    if (stream == NULL){
+        exit(EXIT_FAILURE);
+    }
   int element_number = 0;
 
   float value;

@@ -470,12 +470,12 @@ int main( int argc, char* argv[]){
   _mm_free( quantity_col_ptr );
 
   // FREE Shipdate Matrix
-  _mm_free( shipdate_csc_values = NULL );
+  _mm_free( shipdate_csc_values );
   _mm_free( shipdate_row_ind );
   _mm_free( shipdate_col_ptr );
 
   // FREE Projection Matrix
-  _mm_free( projection_csc_values = NULL );
+  _mm_free( projection_csc_values );
   _mm_free( projection_row_ind );
   _mm_free( projection_col_ptr );
 
