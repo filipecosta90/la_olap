@@ -2324,7 +2324,6 @@ void csc_csc_mm(
   __assume_aligned(A_csc_values, MEM_LINE_SIZE);
   __assume_aligned(A_row_ind, MEM_LINE_SIZE);
   __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
-
   __assume_aligned(B_csc_values, MEM_LINE_SIZE);
   __assume_aligned(B_row_ind, MEM_LINE_SIZE);
   __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
@@ -2364,16 +2363,80 @@ void csc_csc_mm(
       }
     }
   }
-
   aux_col_ptr[B_n_cols] = nnz_aux;
   *C_n_rows = (max_row+1);
   *C_n_cols = B_n_cols;
   *C_n_nnz = nnz_aux;
-
   *C_csc_values = aux_csc_values;
   *C_row_ind = aux_row_ind;
   *C_col_ptr = aux_col_ptr;
+}
 
+
+void csc_csc_bitmap_mm(
+                float * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+                int * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
+                int *__restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr,
+                int A_n_nnz, int A_n_rows, int A_n_cols,
+                float * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) B_csc_values,
+                int * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) B_row_ind,
+                int * __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) B_col_ptr,
+                int B_n_nnz, int B_n_rows, int B_n_cols,
+                float ** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_csc_values,
+                int ** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_row_ind,
+                int ** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_col_ptr,
+                int *C_n_nnz, int *C_n_rows, int *C_n_cols
+                ){
+    
+    __assume_aligned(A_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(A_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
+    __assume_aligned(B_csc_values, MEM_LINE_SIZE);
+    __assume_aligned(B_row_ind, MEM_LINE_SIZE);
+    __assume_aligned(B_col_ptr, MEM_LINE_SIZE);
+    
+    __declspec(align(MEM_LINE_SIZE)) float * aux_csc_values;
+    __declspec(align(MEM_LINE_SIZE)) int* aux_row_ind;
+    __declspec(align(MEM_LINE_SIZE)) int* aux_col_ptr;
+    int b_row = -1;
+    int a_row = -1 ;
+    int flag_a, flag_b;
+    int a_pos, b_pos;
+    int max_row = 0;
+    int nnz_aux = 0;
+    
+    int nnz = A_n_nnz > B_n_nnz ? A_n_nnz : B_n_nnz;
+    
+    aux_csc_values = (float*) _mm_malloc ( nnz * sizeof(float) , MEM_LINE_SIZE );
+    aux_row_ind = (int*) _mm_malloc ( nnz  * sizeof(int) , MEM_LINE_SIZE);
+    aux_col_ptr = (int*) _mm_malloc ( (B_n_cols+1) * sizeof(int) , MEM_LINE_SIZE);
+    
+    for ( int at_column_b = 0 ; at_column_b < B_n_cols ; ++at_column_b ){
+        aux_col_ptr[at_column_b] = nnz_aux;
+        b_pos = B_col_ptr[at_column_b];
+        flag_b = B_col_ptr[at_column_b+1] - b_pos;
+        if ( flag_b > 0 ) {
+            b_row = B_row_ind[b_pos];
+            for ( int at_column_a = 0 ; at_column_a < A_n_cols ; ++at_column_a ){
+                a_pos = A_col_ptr[at_column_a];
+                flag_a = A_col_ptr[at_column_a+1] - a_pos;
+                if ( ( b_row == at_column_a ) && (flag_a > 0) ){
+                    a_row = A_row_ind[a_pos];
+                    aux_row_ind[nnz_aux] = a_row;
+                    max_row = a_row > max_row ? a_row : max_row;
+                    aux_csc_values[nnz_aux] += 1;
+                    nnz_aux++;
+                }
+            }
+        }
+    }
+    aux_col_ptr[B_n_cols] = nnz_aux;
+    *C_n_rows = (max_row+1);
+    *C_n_cols = B_n_cols;
+    *C_n_nnz = nnz_aux;
+    *C_csc_values = aux_csc_values;
+    *C_row_ind = aux_row_ind;
+    *C_col_ptr = aux_col_ptr;
 }
 
 void csc_bang(
