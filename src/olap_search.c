@@ -465,7 +465,7 @@ void tbl_read_csc (
     int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
     int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr
     ){
-#ifdef D_DEBUGGING
+#ifdef D_VERBOSE
   printf("going to read column %d\n", tbl_column);
 #endif
 
@@ -542,7 +542,7 @@ void tbl_read_csc (
   *n_cols = number_elements;
   *n_nnz = number_elements;
 
-#ifdef D_DEBUGGING
+#ifdef D_VERBOSE
   print_csc(
       *A_csc_values, *A_row_ind, *A_col_ptr,
       *n_nnz, *n_rows, *n_cols
@@ -560,7 +560,7 @@ void tbl_read_csc_measure (
     int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_JA,
     int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_IA
     ){
-#ifdef D_DEBUGGING
+#ifdef D_VERBOSE
   printf("going to read column %d\n", tbl_column);
 #endif
 
@@ -620,7 +620,7 @@ void tbl_read_csc_measure (
   *columns = number_elements;
   *nnz = number_elements;
 
-#ifdef D_DEBUGGING
+#ifdef D_VERBOSE
   print_csc(
       *A_csc_values, *A_JA, *A_IA,
       *nnz, *rows, *columns

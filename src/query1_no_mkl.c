@@ -85,7 +85,9 @@ int main( int argc, char* argv[]){
   strcat(table_file, argv[1]);
   strcat(table_file, ".tbl");
 
-#ifdef D_DEBUGGING
+  int dataset_n_elements[33] = { 100 , 6001215, 11997996, -1 , 23996604, -1 , -1 , -1 , 47989007,  -1 , -1 , -1 , -1 , -1 , -1 , -1 ,  95988640,  -1 , -1 , -1 , -1 , -1 , -1 , -1, -1, -1, -1, -1, -1, -1, -1, -1, 192000551} ;
+
+#ifdef D_VERBOSE
   printf("going to read results from %s\n", table_file);
 #endif
 
@@ -214,9 +216,9 @@ int main( int argc, char* argv[]){
   int final_vector_n_nnz;
   int final_vector_n_rows;
 
-  int number_elements = tbl_get_number_elements (table_file);
+  int number_elements = dataset_n_elements[argv[1]];
 
-#ifdef D_DEBUGGING
+#ifdef D_VERBOSE
   printf("tbl file has %d elements\n", number_elements);
 #endif
 
@@ -419,7 +421,7 @@ int main( int argc, char* argv[]){
   ////////////////////////
   writeResults( argv[1] );
 
-#ifdef D_DEBUGGING
+#ifdef D_VERBOSE
   printf("( ( projection . selection ) . quantity ) . bang || final vector rows %d nnz %d\n", final_vector_n_rows, final_vector_n_nnz );
   print_csc_vector(
       final_vector_csc_values, final_vector_row_ind,

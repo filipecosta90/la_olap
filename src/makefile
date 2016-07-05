@@ -14,11 +14,14 @@ DEBUGFLAGS=  $(INCLUDE) -qopenmp -g -ggdb -O3 -Wall -Wextra -xAVX -D_BSD_SOURCE 
 nomkl: olap_search.o query1_no_mkl.o
 	$(CC) $(CFLAGS) olap_search.c query1_no_mkl.c -o query1_no_mkl $(LIB) 
 
+nomklver: olap_search.o query1_no_mkl.o
+	$(CC) $(CFLAGS) -DD_VERBOSE olap_search.c query1_no_mkl.c -o query1_no_mkl $(LIB) 
+
 nomkldebug: olap_search.o query1_no_mkl.o
 	$(CC) $(DEBUGFLAGS) olap_search.c query1_no_mkl.c -o query1_no_mkl $(LIB) 
 
-nomklverbose: olap_search.o query1_no_mkl.o
-	$(CC) $(DEBUGFLAGS) -DD_DEBUGGING olap_search.c query1_no_mkl.c -o query1_no_mkl $(LIB) 
+nomkldebugver: olap_search.o query1_no_mkl.o
+	$(CC) $(DEBUGFLAGS) -DD_VERBOSE -DD_DEBUGGING olap_search.c query1_no_mkl.c -o query1_no_mkl $(LIB) 
 
 
 v0: olap_search.o querie1_search.o
