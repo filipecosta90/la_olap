@@ -441,6 +441,10 @@ void tbl_read(
 int tbl_get_number_elements (char* table_name){
 
   FILE* stream = fopen(table_name, "r");
+    if (stream == NULL){
+        exit(EXIT_FAILURE);
+    }
+    
   int element_number = 0;
 char *line = NULL;
            size_t len = 0;
@@ -448,7 +452,7 @@ char *line = NULL;
    
   for( element_number = 0 ; ( read = getline(&line, &len, stream) ) > 0  ; ++element_number ){
 	}
-
+    free(line);
   return element_number;
 }
 
@@ -516,7 +520,7 @@ void tbl_read_csc (
     aux_csc_row_ind[element_number] = row_of_element;
     aux_csc_values[element_number] = 1.0f;
   }
-
+    free(line);
   fclose(stream);
 
 
@@ -578,22 +582,19 @@ void tbl_read_csc_measure (
   int element_number = 0;
 
   float value;
-  //char line[1024];
-
-
-           char *line = NULL;
-           size_t len = 0;
-
-  for( element_number = 0 ; element_number < number_elements ; ++element_number ){
-	 getline(&line, &len, stream);
-    char* tmp_field = strdup(line);
-    char *field = (char*) malloc( MAX_FIELD_SIZE * sizeof(char));
-    field = getfield(tmp_field, tbl_column, field);
+    char *field=NULL;
+    char *line = NULL;
+    size_t len = 0;
+    
+    for( element_number = 0 ; element_number < number_elements ; ++element_number ){
+        getline(&line, &len, stream);
+        field = getfield(line, tbl_column, field);
     value = atof(field);
     aux_csc_ja[element_number] = element_number;
     aux_csc_ia[element_number] = element_number;
     aux_csc_values[element_number] = value;
   }
+    free(line);
 
   fclose(stream);
 
