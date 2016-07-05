@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<log version="1.0" tool="runtool">
+
+<msg id="1" tool="runtool">
+  <type>log-start</type>
+  <arg>2016/07/05 04:41:09</arg>
+</msg>
+<msg id="2" tool="runtool">
+  <type>status</type>
+  <arg> </arg>
+</msg>
+<msg id="3" tool="runtool">
+  <type>problems-total</type>
+  <arg>0</arg>
+</msg>
+<msg id="4" tool="runtool">
+  <type>log-end</type>
+  <arg>2016/07/05 04:42:35</arg>
+</msg>
+
+</log>
+

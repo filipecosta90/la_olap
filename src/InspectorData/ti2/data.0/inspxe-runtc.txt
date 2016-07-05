@@ -1,0 +1,37 @@
+
+=== Start: [2016/07/05 04:41:09] === 
+Analysis started...
+Result file: /home/a57816/CPD_PI_OLAP/src/InspectorData/ti2/ti2.inspxe 
+Found target process /home/a57816/CPD_PI_OLAP/src/query1_no_mkl (PID = 25429). Analysis started... 
+Loaded module: /home/a57816/CPD_PI_OLAP/src/query1_no_mkl. 
+Loaded module: /lib64/ld-linux-x86-64.so.2. 
+Loaded module: /lib64/libglib-2.0.so.0. 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_lp64.so. 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_core.so. 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_sequential.so. 
+Loaded module: /lib64/libpthread.so.0. 
+Loaded module: /lib64/libm.so.6. 
+Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so. 
+Loaded module: /lib64/libgcc_s.so.1. 
+Loaded module: /lib64/libc.so.6. 
+Loaded module: /lib64/libdl.so.2. 
+Loaded module: /share/apps/intel/inspector_xe_2016.1.0.423441/lib64/runtime/libittnotify.so. 
+Warning: One or more threads in the application accessed the stack of another thread. This may indicate one or more bugs in your application. Setting the Inspector to detect data races on stack accesses and running another analysis may help you locate these and other bugs.
+Unloaded module: /home/a57816/CPD_PI_OLAP/src/query1_no_mkl. 
+Unloaded module: /lib64/ld-linux-x86-64.so.2. 
+Unloaded module: /lib64/libglib-2.0.so.0. 
+Unloaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_lp64.so. 
+Unloaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_core.so. 
+Unloaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_sequential.so. 
+Unloaded module: /lib64/libpthread.so.0. 
+Unloaded module: /lib64/libm.so.6. 
+Unloaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so. 
+Unloaded module: /lib64/libgcc_s.so.1. 
+Unloaded module: /lib64/libc.so.6. 
+Unloaded module: /lib64/libdl.so.2. 
+Unloaded module: /share/apps/intel/inspector_xe_2016.1.0.423441/lib64/runtime/libittnotify.so. 
+Process /home/a57816/CPD_PI_OLAP/src/query1_no_mkl (PID = 25429) has terminated. 
+Application exit code: 0 
+Result file: /home/a57816/CPD_PI_OLAP/src/InspectorData/ti2/ti2.inspxe 
+Analysis completed
+=== End: [2016/07/05 04:42:35] === 

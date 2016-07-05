@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feedback>
+ <message severity="verbose">Analysis started...</message>
+ <nop/>
+ <message severity="verbose">Result file: /home/a57816/CPD_PI_OLAP/src/InspectorData/mi3/mi3.inspxe </message>
+ <nop/>
+ <message severity="verbose">Analysis started for /home/a57816/CPD_PI_OLAP/src/query1_no_mkl (pid = 25740) </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /home/a57816/CPD_PI_OLAP/src/query1_no_mkl, address range [0x400000-0x63de77] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /lib64/ld-linux-x86-64.so.2, address range [0x328d200000-0x328d421187], minimal analysis </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /lib64/libglib-2.0.so.0, address range [0x328f600000-0x328f8e4c0f] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_lp64.so, address range [0x2ad18f297000-0x2ad18fbd4eff] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_core.so, address range [0x2ad18fc31000-0x2ad191515147] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_sequential.so, address range [0x2ad1915c8000-0x2ad191e6ed4f] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /lib64/libpthread.so.0, address range [0x328de00000-0x328e01c39f] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /lib64/libm.so.6, address range [0x328e200000-0x328e4830d7] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so, address range [0x2ad191f11000-0x2ad192251bdf], minimal analysis </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /lib64/libgcc_s.so.1, address range [0x328f200000-0x328f415cf7] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /lib64/libc.so.6, address range [0x328d600000-0x328d9928a7] </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /lib64/libdl.so.2, address range [0x328da00000-0x328dc030ff], minimal analysis </message>
+ <nop/>
+ <message severity="verbose">Loaded module: /share/apps/intel/inspector_xe_2016.1.0.423441/lib64/runtime/libittnotify.so, address range [0x2ad193dd9000-0x2ad193fe58df], minimal analysis </message>
+ <nop/>
+ <message severity="verbose">Process /home/a57816/CPD_PI_OLAP/src/query1_no_mkl exited with code 0. Leak analysis starting. Please wait... </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /home/a57816/CPD_PI_OLAP/src/query1_no_mkl </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /lib64/ld-linux-x86-64.so.2 </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /lib64/libglib-2.0.so.0 </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_intel_lp64.so </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_core.so </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64/libmkl_sequential.so </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /lib64/libpthread.so.0 </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /lib64/libm.so.6 </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /share/apps/intel/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64/libiomp5.so </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /lib64/libgcc_s.so.1 </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /lib64/libc.so.6 </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /lib64/libdl.so.2 </message>
+ <nop/>
+ <message severity="verbose">Unloaded module: /share/apps/intel/inspector_xe_2016.1.0.423441/lib64/runtime/libittnotify.so </message>
+ <nop/>
+ <message severity="verbose">Completed analysis for /home/a57816/CPD_PI_OLAP/src/query1_no_mkl </message>
+ <nop/>
+ <message severity="verbose">Application exit code: 0 </message>
+ <nop/>
+ <message severity="verbose">Result file: /home/a57816/CPD_PI_OLAP/src/InspectorData/mi3/mi3.inspxe </message>
+ <nop/>
+ <message severity="verbose">Analysis completed</message>
+ <nop/>
+ <message severity="info">  </message>
+ <nop/>
+ <message severity="info">3 new problem(s) found </message>
+ <nop/>
+ <message severity="info">    2 Memory leak problem(s) detected </message>
+ <nop/>
+ <message severity="info">    1 Memory not deallocated problem(s) detected </message>
+ <nop/>
+</feedback>
