@@ -216,60 +216,75 @@ int main( int argc, char* argv[]){
   int final_vector_n_nnz;
   int final_vector_n_rows;
 
-int dataset = atoi(argv[1]);
+  int dataset = atoi(argv[1]);
   int number_elements = dataset_n_elements[dataset];
 
 #ifdef D_VERBOSE
   printf("tbl file has %d elements\n", number_elements);
 #endif
 
-  /** ---------------------------------------------------------------------------
-   ** Populate Return Flag Matrix
-   ** -------------------------------------------------------------------------*/
-  //read return flag
-  //bitmap matrix
-  tbl_read_csc(
-      table_file , 9, number_elements,
-      &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
-      &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
-      );
+#pragma omp parallel
+  {
+    /** ---------------------------------------------------------------------------
+     ** Populate Return Flag Matrix
+     ** -------------------------------------------------------------------------*/
+    //read return flag
+    //bitmap matrix
 
-  /** ---------------------------------------------------------------------------
-   ** Populate Line Status Matrix
-   ** -------------------------------------------------------------------------*/
-  //read line status
-  //bitmap matrix
-  tbl_read_csc(
-      table_file , 10, number_elements,
-      &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
-      &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
-      );
+#pragma omp task
+    {
+      tbl_read_csc(
+          table_file , 9, number_elements,
+          &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
+          &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
+          );
+    }
 
-  /** ---------------------------------------------------------------------------
-   ** =========================== END OF DECLARATIONS ===========================
-   ** -------------------------------------------------------------------------*/
+    /** ---------------------------------------------------------------------------
+     ** Populate Line Status Matrix
+     ** -------------------------------------------------------------------------*/
+    //read line status
+    //bitmap matrix
+#pragma omp task
+    {
+      tbl_read_csc(
+          table_file , 10, number_elements,
+          &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
+          &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
+          );
+    }
+    /** ---------------------------------------------------------------------------
+     ** =========================== END OF DECLARATIONS ===========================
+     ** -------------------------------------------------------------------------*/
 
-  /** ---------------------------------------------------------------------------
-   ** Populate Quantity Matrix
-   ** -------------------------------------------------------------------------*/
-  //read quantity
-  // measure
-  tbl_read_csc_measure(
-      table_file , 5, number_elements,
-      &quantity_n_nnz,  &quantity_n_rows, &quantity_n_cols , 
-      &quantity_csc_values, &quantity_row_ind, &quantity_col_ptr
-      );
+    /** ---------------------------------------------------------------------------
+     ** Populate Quantity Matrix
+     ** -------------------------------------------------------------------------*/
+    //read quantity
+    // measure
+#pragma omp task
+    {
+      tbl_read_csc_measure(
+          table_file , 5, number_elements,
+          &quantity_n_nnz,  &quantity_n_rows, &quantity_n_cols , 
+          &quantity_csc_values, &quantity_row_ind, &quantity_col_ptr
+          );
+    }
 
-  /** ---------------------------------------------------------------------------
-   ** Populate Shipdate Matrix
-   ** -------------------------------------------------------------------------*/
-  //read shipdate
-  //bitmap matrix
-  tbl_read_csc(
-      table_file , 11, number_elements,
-      &shipdate_n_nnz, &shipdate_n_rows, &shipdate_n_cols ,
-      &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
-      );
+    /** ---------------------------------------------------------------------------
+     ** Populate Shipdate Matrix
+     ** -------------------------------------------------------------------------*/
+    //read shipdate
+    //bitmap matrix
+#pragma omp task
+    {
+      tbl_read_csc(
+          table_file , 11, number_elements,
+          &shipdate_n_nnz, &shipdate_n_rows, &shipdate_n_cols ,
+          &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
+          );
+    }
+  }
 
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
