@@ -33,11 +33,12 @@
 #define _olap_c
 
 #include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <glib.h>
 #include <string.h>
-#include <stdio.h>
 #include "mkl_spblas.h"
 #include "mkl_types.h"
 #include "mkl.h"
@@ -516,9 +517,8 @@ void tbl_read_csc (
 #ifdef D_DEBUGGING
     assert(field!=NULL);
 #endif
-
     quark_field = (int) g_quark_from_string (field);
-    // since quarks start by 1 and we want to start at line 0 and not 1 lets decrement
+   // since quarks start by 1 and we want to start at line 0 and not 1 lets decrement
     row_of_element = quark_field -1;
     // for calculating the number of rows
     if (current_major_row < row_of_element ){
