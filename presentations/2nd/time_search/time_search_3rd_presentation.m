@@ -69,12 +69,12 @@ par_pgres_4 = csvread('timing/pgres_par_4.csv') / 1000;
 par_pgres_8 = csvread('timing/pgres_par_8.csv') / 1000;
 par_pgres_16 = csvread('timing/pgres_par_16.csv') / 1000;
 par_pgres_32 = csvread('timing/pgres_par_32.csv') / 1000;
-best_time_pgres_par_1 = min( par_pgres_1 );
-best_time_pgres_par_2 = min( par_pgres_2 );
-best_time_pgres_par_4 = min( par_pgres_4 );
-best_time_pgres_par_8 = min( par_pgres_8 );
-best_time_pgres_par_16 = min( par_pgres_16 );
-best_time_pgres_par_32 = min( par_pgres_32 );
+best_time_pgres_par_1 = min( par_pgres_1 )
+best_time_pgres_par_2 = min( par_pgres_2 )
+best_time_pgres_par_4 = min( par_pgres_4 )
+best_time_pgres_par_8 = min( par_pgres_8 )
+best_time_pgres_par_16 = min( par_pgres_16 )
+best_time_pgres_par_32 = min( par_pgres_32 )
 
 
 
@@ -121,7 +121,7 @@ set(gca, 'YTick', [1 2 4 8 16 32 64 128 ]);
 
 set(gca, 'XTick', [1 2 4 8 16 32 ]);
 xlim([1,32]) ;
-ylim([0,164]) ;
+ylim([0,64]) ;
 
 
 set(gca,'YTickLabel',num2str(get(gca,'YTick').'));

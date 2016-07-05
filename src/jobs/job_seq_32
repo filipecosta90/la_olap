@@ -10,7 +10,7 @@
 #          after the first executable statement are ignored.
 
 #PBS -N OLAP_PAR_FULL
-#PBS -l walltime=00:30:00
+#PBS -l walltime=00:20:00
 #PBS -q mei
 
 #          PBS can send informative email messages to you about the
@@ -45,9 +45,9 @@ cd CPD/PI/CPD_PI_OLAP/src
 
 export OMP_NUM_THREADS=20
 
-sample_size=5
+sample_size=2
 
-for tbl_size in 1 2 4 8 16 32
+for tbl_size in 32
 do
 	for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 	do
