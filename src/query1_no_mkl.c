@@ -216,7 +216,8 @@ int main( int argc, char* argv[]){
   int final_vector_n_nnz;
   int final_vector_n_rows;
 
-  int number_elements = dataset_n_elements[argv[1]];
+int dataset = atoi(argv[1]);
+  int number_elements = dataset_n_elements[dataset];
 
 #ifdef D_VERBOSE
   printf("tbl file has %d elements\n", number_elements);

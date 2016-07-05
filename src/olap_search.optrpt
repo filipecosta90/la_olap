@@ -155,21 +155,6 @@ LOOP END
 LOOP BEGIN at olap_search.c(420,5)
 <Remainder loop for vectorization>
 LOOP END
-
-LOOP BEGIN at olap_search.c(117,5) inlined into olap_search.c(430,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(118,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(122,5) inlined into olap_search.c(430,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(123,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(127,5) inlined into olap_search.c(430,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(128,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
 ===========================================================================
 
 Begin optimization report for: tbl_get_number_elements(char *)
@@ -188,7 +173,11 @@ Begin optimization report for: tbl_read_csc(char *, int, int, int *, int *, int 
 
 
 LOOP BEGIN at olap_search.c(509,3)
-   remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria
+   remark #15382: vectorization support: call to function getline() cannot be vectorized   [ olap_search.c(510,3) ]
+   remark #15382: vectorization support: call to function strtok(char *__restrict__, const char *__restrict__) cannot be vectorized   [ olap_search.c(55,19) ]
+   remark #15382: vectorization support: call to function strtok(char *__restrict__, const char *__restrict__) cannot be vectorized   [ olap_search.c(58,21) ]
+   remark #15382: vectorization support: call to function g_quark_from_string(const gchar *) cannot be vectorized   [ olap_search.c(517,25) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
 
    LOOP BEGIN at olap_search.c(57,3) inlined into olap_search.c(511,13)
       remark #15527: loop was not vectorized: function call to strtok(char *__restrict__, const char *__restrict__) cannot be vectorized   [ olap_search.c(58,21) ]
@@ -255,21 +244,6 @@ LOOP BEGIN at olap_search.c(674,30)
    LOOP BEGIN at olap_search.c(57,3) inlined into olap_search.c(677,13)
       remark #15527: loop was not vectorized: function call to strtok(char *__restrict__, const char *__restrict__) cannot be vectorized   [ olap_search.c(58,21) ]
    LOOP END
-LOOP END
-
-LOOP BEGIN at olap_search.c(117,5) inlined into olap_search.c(734,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(118,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(122,5) inlined into olap_search.c(734,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(123,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-LOOP END
-
-LOOP BEGIN at olap_search.c(127,5) inlined into olap_search.c(734,3)
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(128,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
 LOOP END
 ===========================================================================
 
@@ -759,6 +733,17 @@ LOOP END
 ===========================================================================
 
 Begin optimization report for: csc_csc_krao(float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float **, int **, int **, int *, int *, int *)
+
+    Report from: OpenMP optimizations [openmp]
+
+OpenMP Construct at olap_search.c(2107,1)
+remark #16200: OpenMP DEFINED LOOP WAS PARALLELIZED
+OpenMP Construct at olap_search.c(2117,1)
+remark #16200: OpenMP DEFINED LOOP WAS PARALLELIZED
+OpenMP Construct at olap_search.c(2129,1)
+remark #16200: OpenMP DEFINED LOOP WAS PARALLELIZED
+OpenMP Construct at olap_search.c(2103,1)
+remark #16201: OpenMP DEFINED REGION WAS PARALLELIZED
 
     Report from: Vector optimizations [vec]
 
