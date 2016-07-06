@@ -48,7 +48,7 @@ double global_time_start, global_time_stop;
 // intermediate timers
 double global_time_projection, global_time_selection,  global_time_projection_selection, global_time_projection_selection_aggregation;
 
-void writeResults ( char* dataset ) {
+void writeResults ( char* dataset, char* type ) {
   double total_time, projection_time, selection_time, projection_selection_time, projection_selection_aggregation_time, bang_time, final_time;
 
   //1st opp
@@ -68,7 +68,9 @@ void writeResults ( char* dataset ) {
 
   total_time = global_time_stop - global_time_start;
   char file_write[80];
-  strcpy(file_write, "timing/timings_vec_nomkl_");
+  strcpy(file_write, "timing/timings_");
+  strcat(file_write, type);
+  strcat(file_write, "_");
   strcat(file_write, dataset);
   strcat(file_write, ".csv");
 
@@ -83,21 +85,21 @@ int main( int argc, char* argv[]){
   strcpy(table_file_5, "__tbl/lineitem_");
   strcat(table_file_5, argv[1]);
   strcat(table_file_5, "_5.tbl");
-    
+
   char table_file_9[80];
-    strcpy(table_file_9, "__tbl/lineitem_");
-    strcat(table_file_9, argv[1]);
-    strcat(table_file_9, "_9.tbl");
-    
-    char table_file_10[80];
-    strcpy(table_file_10, "__tbl/lineitem_");
-    strcat(table_file_10, argv[1]);
-    strcat(table_file_10, "_10.tbl");
-    
-    char table_file_11[80];
-    strcpy(table_file_11, "__tbl/lineitem_");
-    strcat(table_file_11, argv[1]);
-    strcat(table_file_11, "_11.tbl");
+  strcpy(table_file_9, "__tbl/lineitem_");
+  strcat(table_file_9, argv[1]);
+  strcat(table_file_9, "_9.tbl");
+
+  char table_file_10[80];
+  strcpy(table_file_10, "__tbl/lineitem_");
+  strcat(table_file_10, argv[1]);
+  strcat(table_file_10, "_10.tbl");
+
+  char table_file_11[80];
+  strcpy(table_file_11, "__tbl/lineitem_");
+  strcat(table_file_11, argv[1]);
+  strcat(table_file_11, "_11.tbl");
 
   int dataset_n_elements[33] = { 100 , 6001215, 11997996, -1 , 23996604, -1 , -1 , -1 , 47989007,  -1 , -1 , -1 , -1 , -1 , -1 , -1 ,  95988640,  -1 , -1 , -1 , -1 , -1 , -1 , -1, -1, -1, -1, -1, -1, -1, -1, -1, 192000551} ;
 
@@ -234,52 +236,52 @@ int main( int argc, char* argv[]){
   printf("tbl file has %d elements\n", number_elements);
 #endif
 
-    /** ---------------------------------------------------------------------------
-     ** Populate Return Flag Matrix
-     ** -------------------------------------------------------------------------*/
-    //read return flag
-    //bitmap matrix
+  /** ---------------------------------------------------------------------------
+   ** Populate Return Flag Matrix
+   ** -------------------------------------------------------------------------*/
+  //read return flag
+  //bitmap matrix
 
-      col_read_csc(
-          table_file_9, number_elements,
-          &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
-          &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
-          );
-    /** ---------------------------------------------------------------------------
-     ** Populate Line Status Matrix
-     ** -------------------------------------------------------------------------*/
-    //read line status
-    //bitmap matrix
-      col_read_csc(
-          table_file_10, number_elements,
-          &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
-          &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
-          );
-    /** ---------------------------------------------------------------------------
-     ** =========================== END OF DECLARATIONS ===========================
-     ** -------------------------------------------------------------------------*/
+  col_read_csc(
+      table_file_9, number_elements,
+      &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
+      &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
+      );
+  /** ---------------------------------------------------------------------------
+   ** Populate Line Status Matrix
+   ** -------------------------------------------------------------------------*/
+  //read line status
+  //bitmap matrix
+  col_read_csc(
+      table_file_10, number_elements,
+      &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
+      &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
+      );
+  /** ---------------------------------------------------------------------------
+   ** =========================== END OF DECLARATIONS ===========================
+   ** -------------------------------------------------------------------------*/
 
-    /** ---------------------------------------------------------------------------
-     ** Populate Quantity Matrix
-     ** -------------------------------------------------------------------------*/
-    //read quantity
-    // measure
-      col_read_csc_measure(
-          table_file_5, number_elements,
-          &quantity_n_nnz,  &quantity_n_rows, &quantity_n_cols , 
-          &quantity_csc_values, &quantity_row_ind, &quantity_col_ptr
-          );
+  /** ---------------------------------------------------------------------------
+   ** Populate Quantity Matrix
+   ** -------------------------------------------------------------------------*/
+  //read quantity
+  // measure
+  col_read_csc_measure(
+      table_file_5, number_elements,
+      &quantity_n_nnz,  &quantity_n_rows, &quantity_n_cols , 
+      &quantity_csc_values, &quantity_row_ind, &quantity_col_ptr
+      );
 
-    /** ---------------------------------------------------------------------------
-     ** Populate Shipdate Matrix
-     ** -------------------------------------------------------------------------*/
-    //read shipdate
-    //bitmap matrix
-      col_read_csc(
-          table_file_11, number_elements,
-          &shipdate_n_nnz, &shipdate_n_rows, &shipdate_n_cols ,
-          &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
-          );
+  /** ---------------------------------------------------------------------------
+   ** Populate Shipdate Matrix
+   ** -------------------------------------------------------------------------*/
+  //read shipdate
+  //bitmap matrix
+  col_read_csc(
+      table_file_11, number_elements,
+      &shipdate_n_nnz, &shipdate_n_rows, &shipdate_n_cols ,
+      &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
+      );
 
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
@@ -336,7 +338,7 @@ int main( int argc, char* argv[]){
 
   GET_TIME(global_time_projection);
 
-  csc_to_csc_mx_selection_and(
+  csc_csc_mx_selection_and(
       shipdate_csc_values, shipdate_row_ind, shipdate_col_ptr,
       shipdate_n_nnz, shipdate_n_rows, shipdate_n_cols,
 

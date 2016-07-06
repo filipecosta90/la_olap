@@ -178,6 +178,18 @@ void csc_to_csc_mx_selection_and(
     int* C_NNZ, int* C_number_rows, int* C_number_columns
     );
 
+void csc_csc_mx_selection_and(
+    float* __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+    int* __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
+    int* __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr,
+    int A_NNZ, int A_number_rows, int A_number_columns,
+    int opp_code, char *restrict comparation_key, int opp_code2, char*restrict comparation_key2,
+    float** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_csc_values,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_row_ind,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) C_col_ptr,
+    int* C_n_nnz, int* C_n_rows, int* C_n_cols
+    );
+
 void csr_mx_selection_or(
     float* A_csr_values, int* A_JA, int* A_IA,
     int A_NNZ, int A_number_rows, int A_number_columns,

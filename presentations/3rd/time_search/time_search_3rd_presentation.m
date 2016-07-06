@@ -29,7 +29,7 @@ csv_results_2 = readtable('timing/timings_vec_nomkl_2.csv','ReadVariableNames',t
 csv_results_4 = readtable('timing/timings_vec_nomkl_4.csv','ReadVariableNames',true);
 csv_results_8 = readtable('timing/timings_vec_nomkl_8.csv','ReadVariableNames',true);
 csv_results_16 = readtable('timing/timings_vec_nomkl_16.csv','ReadVariableNames',true);
-%csv_results_32 = readtable('timing/timings_vec_nomkl_32.csv','ReadVariableNames',true);
+csv_results_32 = readtable('timing/timings_vec_nomkl_32.csv','ReadVariableNames',true);
 
 
 time_1 = csv_results_1.total;
@@ -37,7 +37,7 @@ time_2 = csv_results_2.total;
 time_4 = csv_results_4.total;
 time_8 = csv_results_8.total;
 time_16 = csv_results_16.total;
-%time_32 = csv_results_32.total;
+time_32 = csv_results_32.total;
 
 
 
@@ -48,7 +48,7 @@ best_time_2 = min( time_2 );
 best_time_4 = min( time_4 );
 best_time_8 = min( time_8 );
 best_time_16 = min( time_16 );
-best_time_32 = 0; %min( time_32 );
+best_time_32 = min( time_32 );
 
 seq_pgres_1 = csvread('timing/pgres_seq_1.csv') / 1000;
 seq_pgres_2 = csvread('timing/pgres_seq_2.csv') / 1000;
@@ -130,19 +130,14 @@ set(gca,'YTickLabel',num2str(get(gca,'YTick').'));
 l = legend(  'Parallel Linear Algebra Approach' , 'Sequential PostgreSQL', 'Parallel PostgreSQL (max\_parallel\_degree = 20)' );
 
 
-  
-
-
-
-
 set(l,'FontSize',12);
 ylabel('Time in seconds');
 
 xlabel('TPC-H scale factor');
-t = title({'TPC-H benchmark simplified querie-1 time for solution analysis','for different scale factors, between Linear Algebra approach vs Relational Algebra approach,', 'performing a K-Best (K=3,N=50) time measurement technique'},'interpreter','latex')
-
-set(t,'FontSize',24);
+t = title({'TPC-H benchmark simplified query-1 time for solution analysis','for different scale factors, between Linear Algebra approach vs Relational Algebra approach,', 'performing a K-Best (K=3,N=50) time measurement technique'},'interpreter','latex');
 set(gca,'fontsize',12);
+
+set(t,'FontSize',14);
 
 
 
