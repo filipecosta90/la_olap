@@ -73,7 +73,7 @@ void writeResults ( char* dataset, char* type ) {
   strcat(file_write, "_");
   strcat(file_write, dataset);
   strcat(file_write, ".csv");
-
+printf("writing results to %s\n", file_write);
   FILE* stream = fopen(file_write, "a+");
   fprintf(stream, "%s, %lf, %lf, %lf, %lf, %lf, %lf\n",dataset, projection_time, selection_time, projection_selection_time, projection_selection_aggregation_time, bang_time , total_time);
   fclose(stream);
@@ -432,7 +432,7 @@ int main( int argc, char* argv[]){
   ////////////////////////
   // WRITE EXPERIMENT DATA
   ////////////////////////
-  writeResults( argv[1] );
+  writeResults( argv[1] , argv[2] );
 
 #ifdef D_VERBOSE
   printf("( ( projection . selection ) . quantity ) . bang || final vector rows %d nnz %d\n", final_vector_n_rows, final_vector_n_nnz );
