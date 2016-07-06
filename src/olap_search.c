@@ -689,9 +689,6 @@ void col_read_csc (
     int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
     int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr
     ){
-#ifdef D_VERBOSE
-  printf("going to read column %d\n", tbl_column);
-#endif
 
   //define CSC auxiliar sparse-matrix
   // values will contain only ones
@@ -813,9 +810,6 @@ void col_read_csc_measure (
     int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_JA,
     int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_IA
     ){
-#ifdef D_VERBOSE
-  printf("going to read column %d\n", tbl_column);
-#endif
 
   //define CSC auxiliar sparse-matrix
   // values will contain only ones
