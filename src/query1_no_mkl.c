@@ -79,16 +79,28 @@ void writeResults ( char* dataset ) {
 
 int main( int argc, char* argv[]){
 
-  char table_file[80];
-  strcpy(table_file, "__tbl/lineitem_");
-  strcat(table_file, argv[1]);
-  strcat(table_file, ".tbl");
+  char table_file_5[80];
+  strcpy(table_file_5, "__tbl/lineitem_");
+  strcat(table_file_5, argv[1]);
+  strcat(table_file_5, "_5.tbl");
+    
+  char table_file_9[80];
+    strcpy(table_file_9, "__tbl/lineitem_");
+    strcat(table_file_9, argv[1]);
+    strcat(table_file_9, "_9.tbl");
+    
+    char table_file_10[80];
+    strcpy(table_file_10, "__tbl/lineitem_");
+    strcat(table_file_10, argv[1]);
+    strcat(table_file_10, "_10.tbl");
+    
+    char table_file_11[80];
+    strcpy(table_file_11, "__tbl/lineitem_");
+    strcat(table_file_11, argv[1]);
+    strcat(table_file_11, "_11.tbl");
 
   int dataset_n_elements[33] = { 100 , 6001215, 11997996, -1 , 23996604, -1 , -1 , -1 , 47989007,  -1 , -1 , -1 , -1 , -1 , -1 , -1 ,  95988640,  -1 , -1 , -1 , -1 , -1 , -1 , -1, -1, -1, -1, -1, -1, -1, -1, -1, 192000551} ;
 
-#ifdef D_VERBOSE
-  printf("going to read results from %s\n", table_file);
-#endif
 
 
   /** ---------------------------------------------------------------------------
@@ -228,8 +240,8 @@ int main( int argc, char* argv[]){
     //read return flag
     //bitmap matrix
 
-      tbl_read_csc(
-          table_file , 9, number_elements,
+      col_read_csc(
+          table_file_9, number_elements,
           &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
           &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
           );
@@ -238,8 +250,8 @@ int main( int argc, char* argv[]){
      ** -------------------------------------------------------------------------*/
     //read line status
     //bitmap matrix
-      tbl_read_csc(
-          table_file , 10, number_elements,
+      col_read_csc(
+          table_file_10, number_elements,
           &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
           &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
           );
@@ -252,8 +264,8 @@ int main( int argc, char* argv[]){
      ** -------------------------------------------------------------------------*/
     //read quantity
     // measure
-      tbl_read_csc_measure(
-          table_file , 5, number_elements,
+      col_read_csc_measure(
+          table_file_5, number_elements,
           &quantity_n_nnz,  &quantity_n_rows, &quantity_n_cols , 
           &quantity_csc_values, &quantity_row_ind, &quantity_col_ptr
           );
@@ -263,8 +275,8 @@ int main( int argc, char* argv[]){
      ** -------------------------------------------------------------------------*/
     //read shipdate
     //bitmap matrix
-      tbl_read_csc(
-          table_file , 11, number_elements,
+      col_read_csc(
+          table_file_11, number_elements,
           &shipdate_n_nnz, &shipdate_n_rows, &shipdate_n_cols ,
           &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
           );
