@@ -83,7 +83,6 @@ void tbl_read(
     float** A_csr_values, int** A_JA, int** A_IA
     );
 
-
 int tbl_get_number_elements (char* table_name);
 
 void tbl_read_csc (
@@ -96,6 +95,22 @@ void tbl_read_csc_measure (
     char* table_name, int tbl_column, int number_elements,
     int* nnz, int* rows, int* columns,
     float** A_csr_values, int** A_row_ind, int** A_col_ptr
+    );
+
+void col_read_csc (
+    char* table_name, int number_elements,
+    int* n_nnz, int* n_rows, int* n_cols,
+    float** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_row_ind,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_col_ptr
+    );
+
+void col_read_csc_measure (
+    char* table_name, int number_elements,
+    int* nnz, int* rows, int* columns,
+    float** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_JA,
+    int** __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_IA
     );
 
 void tbl_read_measure(
