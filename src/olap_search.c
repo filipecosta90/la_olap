@@ -497,7 +497,6 @@ void tbl_read_csc (
     exit(EXIT_FAILURE);
   }
   int number_rows = - 1;
-  int element_number = 0;
 
   float value;
 
@@ -507,12 +506,16 @@ void tbl_read_csc (
   int row_of_element;
 
   char *field=NULL; 
-  char *line = NULL;
+  char line[MAX_REG_SIZE];
+    char *ret;
   size_t len = 0;
 
-  for( element_number = 0 ; element_number < number_elements ; ++element_number ){
-    getline(&line, &len, stream);
-    field = getfield(line, tbl_column, field);
+  for(int element_number = 0 ; element_number < number_elements ; ++element_number ){
+      ret = fgets(line, MAX_REG_SIZE, stream);
+      if (ret == NULL){
+          exit(EXIT_FAILURE);
+      }
+      field = getfield(line, tbl_column, field);
 
 #ifdef D_DEBUGGING
     assert(field!=NULL);
@@ -598,12 +601,18 @@ void tbl_read_csc_measure (
   int element_number = 0;
 
   float value;
-  char *field=NULL;
-  char *line = NULL;
-  size_t len = 0;
 
-  for( element_number = 0 ; element_number < number_elements ; ++element_number ){
-    getline(&line, &len, stream);
+    char *field=NULL;
+    char line[MAX_REG_SIZE];
+    char *ret;
+    size_t len = 0;
+    
+    for(int element_number = 0 ; element_number < number_elements ; ++element_number ){
+        ret = fgets(line, MAX_REG_SIZE, stream);
+        if (ret == NULL){
+            exit(EXIT_FAILURE);
+        }
+        
     field = getfield(line, tbl_column, field);
     value = atof(field);
     aux_csc_ja[element_number] = element_number;
@@ -1270,9 +1279,6 @@ void csc_to_csr_mx_selection_and(
   *C_number_columns = A_number_columns;
   *C_NNZ = A_NNZ;
 }
-
-
-
 
 void csc_to_csc_mx_selection_and(
     float* __restrict__  __attribute__((aligned (MEM_LINE_SIZE))) A_csc_values,
@@ -2112,7 +2118,7 @@ void csc_csc_krao(
   {
     __assume_aligned(aux_col_ptr, MEM_LINE_SIZE);
     __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
-#pragma omp for nowait
+#pragma omp for nowait reduction(+:aux_col_ptr)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
@@ -2122,7 +2128,7 @@ void csc_csc_krao(
     __assume_aligned(aux_csc_values, MEM_LINE_SIZE);
     __assume_aligned(A_csc_values, MEM_LINE_SIZE);
     __assume_aligned(B_csc_values, MEM_LINE_SIZE);
-#pragma omp for nowait
+#pragma omp for nowait reduction(+:aux_csc_values)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const int b_pos = B_col_ptr[at_column];
@@ -2134,7 +2140,7 @@ void csc_csc_krao(
     __assume_aligned(A_row_ind, MEM_LINE_SIZE);
     __assume_aligned(B_row_ind, MEM_LINE_SIZE);
     __assume_aligned(aux_row_ind, MEM_LINE_SIZE);
-#pragma omp for nowait
+#pragma omp for nowait reduction(+:aux_row_ind)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const  int b_pos = B_col_ptr[at_column];
