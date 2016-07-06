@@ -41,18 +41,18 @@ echo "DONE!"
 echo "Ready now for running make!"
 
 cd 
-cd CPD/PI/CPD_PI_OLAP/src
+cd CPD_PI_OLAP/src
 
 export OMP_NUM_THREADS=20
 
-sample_size=5
+sample_size=20
 
 for tbl_size in 1 2 4 8 16 32
 do
 	for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 	do
 	echo "going to run for $tbl_size"
-	./querie1_search_vec "$tbl_size"
+	./querie1_no_mkl $tbl_size
 	done
 done
 echo "Done..."

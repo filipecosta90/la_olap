@@ -935,12 +935,12 @@ Begin optimization report for: csc_csc_mm(float *__restrict__, int *__restrict__
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap_search.c(2348,3)
+LOOP BEGIN at olap_search.c(2347,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at olap_search.c(2354,7)
-      remark #15388: vectorization support: reference A_col_ptr has aligned access   [ olap_search.c(2355,9) ]
-      remark #15389: vectorization support: reference A_col_ptr has unaligned access   [ olap_search.c(2356,9) ]
+   LOOP BEGIN at olap_search.c(2353,7)
+      remark #15388: vectorization support: reference A_col_ptr has aligned access   [ olap_search.c(2354,9) ]
+      remark #15389: vectorization support: reference A_col_ptr has unaligned access   [ olap_search.c(2355,9) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15300: LOOP WAS VECTORIZED
@@ -953,17 +953,17 @@ LOOP BEGIN at olap_search.c(2348,3)
       remark #15488: --- end vector loop cost summary ---
    LOOP END
 
-   LOOP BEGIN at olap_search.c(2354,7)
+   LOOP BEGIN at olap_search.c(2353,7)
    <Remainder loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at olap_search.c(2354,7)
+   LOOP BEGIN at olap_search.c(2353,7)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at olap_search.c(2354,7)
-      remark #15388: vectorization support: reference A_col_ptr has aligned access   [ olap_search.c(2355,9) ]
-      remark #15389: vectorization support: reference A_col_ptr has unaligned access   [ olap_search.c(2356,9) ]
+   LOOP BEGIN at olap_search.c(2353,7)
+      remark #15388: vectorization support: reference A_col_ptr has aligned access   [ olap_search.c(2354,9) ]
+      remark #15389: vectorization support: reference A_col_ptr has unaligned access   [ olap_search.c(2355,9) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 4
       remark #15309: vectorization support: normalized vectorization overhead 1.000
@@ -977,7 +977,60 @@ LOOP BEGIN at olap_search.c(2348,3)
       remark #15488: --- end vector loop cost summary ---
    LOOP END
 
-   LOOP BEGIN at olap_search.c(2354,7)
+   LOOP BEGIN at olap_search.c(2353,7)
+   <Remainder loop for vectorization>
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: csc_csc_bitmap_mm(float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float *__restrict__, int *__restrict__, int *__restrict__, int, int, int, float **__restrict__, int **__restrict__, int **__restrict__, int *, int *, int *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at olap_search.c(2414,5)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at olap_search.c(2420,13)
+      remark #15388: vectorization support: reference A_col_ptr has aligned access   [ olap_search.c(2421,17) ]
+      remark #15389: vectorization support: reference A_col_ptr has unaligned access   [ olap_search.c(2422,17) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15475: --- begin vector loop cost summary ---
+      remark #15476: scalar loop cost: 7 
+      remark #15477: vector loop cost: 2.500 
+      remark #15478: estimated potential speedup: 2.800 
+      remark #15488: --- end vector loop cost summary ---
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2420,13)
+   <Remainder loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2420,13)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2420,13)
+      remark #15388: vectorization support: reference A_col_ptr has aligned access   [ olap_search.c(2421,17) ]
+      remark #15389: vectorization support: reference A_col_ptr has unaligned access   [ olap_search.c(2422,17) ]
+      remark #15381: vectorization support: unaligned access used inside loop body
+      remark #15305: vectorization support: vector length 4
+      remark #15309: vectorization support: normalized vectorization overhead 1.000
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15448: unmasked aligned unit stride loads: 1 
+      remark #15450: unmasked unaligned unit stride loads: 1 
+      remark #15475: --- begin vector loop cost summary ---
+      remark #15476: scalar loop cost: 7 
+      remark #15477: vector loop cost: 2.500 
+      remark #15478: estimated potential speedup: 2.630 
+      remark #15488: --- end vector loop cost summary ---
+   LOOP END
+
+   LOOP BEGIN at olap_search.c(2420,13)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
@@ -988,12 +1041,12 @@ Begin optimization report for: csc_bang(float *__restrict__, int *__restrict__, 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap_search.c(2404,3)
+LOOP BEGIN at olap_search.c(2467,3)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed ANTI dependence between aux_row_ind line 2412 and aux_row_ind line 2417
-   remark #15346: vector dependence: assumed FLOW dependence between aux_row_ind line 2417 and aux_row_ind line 2412
+   remark #15346: vector dependence: assumed ANTI dependence between aux_row_ind line 2475 and aux_row_ind line 2480
+   remark #15346: vector dependence: assumed FLOW dependence between aux_row_ind line 2480 and aux_row_ind line 2475
 
-   LOOP BEGIN at olap_search.c(2411,7)
+   LOOP BEGIN at olap_search.c(2474,7)
       remark #15520: loop was not vectorized: loop with multiple exits cannot be vectorized unless it meets search loop idiom criteria
    LOOP END
 LOOP END
@@ -1004,10 +1057,10 @@ Begin optimization report for: produce_tuple_from_krao_csc(float *__restrict__, 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at olap_search.c(2445,3)
-   remark #15382: vectorization support: call to function g_quark_to_string(GQuark) cannot be vectorized   [ olap_search.c(2451,23) ]
-   remark #15382: vectorization support: call to function g_quark_to_string(GQuark) cannot be vectorized   [ olap_search.c(2452,23) ]
-   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(2453,5) ]
+LOOP BEGIN at olap_search.c(2508,3)
+   remark #15382: vectorization support: call to function g_quark_to_string(GQuark) cannot be vectorized   [ olap_search.c(2514,23) ]
+   remark #15382: vectorization support: call to function g_quark_to_string(GQuark) cannot be vectorized   [ olap_search.c(2515,23) ]
+   remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(2516,5) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
 LOOP END
 ===========================================================================
