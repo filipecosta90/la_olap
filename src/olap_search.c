@@ -2114,7 +2114,7 @@ void csc_csc_krao(
   int current_row = 0;
   int max_row = 0;
 
-#pragma omp parallel
+#pragma omp parallel reduction(+:aux_col_ptr) 
   {
     __assume_aligned(aux_col_ptr, MEM_LINE_SIZE);
     __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
@@ -2140,7 +2140,7 @@ void csc_csc_krao(
     __assume_aligned(A_row_ind, MEM_LINE_SIZE);
     __assume_aligned(B_row_ind, MEM_LINE_SIZE);
     __assume_aligned(aux_row_ind, MEM_LINE_SIZE);
-#pragma omp for nowait reduction(+:aux_row_ind)
+#pragma omp for reduction(+:aux_row_ind)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const  int b_pos = B_col_ptr[at_column];

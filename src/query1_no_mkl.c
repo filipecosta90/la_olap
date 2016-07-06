@@ -79,10 +79,25 @@ void writeResults ( char* dataset ) {
 
 int main( int argc, char* argv[]){
 
-  char table_file[80];
-  strcpy(table_file, "__tbl/lineitem_");
-  strcat(table_file, argv[1]);
-  strcat(table_file, ".tbl");
+  char table_file_5[80];
+  strcpy(table_file_5, "__tbl/lineitem_");
+  strcat(table_file_5, argv[1]);
+  strcat(table_file_5, "_5.tbl");
+    
+  char table_file_9[80];
+    strcpy(table_file_9, "__tbl/lineitem_");
+    strcat(table_file_9, argv[1]);
+    strcat(table_file_9, "_9.tbl");
+    
+    char table_file_10[80];
+    strcpy(table_file_10, "__tbl/lineitem_");
+    strcat(table_file_10, argv[1]);
+    strcat(table_file_10, "_10.tbl");
+    
+    char table_file_11[80];
+    strcpy(table_file_11, "__tbl/lineitem_");
+    strcat(table_file_11, argv[1]);
+    strcat(table_file_11, "_11.tbl");
 
   int dataset_n_elements[33] = { 100 , 6001215, 11997996, -1 , 23996604, -1 , -1 , -1 , 47989007,  -1 , -1 , -1 , -1 , -1 , -1 , -1 ,  95988640,  -1 , -1 , -1 , -1 , -1 , -1 , -1, -1, -1, -1, -1, -1, -1, -1, -1, 192000551} ;
 
