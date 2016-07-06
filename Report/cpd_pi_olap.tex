@@ -1,0 +1,258 @@
+% !TEX encoding = UTF-8 Unicode
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal Article
+% LaTeX Template
+% Version 1.3 (9/9/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[twoside]{article}
+
+\usepackage{lipsum}
+
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+%\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+
+%\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[top=20mm,left=8mm,right=8mm,bottom=20mm]{geometry}
+
+\usepackage{multicol} % Used for the two-column layout of the document
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+\usepackage{paralist} % Used for the compactitem environment which makes bullet points with less space between them
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+%2º espacamento antes da section
+\usepackage{titlesec} % Allows customization of titles
+%\titlespacing*{\section}{0pt}{0pt}{0pt}
+\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+\renewcommand\thesubsection{\Roman{subsection}} % Roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{University of Minho $\bullet$ CPD Integrated Project 2015-2016} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+
+%%% ADDED BY ME %%%%%%
+%\floatstyle{boxed} 
+\restylefloat{figure}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsfonts}
+\usepackage{listings,mdframed}
+\usepackage{fancyvrb}
+\usepackage{cleveref}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{relsize}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\usepackage{tabularx,caption}
+
+
+%%% For using norm || %%%%%
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+
+\usepackage{xcolor}
+\lstdefinestyle{BashInputStyle}{
+  language=bash,
+  basicstyle=\small\sffamily,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=3pt,
+  frame=tb,
+  columns=fullflexible,
+  backgroundcolor=\color{yellow!20},
+  linewidth=0.9\linewidth,
+  xleftmargin=0.1\linewidth
+  %moredelim=**[is][\color{red}]{@}{@},
+}
+
+
+\lstdefinestyle{colorcode}{
+  language=C,
+  basicstyle=\small\sffamily,
+  numberstyle=\tiny,
+  numbersep=6pt,
+  emptylines=1,
+  breaklines=true,
+  columns=fullflexible,
+  linewidth=0.9\linewidth,
+  xleftmargin=0.1\linewidth
+  basicstyle=\ttfamily\color{black},
+  moredelim=**[is][\color{red}]{@}{@},
+  moredelim=**[is][\color{orange}]{|}{|}
+}
+
+\newcommand*{\Package}[1]{\texttt{#1}}
+
+\lstset{
+    numbers=left,
+	language=C,
+	keywordstyle=\bfseries\ttfamily\color[rgb]{0,0,1},
+	identifierstyle=\ttfamily,
+	commentstyle=\color[rgb]{0.133,0.545,0.133},
+	stringstyle=\ttfamily\color[rgb]{0.627,0.126,0.941},
+	showstringspaces=false,
+	basicstyle=\small,
+numberstyle=\tiny,
+numbers=right,
+	stepnumber=1,
+	numbersep=10pt,
+	tabsize=1,
+	breaklines=true,
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	breakatwhitespace=false,
+	aboveskip={1.5\baselineskip},
+  columns=fixed,
+  upquote=true,
+  extendedchars=true,
+ frame=single,
+ inputencoding=utf8,
+    literate={á}{{\'a}}1 {ã}{{\~a}}1 {â}{{\~a}}1 {é}{{\'e}}1 {ê}{{\'e}}1 {ç}{{\'c}}1 {ú}{{\'u}}1 {ó}{{\'o}}1 {í}{{\'i}}1,
+ %backgroundcolor=\color{lbcolor},
+}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{\vspace{-15mm}\fontsize{24pt}{10pt}\selectfont\textbf{Optimisation of a Linear Algebra Approach to OLAP}} % Article title
+
+\author{
+\large
+\textsc{Filipe Oliveira} - \textsc{A57816}\\
+\normalsize \href{mailto:a57816@alunos.uminho.pt}{a57816@alunos.uminho.pt}
+\vspace{-5mm}
+\and
+\textsc{Sérgio Caldas} - \textsc{A57779}\\
+\normalsize \href{mailto:a57779@alunos.uminho.pt}{a57779@alunos.uminho.pt}
+}
+
+
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Insert title
+
+\thispagestyle{fancy} % All pages have headers and footers
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+\indent % Dummy abstract text
+\par Online Analytical processing (OLAP) systems, perform multidimensional analysis of business data and provides the capability for complex calculations, trend analysis, and sophisticated data modeling. 
+All the referred analysis depends on Relational Algebra, which lack algebraic properties, and qualitative and quantitative proofs for all the relational operator.
+The proposed solution focus on a typed linear algebra approach, encoding OLAP functionality solely in terms of Linear Algebra operations (matrices).
+\par It has been argued that linear algebra (LA) is better suited than standard relational algebra for formalizing and implementing queries in on-line multidimensional data analysis \cite{macedo2015linear} \cite{da2015benchmarking}. This can be achieved over a small LA sparse matrix kernel which, further to multiplication and transposition, offers the Kronecker, Khatri-Rao and Hadamard products.
+
+\end{abstract}
+\vspace{0.5cm}
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+\begin{multicols}{2} % Two-column layout throughout the main article text
+\section{Introduction}
+\indent
+\par In a initial fase we implemented from the start a typed linear algebra solution, and evaluate its performance in a real word scenario, using different datasets. The datasets was produced with TPC-H Benchmark, was produced multiples datasets with different data sizes (1, 2, 4, 8, 16, 32 Gb) in order to obtain a realistic results.
+
+\section{Hardware Characterization}
+\indent
+\par The platform used by us for our study at Search6 is a dual-socket system equipped with two Intel\textsuperscript{\textregistered} Ivy Bridge processors. The system, referenced as compute node 652-1, has two Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} E5-2670v2 (Ivy Bridge architecture) and features 64 GB of DDR3 RAM, supported at a frequency of XXXX MHz divided in 4 memory channels.
+
+\begin{table}[H]
+\centering
+  \begin{tabular}{ | L{3.5cm} | R{5cm} | }
+  
+    \hline
+    System & compute-652-1 \\ \hline \hline
+        \# CPUs & 2\\ \hline
+    CPU & Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} E5-2670v2\\ \hline 
+    Architecture & Ivy Bridge \\ \hline 
+    \# Cores per CPU & 10 \\ \hline 
+    \# Threads per CPU & 20\\ \hline 
+    Clock Freq. & 2.5 GHz\\ \hline \hline 
+    L1 Cache & 320KB \newline 32KB per core\\ \hline 
+    L2 Cache & 2560KB  \newline  256KB per core \newline\\ \hline 
+    L3 Cache & 25600KB \newline shared \\ \hline \hline 
+    Inst. Set Ext. & SSE4.2 \& AVX \\ \hline 
+        \#Memory Channels & 4\\ \hline \hline
+
+    Vendors Announced Peak Memory BW & 59.7 GB/s\\ \hline
+    Measured\footnote{Stream Benchamrk} Peak Memory BW & 58.5GB/s\\ \hline
+  \end{tabular}
+     \caption{Architectural characteristics of the two evaluation platforms.}
+     \label{table:characterization}
+\end{table}
+
+
+%---------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%--------------------------------------------------------------------------------------
+\bibliographystyle{plain}
+\bibliography{references.bib}
+
+%---------------------------------------------------------------------------------------
+\end{multicols}
+\end{document}
+
+
+
+%\par In order to compute algorithm complexity correctly, we need to know the values for \textcolor[rgb]{1,0.5,0}{\textbf{md->movemx}}, and \textcolor[rgb]{1,0.5,0}{\textbf{md->mdsize}}. So, after inspecting \textbf{MD.c} file we can see that \textcolor[rgb]{1,0.5,0}{\textbf{md->movemx}} is 50. 
+%The \textcolor[rgb]{1,0.5,0}{\textbf{md->mdsize}} value depends on the value of \textbf{md->mm} value. This values depends on datasizes[md->size] wich is on main.c file and is a parameter of \textbf{initialiseMD} function. Since  the value of \textbf{md->mm} doesn't change the complexity of the algorithmm we will use de value on datasizes[1] wich is \textbf{13}.
+
+
+%\par So, to compute \textcolor[rgb]{1,0.5,0}{\textbf{md->mdsize}} we'll need to perform the following calculations:
+
+
+%\begin{verbatim}
+%    md->mdsize = md->mm * md->mm * md->mm * 4.
+%    md->mm = datasizes[1]
+%    datasizes[1] = 13
+%    md->mm = 13
+%\end{verbatim}
+
+%\textbf{md->mdsize} is 13 * 13 * 13 * 4 wich is equal to 8788. Thats the total executions of \textbf{force} function we'll consider. Inside force, we'll also need to contabilize the complexity of \textbf{calculePow}, \textbf{third\_newton\_law}, \textbf{update\_static\_variables} and \textbf{updateForce}.
+%All of these functions just perform memory access and has no loop so we'll consider they execute $50 \times n\times n$ times. For those functions we achieved the complexity $\mathcal{O}(n^{2})$. For \textbf{force} we can achieve the following formulation to determine the complexity:
+
+
