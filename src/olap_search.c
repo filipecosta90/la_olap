@@ -1588,10 +1588,8 @@ void csc_to_csc_mx_selection_and(
   __assume_aligned(A_row_ind, MEM_LINE_SIZE);
   __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
 
-  //#pragma omp parallel for
   for ( int at_column = 0; at_column < A_number_columns; ++at_column){
     aux_csc_col_ptr[at_column] =  at_non_zero;
-    //const int a_pos =A_col_ptr[at_column];
     const int iaa = A_row_ind[at_column] +1 ;
     non_zero = 0;
     field = (char*) g_quark_to_string ( iaa );
@@ -1714,10 +1712,8 @@ void csc_csc_mx_selection_and(
   __assume_aligned(A_row_ind, MEM_LINE_SIZE);
   __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
 
-  //#pragma omp parallel for
   for ( int at_column = 0; at_column < A_number_columns; ++at_column){
     aux_csc_col_ptr[at_column] =  at_non_zero;
-    //const int a_pos =A_col_ptr[at_column];
     const int iaa = A_row_ind[at_column] +1 ;
     non_zero = 0;
     if ( aux_row_bitmap[iaa] == 1 ){
