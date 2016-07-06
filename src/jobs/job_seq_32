@@ -52,7 +52,7 @@ do
 	for (( seq_num=1; seq_num <= $sample_size; ++seq_num ))
 	do
 	echo "going to run for $tbl_size"
-	./querie1_no_mkl "$tbl_size"
+	./querie1_no_mkl $tbl_size "no_mkl"
 	done
 done
 echo "Done..."

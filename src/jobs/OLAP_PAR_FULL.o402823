@@ -1,0 +1,2384 @@
+Loading Parallel Studio XE 2016 Compilers ...
+DONE!
+Ready now for running make!
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 32
+tbl file has 192000551 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 3	N COLS: 192000551
+readed matrix 3 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 5	N COLS: 192000551
+readed matrix 5 >< 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 192000551	N COLS: 192000551
+readed matrix 192000551 192000551 : NNZ 192000551
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+100 mil
+125 mil
+150 mil
+175 mil
+N NONZ: 192000551	N ROWS: 2531	N COLS: 192000551
+readed matrix 2531 >< 192000551 : NNZ 192000551
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	78187880.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 78187880.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 16
+tbl file has 95988640 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 3	N COLS: 95988640
+readed matrix 3 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 5	N COLS: 95988640
+readed matrix 5 >< 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 95988640	N COLS: 95988640
+readed matrix 95988640 95988640 : NNZ 95988640
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+50 mil
+N NONZ: 95988640	N ROWS: 2531	N COLS: 95988640
+readed matrix 2531 >< 95988640 : NNZ 95988640
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	39122820.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 39122820.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 8
+tbl file has 47989007 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 3	N COLS: 47989007
+readed matrix 3 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 5	N COLS: 47989007
+readed matrix 5 >< 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 47989007	N COLS: 47989007
+readed matrix 47989007 47989007 : NNZ 47989007
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 47989007	N ROWS: 2531	N COLS: 47989007
+readed matrix 2531 >< 47989007 : NNZ 47989007
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	19571752.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 19571752.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 4
+tbl file has 23996604 elements
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 3	N COLS: 23996604
+readed matrix 3 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 5	N COLS: 23996604
+readed matrix 5 >< 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 23996604	N COLS: 23996604
+readed matrix 23996604 23996604 : NNZ 23996604
+big cycle
+1 mil
+10 mil
+15 mil
+20 mil
+N NONZ: 23996604	N ROWS: 2531	N COLS: 23996604
+readed matrix 2531 >< 23996604 : NNZ 23996604
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	9773731.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 9773731.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 2
+tbl file has 11997996 elements
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 3	N COLS: 11997996
+readed matrix 3 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 5	N COLS: 11997996
+readed matrix 5 >< 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 11997996	N COLS: 11997996
+readed matrix 11997996 11997996 : NNZ 11997996
+big cycle
+1 mil
+10 mil
+N NONZ: 11997996	N ROWS: 2531	N COLS: 11997996
+readed matrix 2531 >< 11997996 : NNZ 11997996
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	4895102.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 4895102.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+going to run for 1
+tbl file has 6001215 elements
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 3	N COLS: 6001215
+readed matrix 3 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 5	N COLS: 6001215
+readed matrix 5 >< 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 6001215	N COLS: 6001215
+readed matrix 6001215 6001215 : NNZ 6001215
+big cycle
+1 mil
+N NONZ: 6001215	N ROWS: 2531	N COLS: 6001215
+readed matrix 2531 >< 6001215 : NNZ 6001215
+( ( projection . selection ) . quantity ) . bang || final vector rows 4 nnz 1
+N NONZ: 1	N ROWS: 4
+CSC values: [	2451813.000000, ]
+row_ind: [	3, ]
+going to produce tuples
+(N
+,O
+) 2451813.000000
+** STOP TIME MEASUREMENT
+Done...

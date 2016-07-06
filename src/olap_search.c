@@ -1722,6 +1722,7 @@ void csc_csc_mx_selection_and(
       at_non_zero++;
     }
   }
+_mm_free(aux_row_bitmap);
   max_row =  aux_csc_row_ind[at_non_zero];
   aux_csc_col_ptr[A_number_columns] = at_non_zero;
   *C_n_rows = (max_row+1) ;
