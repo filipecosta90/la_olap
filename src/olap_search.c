@@ -509,9 +509,40 @@ void tbl_read_csc (
   char line[MAX_REG_SIZE];
     char *ret;
   size_t len = 0;
-
+printf("big cycle\n");
   for(int element_number = 0 ; element_number < number_elements ; ++element_number ){
-      ret = fgets(line, MAX_REG_SIZE, stream);
+if ( element_number == 1000000 ){
+	printf("1 mil\n");
+}      
+if ( element_number == 10000000 ){
+	printf("10 mil\n");
+}
+ if ( element_number == 15000000 ){
+	printf("15 mil\n");
+}  
+  if ( element_number == 20000000 ){
+	printf("20 mil\n");
+} 
+  if ( element_number == 50000000 ){
+	printf("50 mil\n");
+} 
+ if ( element_number == 100000000 ){
+	printf("100 mil\n");
+} 
+ if ( element_number == 125000000 ){
+	printf("125 mil\n");
+} 
+
+ if ( element_number == 150000000 ){
+	printf("150 mil\n");
+}
+
+ 
+ if ( element_number == 175000000 ){
+	printf("175 mil\n");
+} 
+
+ ret = fgets(line, MAX_REG_SIZE, stream);
       if (ret == NULL){
           exit(EXIT_FAILURE);
       }
@@ -2118,7 +2149,7 @@ void csc_csc_krao(
   {
     __assume_aligned(aux_col_ptr, MEM_LINE_SIZE);
     __assume_aligned(A_col_ptr, MEM_LINE_SIZE);
-#pragma omp for nowait reduction(+:aux_col_ptr)
+#pragma omp for nowait //reduction(+:aux_col_ptr)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       aux_col_ptr[at_column] = A_col_ptr[at_column];
     }
@@ -2128,7 +2159,7 @@ void csc_csc_krao(
     __assume_aligned(aux_csc_values, MEM_LINE_SIZE);
     __assume_aligned(A_csc_values, MEM_LINE_SIZE);
     __assume_aligned(B_csc_values, MEM_LINE_SIZE);
-#pragma omp for nowait reduction(+:aux_csc_values)
+#pragma omp for nowait //reduction(+:aux_csc_values)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const int b_pos = B_col_ptr[at_column];
@@ -2140,7 +2171,7 @@ void csc_csc_krao(
     __assume_aligned(A_row_ind, MEM_LINE_SIZE);
     __assume_aligned(B_row_ind, MEM_LINE_SIZE);
     __assume_aligned(aux_row_ind, MEM_LINE_SIZE);
-#pragma omp for nowait reduction(+:aux_row_ind)
+#pragma omp for nowait //reduction(+:aux_row_ind)
     for ( int at_column = 0 ; at_column < A_n_cols ; ++at_column ){
       const int a_pos = A_col_ptr[at_column];
       const  int b_pos = B_col_ptr[at_column];
