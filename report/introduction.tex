@@ -1,0 +1,16 @@
+% !TEX encoding = UTF-8 Unicode
+
+\section{Introduction}
+\indent
+
+The design and development of systems that generate, collect, store, process, analyze, and query large sets of data is filled with significant challenges both hardware and software. Combined, these challenges represent a difficult landscape for software engineers.\par 
+The relation database is the current solution 	for big data storage.
+Prior efforts have been made \cite{macedo2015linear} \cite{da2015benchmarking} in the research project "Linear Algebra approach to OLAP", in order to fully represent relational algebra in terms of linear algebra operators.
+\par Regarding the challenge of High Performance Computing, we implemented from the start a typed linear algebra solution given special importance to the data modelling which, if done poorly, limits the attainable efficiency in data-intesive systems like OLAP.\par 
+With respect to performance evaluation and results validation in a real work scenario, the used datasets were produced with TPC-H Benchmark, in which is workload consists of multiple query runs.
+In order to obtain realistic and meaningful results large datasets were considered, ranging from 1 to 64GB. 
+In order to infer conclusions and compare relational and linear algebra the  object-relational database management system PostgreSQL version 9.6, with roots in open source community, was chosen in order to represent the relational algebra approach. 
+
+
+
+

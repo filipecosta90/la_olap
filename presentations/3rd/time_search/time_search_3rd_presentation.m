@@ -91,13 +91,13 @@ time_olap_new = [ best_time_1 best_time_2 best_time_4 best_time_8 best_time_16 b
 %loglog(dataset,time_olap,'s--','Color', color0,'MarkerSize', 14);
 %hold on;
 
-loglog(dataset,time_olap_new,'s--','Color', color7, 'MarkerEdgeColor' , color7, 'MarkerSize', 14);
+loglog(dataset,time_olap_new,'s--','Color', color7, 'LineWidth',2 , 'MarkerSize', 14);
 hold on;
 
-loglog(dataset,time_pgres_seq,'d--','Color', color2,'MarkerSize', 14);
+loglog(dataset,time_pgres_seq,'d--','Color', color2, 'LineWidth',2 ,'MarkerSize', 14);
 hold on;
 
-loglog(dataset,time_pgres_par,'d--','Color', color6,'MarkerSize', 14);
+loglog(dataset,time_pgres_par,'x--','Color', color6,'LineWidth',2 ,'MarkerSize', 14);
 hold on;
 
 

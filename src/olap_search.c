@@ -2722,6 +2722,7 @@ void csc_csc_mm(
       b_row = B_row_ind[b_pos];
       for ( int at_column_a = 0 ; at_column_a < A_n_cols ; ++at_column_a ){
         a_pos = A_col_ptr[at_column_a]; 
+        //check if there is a non zero in this column
         flag_a = A_col_ptr[at_column_a+1] - a_pos;
         if ( ( b_row == at_column_a ) && (flag_a > 0) ){
           a_row = A_row_ind[a_pos];

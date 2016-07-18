@@ -192,38 +192,19 @@ The proposed solution focus on a typed linear algebra approach, encoding OLAP fu
 %	ARTICLE CONTENTS
 %----------------------------------------------------------------------------------------
 \begin{multicols}{2} % Two-column layout throughout the main article text
-\section{Introduction}
-\indent
-\par In a initial fase we implemented from the start a typed linear algebra solution, and evaluate its performance in a real word scenario, using different datasets. The datasets was produced with TPC-H Benchmark, was produced multiples datasets with different data sizes (1, 2, 4, 8, 16, 32 Gb) in order to obtain a realistic results.
 
-\section{Hardware Characterization}
-\indent
-\par The platform used by us for our study at Search6 is a dual-socket system equipped with two Intel\textsuperscript{\textregistered} Ivy Bridge processors. The system, referenced as compute node 652-1, has two Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} E5-2670v2 (Ivy Bridge architecture) and features 64 GB of DDR3 RAM, supported at a frequency of XXXX MHz divided in 4 memory channels.
 
-\begin{table}[H]
-\centering
-  \begin{tabular}{ | L{3.5cm} | R{5cm} | }
-  
-    \hline
-    System & compute-652-1 \\ \hline \hline
-        \# CPUs & 2\\ \hline
-    CPU & Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} E5-2670v2\\ \hline 
-    Architecture & Ivy Bridge \\ \hline 
-    \# Cores per CPU & 10 \\ \hline 
-    \# Threads per CPU & 20\\ \hline 
-    Clock Freq. & 2.5 GHz\\ \hline \hline 
-    L1 Cache & 320KB \newline 32KB per core\\ \hline 
-    L2 Cache & 2560KB  \newline  256KB per core \newline\\ \hline 
-    L3 Cache & 25600KB \newline shared \\ \hline \hline 
-    Inst. Set Ext. & SSE4.2 \& AVX \\ \hline 
-        \#Memory Channels & 4\\ \hline \hline
+\input{introduction.tex}
 
-    Vendors Announced Peak Memory BW & 59.7 GB/s\\ \hline
-    Measured\footnote{Stream Benchamrk} Peak Memory BW & 58.5GB/s\\ \hline
-  \end{tabular}
-     \caption{Architectural characteristics of the two evaluation platforms.}
-     \label{table:characterization}
-\end{table}
+\input{hardware.tex}
+
+\input{strategy.tex}
+\input{parallelization.tex}
+\input{results.tex}
+\input{future_work.tex}
+\input{conclusion.tex}
+\input{acknowledgements.tex}
+
 
 
 %---------------------------------------------------------------------------------------

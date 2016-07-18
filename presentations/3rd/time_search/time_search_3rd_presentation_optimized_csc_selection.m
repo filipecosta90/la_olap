@@ -1,6 +1,6 @@
 
 red = [ 255 0 0 ];
-green = [ 0 255 0 ];
+green = [ 0 102 0 ];
 blue = [ 0 0 255 ];
 yellow = [ 0 128 128 ];
 magenta = [ 255 0 255 ];
@@ -19,7 +19,6 @@ color9 = orange/255;
 FigHandle = figure;
   set(FigHandle, 'Position', [0, 0, 760, 760]);
 cd ('../../../src');
-
 
 csv_results_1 = readtable('timing/timings_vec_nomkl_1.csv','ReadVariableNames',true);
 csv_results_2 = readtable('timing/timings_vec_nomkl_2.csv','ReadVariableNames',true);
@@ -112,16 +111,16 @@ time_olap_new_v1 = [ best_time_test_1 best_time_test_2 best_time_test_4 best_tim
 %loglog(dataset,time_olap,'s--','Color', color0,'MarkerSize', 14);
 %hold on;
 
-loglog(dataset,time_olap_new,'s--','Color', color7, 'MarkerEdgeColor' , color7, 'MarkerSize', 14);
+loglog(dataset,time_olap_new,'s--','Color', color7, 'LineWidth',2 , 'MarkerSize', 14);
 hold on;
 
-loglog(dataset,time_olap_new_v1,'s--','Color', color9, 'MarkerEdgeColor' , color7, 'MarkerSize', 14);
+loglog(dataset,time_olap_new_v1,'+--','Color', color0, 'LineWidth',2 , 'MarkerSize', 14);
 hold on;
 
-loglog(dataset,time_pgres_seq,'d--','Color', color2,'MarkerSize', 14);
+loglog(dataset,time_pgres_seq,'d--','Color', color2, 'LineWidth',2 ,'MarkerSize', 14);
 hold on;
 
-loglog(dataset,time_pgres_par,'d--','Color', color6,'MarkerSize', 14);
+loglog(dataset,time_pgres_par,'x--','Color', color6,'LineWidth',2 ,'MarkerSize', 14);
 hold on;
 
 A = [ 1 best_time_1 ; 2 best_time_2 ; 4 best_time_4 ; 8 best_time_8 ; 16 best_time_16 ; 32 best_time_32 ];
@@ -146,7 +145,7 @@ set(gca, 'YTick', [1 2 4 8 16 32 64 128 ]);
 
 set(gca, 'XTick', [1 2 4 8 16 32 ]);
 xlim([1,32]) ;
-ylim([0,64]) ;
+ylim([0,8]) ;
 
 
 set(gca,'YTickLabel',num2str(get(gca,'YTick').'));
