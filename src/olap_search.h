@@ -296,5 +296,11 @@ void produce_tuple_from_krao_csc(
     int A_n_rows, int B_n_rows    
     );
 
+void write_coo_from_csc(
+    char* filename,
+    int C_n_nnz, int C_n_rows, int C_n_cols,
+    float* C_csc_values, int*  C_row_ind, int*  C_col_ptr
+    );
+ 
 #endif
 

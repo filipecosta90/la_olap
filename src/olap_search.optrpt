@@ -901,7 +901,7 @@ Begin optimization report for: csr_kron(float *, int *, int *, int, int, int, fl
 
 
 LOOP BEGIN at olap_search.c(2621,25)
-   remark #15388: vectorization support: reference at_column_A.14671 has aligned access
+   remark #15388: vectorization support: reference at_column_A.14672 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
@@ -938,7 +938,7 @@ LOOP BEGIN at olap_search.c(2621,3)
 LOOP END
 
 LOOP BEGIN at olap_search.c(2629,25)
-   remark #15388: vectorization support: reference at_column_A.14675 has aligned access
+   remark #15388: vectorization support: reference at_column_A.14676 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
@@ -977,7 +977,7 @@ LOOP BEGIN at olap_search.c(2629,3)
 LOOP END
 
 LOOP BEGIN at olap_search.c(2636,25)
-   remark #15388: vectorization support: reference at_column_A.14679 has aligned access
+   remark #15388: vectorization support: reference at_column_A.14680 has aligned access
    remark #15305: vectorization support: vector length 2
    remark #15427: loop was completely unrolled
    remark #15301: MATERIALIZED LOOP WAS VECTORIZED
@@ -1147,5 +1147,15 @@ LOOP BEGIN at olap_search.c(2882,3)
    remark #15382: vectorization support: call to function g_quark_to_string(GQuark) cannot be vectorized   [ olap_search.c(2889,23) ]
    remark #15382: vectorization support: call to function printf(const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(2890,5) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
+LOOP END
+===========================================================================
+
+Begin optimization report for: write_coo_from_csc(char *, int, int, int, float *, int *, int *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at olap_search.c(2904,3)
+   remark #15527: loop was not vectorized: function call to fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ olap_search.c(2906,7) ]
 LOOP END
 ===========================================================================

@@ -2891,4 +2891,22 @@ void produce_tuple_from_krao_csc(
   }
 }
 
+void write_coo_from_csc(
+  char* filename,
+    int C_n_nnz, int C_n_rows, int C_n_cols,
+    float* C_csc_values, int*  C_row_ind, int*  C_col_ptr
+    ){
+  int row_c;
+  char* field_c;
+  FILE* stream = fopen(filename, "w");
+  if (stream != NULL ){
+      fprintf( stream, "row,column\n" ); 
+  for (int at_nnz = 0; at_nnz < C_n_nnz; at_nnz++){
+    row_c = C_row_ind[at_nnz];
+      fprintf( stream, "%d,%d\n", row_c, at_nnz ); 
+    }
+    fclose(stream);
+  }
+}
+
 #endif

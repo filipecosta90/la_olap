@@ -247,6 +247,13 @@ int main( int argc, char* argv[]){
       &return_flag_n_nnz, &return_flag_n_rows, &return_flag_n_cols,
       &return_flag_csc_values, &return_flag_row_ind, &return_flag_col_ptr
       );
+
+write_coo_from_csc(
+    "sparsity_9.csv",
+     return_flag_n_nnz, return_flag_n_rows, return_flag_n_cols,
+      return_flag_csc_values, return_flag_row_ind, return_flag_col_ptr
+    );
+
   /** ---------------------------------------------------------------------------
    ** Populate Line Status Matrix
    ** -------------------------------------------------------------------------*/
@@ -257,6 +264,13 @@ int main( int argc, char* argv[]){
       &line_status_n_nnz, &line_status_n_rows, &line_status_n_cols ,
       &line_status_csc_values, &line_status_row_ind, &line_status_col_ptr
       );
+
+write_coo_from_csc(
+    "sparsity_10.csv",
+       line_status_n_nnz, line_status_n_rows, line_status_n_cols ,
+      line_status_csc_values, line_status_row_ind, line_status_col_ptr
+    );
+
   /** ---------------------------------------------------------------------------
    ** =========================== END OF DECLARATIONS ===========================
    ** -------------------------------------------------------------------------*/
@@ -272,6 +286,12 @@ int main( int argc, char* argv[]){
       &quantity_csc_values, &quantity_row_ind, &quantity_col_ptr
       );
 
+write_coo_from_csc(
+    "sparsity_5.csv",
+      quantity_n_nnz,  quantity_n_rows, quantity_n_cols , 
+      quantity_csc_values, quantity_row_ind, quantity_col_ptr
+    );
+
   /** ---------------------------------------------------------------------------
    ** Populate Shipdate Matrix
    ** -------------------------------------------------------------------------*/
@@ -282,6 +302,12 @@ int main( int argc, char* argv[]){
       &shipdate_n_nnz, &shipdate_n_rows, &shipdate_n_cols ,
       &shipdate_csc_values, &shipdate_row_ind, &shipdate_col_ptr
       );
+
+write_coo_from_csc(
+    "sparsity_11.csv",
+       shipdate_n_nnz, shipdate_n_rows, shipdate_n_cols ,
+      shipdate_csc_values, shipdate_row_ind, shipdate_col_ptr
+    );
 
   /** ---------------------------------------------------------------------------
    ** ---------------------------------------------------------------------------
@@ -432,8 +458,9 @@ int main( int argc, char* argv[]){
   ////////////////////////
   // WRITE EXPERIMENT DATA
   ////////////////////////
+if (argc > 2 ){
   writeResults( argv[1] , argv[2] );
-
+}
 #ifdef D_VERBOSE
   printf("( ( projection . selection ) . quantity ) . bang || final vector rows %d nnz %d\n", final_vector_n_rows, final_vector_n_nnz );
   print_csc_vector(
