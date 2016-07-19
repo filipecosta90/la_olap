@@ -1,0 +1,17 @@
+digraph models_diagram {
+
+  graph[rankdir=LR, overlap=false]
+    struct1 [ shape=plaintext,
+    label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+    <TR><TD COLSPAN="2">LINEITEM</TD></TR>
+    <TR><TD>COLUMN</TD><TD>#COL</TD></TR>
+    <TR><TD>ORDERKEY</TD><TD PORT="f1">1</TD></TR>
+    <TR><TD>PARTKEY</TD><TD PORT="f2">2</TD></TR>
+    <TR><TD>SUPPKEY</TD><TD PORT="f3">3</TD></TR>
+    <TR><TD>LINENUMBER</TD><TD PORT="f4">4</TD></TR>
+    </TABLE>
+    >
+    ]
+
+}

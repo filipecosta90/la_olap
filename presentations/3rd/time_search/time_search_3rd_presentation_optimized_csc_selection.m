@@ -1,11 +1,8 @@
 
 red = [ 255 0 0 ];
-green = [ 0 255 0 ];
+green = [ 0 102 0 ];
 blue = [ 0 0 255 ];
-%yellow = [ 255 255 0 ];
-
 yellow = [ 0 128 128 ];
-
 magenta = [ 255 0 255 ];
 brown = [ 165 42 42 ];
 orange = [ 255 165 0 ];
@@ -23,14 +20,12 @@ FigHandle = figure;
   set(FigHandle, 'Position', [0, 0, 760, 760]);
 cd ('../../../src');
 
-
 csv_results_1 = readtable('timing/timings_vec_nomkl_1.csv','ReadVariableNames',true);
 csv_results_2 = readtable('timing/timings_vec_nomkl_2.csv','ReadVariableNames',true);
 csv_results_4 = readtable('timing/timings_vec_nomkl_4.csv','ReadVariableNames',true);
 csv_results_8 = readtable('timing/timings_vec_nomkl_8.csv','ReadVariableNames',true);
 csv_results_16 = readtable('timing/timings_vec_nomkl_16.csv','ReadVariableNames',true);
 csv_results_32 = readtable('timing/timings_vec_nomkl_32.csv','ReadVariableNames',true);
-
 
 time_1 = csv_results_1.total;
 time_2 = csv_results_2.total;
@@ -39,16 +34,40 @@ time_8 = csv_results_8.total;
 time_16 = csv_results_16.total;
 time_32 = csv_results_32.total;
 
-
-
-
-
 best_time_1 = min( time_1 );
 best_time_2 = min( time_2 );
 best_time_4 = min( time_4 );
 best_time_8 = min( time_8 );
 best_time_16 = min( time_16 );
 best_time_32 = min( time_32 );
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+csv_results_1 = readtable('timing/timings_test_1.csv','ReadVariableNames',true);
+csv_results_2 = readtable('timing/timings_test_2.csv','ReadVariableNames',true);
+csv_results_4 = readtable('timing/timings_test_4.csv','ReadVariableNames',true);
+csv_results_8 = readtable('timing/timings_test_8.csv','ReadVariableNames',true);
+csv_results_16 = readtable('timing/timings_test_16.csv','ReadVariableNames',true);
+csv_results_32 = readtable('timing/timings_test_32.csv','ReadVariableNames',true);
+
+time_test_1 = csv_results_1.total;
+time_test_2 = csv_results_2.total;
+time_test_4 = csv_results_4.total;
+time_test_8 = csv_results_8.total;
+time_test_16 = csv_results_16.total;
+time_test_32 = csv_results_32.total;
+
+best_time_test_1 = min( time_test_1 );
+best_time_test_2 = min( time_test_2 );
+best_time_test_4 = min( time_test_4 );
+best_time_test_8 = min( time_test_8 );
+best_time_test_16 = min( time_test_16 );
+best_time_test_32 = min( time_test_32 );
+
+
+%%%%%%%%%%%%%%%%%%%
 
 seq_pgres_1 = csvread('timing/pgres_seq_1.csv') / 1000;
 seq_pgres_2 = csvread('timing/pgres_seq_2.csv') / 1000;
@@ -86,6 +105,7 @@ time_pgres_seq = [ best_time_pgres_1 best_time_pgres_2 best_time_pgres_4 best_ti
 time_pgres_par = [ best_time_pgres_par_1 best_time_pgres_par_2 best_time_pgres_par_4 best_time_pgres_par_8 best_time_pgres_par_16 best_time_pgres_par_32  ];
 
 time_olap_new = [ best_time_1 best_time_2 best_time_4 best_time_8 best_time_16 best_time_32 ];
+time_olap_new_v1 = [ best_time_test_1 best_time_test_2 best_time_test_4 best_time_test_8 best_time_test_16 best_time_test_32 ];
 
 
 %loglog(dataset,time_olap,'s--','Color', color0,'MarkerSize', 14);
@@ -94,18 +114,22 @@ time_olap_new = [ best_time_1 best_time_2 best_time_4 best_time_8 best_time_16 b
 loglog(dataset,time_olap_new,'s--','Color', color7, 'LineWidth',2 , 'MarkerSize', 14);
 hold on;
 
+loglog(dataset,time_olap_new_v1,'+--','Color', color0, 'LineWidth',2 , 'MarkerSize', 14);
+hold on;
+
 loglog(dataset,time_pgres_seq,'d--','Color', color2, 'LineWidth',2 ,'MarkerSize', 14);
 hold on;
 
 loglog(dataset,time_pgres_par,'x--','Color', color6,'LineWidth',2 ,'MarkerSize', 14);
 hold on;
 
-
-
-
 A = [ 1 best_time_1 ; 2 best_time_2 ; 4 best_time_4 ; 8 best_time_8 ; 16 best_time_16 ; 32 best_time_32 ];
 str = num2str([ best_time_1 ; best_time_2 ; best_time_4 ; best_time_8  ; best_time_16 ; best_time_32 ]);
 text(A(:,1)*1.10, A(:,2)*1,str);
+
+B = [ 1 best_time_test_1 ; 2 best_time_test_2 ; 4 best_time_test_4 ; 8 best_time_test_8 ; 16 best_time_test_16 ; 32 best_time_test_32 ];
+str = num2str([ best_time_test_1 ; best_time_test_2 ; best_time_test_4 ; best_time_test_8  ; best_time_test_16 ; best_time_test_32 ]);
+text(B(:,1)*1.10, B(:,2)*1,str);
 
 C = [ 1 best_time_pgres_1 ; 2 best_time_pgres_2 ; 4 best_time_pgres_4 ; 8 best_time_pgres_8  ; 16 best_time_pgres_16  ; 32 best_time_pgres_32  ];
 str1 = num2str([ best_time_pgres_1 ; best_time_pgres_2 ; best_time_pgres_4 ; best_time_pgres_8 ; best_time_pgres_16 ; best_time_pgres_32 ]);
@@ -121,13 +145,13 @@ set(gca, 'YTick', [1 2 4 8 16 32 64 128 ]);
 
 set(gca, 'XTick', [1 2 4 8 16 32 ]);
 xlim([1,32]) ;
-ylim([0,64]) ;
+ylim([0,8]) ;
 
 
 set(gca,'YTickLabel',num2str(get(gca,'YTick').'));
 
 
-l = legend(  'Parallel Linear Algebra Approach' , 'Sequential PostgreSQL', 'Parallel PostgreSQL (max\_parallel\_degree = 20)' );
+l = legend(  'Parallel Linear Algebra Approach' , 'Parallel Linear Algebra Approach New Version',  'Sequential PostgreSQL', 'Parallel PostgreSQL (max\_parallel\_degree = 20)' );
 
 
 set(l,'FontSize',12);
