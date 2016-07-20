@@ -25,12 +25,12 @@ FigHandle = figure;
   set(FigHandle, 'Position', [0, 0, 760, 560]);
 cd ('../../../src');
 
-dataset_1 = csvread('timing/timings_vec_1.dat');
-dataset_2 = csvread('timing/timings_vec_2.dat');
-dataset_4 = csvread('timing/timings_vec_4.dat');
-dataset_8 = csvread('timing/timings_vec_8.dat');
-dataset_16 = csvread('timing/timings_vec_16.dat');
-dataset_32 = csvread('timing/timings_vec_32.dat');
+dataset_1 = csvread('timing/timings_vec_1.csv');
+dataset_2 = csvread('timing/timings_vec_2.csv');
+dataset_4 = csvread('timing/timings_vec_4.csv');
+dataset_8 = csvread('timing/timings_vec_8.csv');
+dataset_16 = csvread('timing/timings_vec_16.csv');
+dataset_32 = csvread('timing/timings_vec_32.csv');
 
 
 time_1 = dataset_1 ( :, 2); 

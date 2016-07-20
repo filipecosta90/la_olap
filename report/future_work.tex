@@ -1,3 +1,30 @@
 \section{Future Work}
+\label{future_work}
 \indent
+
+
+The biggest problem of the linear algebra implementation relies in the fact that the intermediate matrices, due to the possibility of a column might not have a nonzero element, are not optimal for further parallelisations. This is the unique speedup container regarding the relational algebra approach. Surpassed that limitation the speedups would ascend to more significant values when compared to the relational algebra version. \par 
+It is also clear that the keys for selection significantly interfere with both linear and relational algebra algorithms. In the LA specific case, a selection operation that returns a low number of nonzero elements might compromise the attainable speedup through parallelisation, since there might not be enough data de keep the computational units busy. \par 
+
+There is still room to greatly improve the parallelisation of
+this algorithm. For example,  a Gather/Scatter analysis for distributed memory parallelism might result in larger attainable speedup, however, efforts need to me made to detect possible latency or bandwidth issues. \par 
+Another approach resides on the duplication of data in a shared memory environment . For the CSC format, regarding the three arrays, every thread would have the total CSC column pointer array and a portion of CSC values and CSC row indexes arrays. The computation of both divided arrays would be thread independent and there would only be necessary to reduce the CSC column pointer. \par 
+
+In order to improve data locality the Block Compressed Sparse Row Format could be used. However the BSR format would largely increase algorithm complexity for the defined methods. That improvement should only be used in the CSR linear algebra defined version.\par 
+
+Future work also includes extending the scope of both offline and run-time optimisations. These include:
+\begin{itemize} 
+\item investigating reordering methods to reduce total query compute time.
+\item exploiting index compression, further cache-blocking and TLB blocking to reduce memory traffic and to further improve locality.
+\item implementing other matrix partitioning schemes.
+\item improving load balance when there are different data structures for each generated matrix.
+\item reducing data structure conversion costs at run-time for the CSR linear algebra version.
+\item determining the most efficient  number of cores for parallelism.
+\item fully translate the remaing TPC-H queries and benchmark both linear and relational algebra approaches.
+\end{itemize}
+
+The usage of CUDA and MIC systems should also be explored as an heterogenous system solution. Since the algorithms require huge portions of simple computation, and it is already parallelised via OpenMp, porting the application to be Xeon Phi compatible should not present great challenges. That solution was not explored despite the simplicity of the porting mainly because of a new counterpart -- the smart scheduling of the multi-architecture processing units.\par 
+
+
+ 
 
