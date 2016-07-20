@@ -20,10 +20,10 @@ Future work also includes extending the scope of both offline and run-time optim
 \item improving load balance when there are different data structures for each generated matrix.
 \item reducing data structure conversion costs at run-time for the CSR linear algebra version.
 \item determining the most efficient  number of cores for parallelism.
-\item fully translate the remaing TPC-H queries and benchmark both linear and relational algebra approaches.
+\item fully translate the remaining TPC-H queries and benchmark both linear and relational algebra approaches.
 \end{itemize}
 
-The usage of CUDA and MIC systems should also be explored as an heterogenous system solution. Since the algorithms require huge portions of simple computation, and it is already parallelised via OpenMp, porting the application to be Xeon Phi compatible should not present great challenges. That solution was not explored despite the simplicity of the porting mainly because of a new counterpart -- the smart scheduling of the multi-architecture processing units.\par 
+The usage of CUDA and MIC systems should also be explored as an heterogenous system solution. Since the algorithms require huge portions of simple computation, and it is already parallelised via OpenMP, porting the application to be Xeon Phi compatible should not present great challenges. That solution was not explored despite the simplicity of the porting mainly because of a new counterpart -- the smart scheduling of the multi-architecture processing units.\par 
 
 
  
