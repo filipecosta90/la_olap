@@ -24,9 +24,9 @@ spy(Q);
 set(gca,'YTickLabel',num2str(get(gca,'YTick')'));
 set(gca,'XTickLabel',num2str(get(gca,'XTick')'));
 
-str = sprintf('Sparsity pattern for Sparse Matrix based on GQuarks\nFor TPC-H 1 lineitem table, row number 10\nMatrix dimensions: ( %d x %d ), non-Zero Percentage: %.5f %%', m, n, percentage);
+str = sprintf('Sparsity pattern for Sparse Matrix based on GQuarks\nFor TPC-H 1 lineitem table, column number 10\nMatrix dimensions: ( %d x %d ), non-Zero Percentage: %.5f %%', m, n, percentage);
 t = title(str);
-set(t,'FontSize',14);
+set(t,'FontSize',16);
 print('sparsity_10','-depsc');
 
 

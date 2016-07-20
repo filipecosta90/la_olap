@@ -1,0 +1,20 @@
+\frametitle{Planning our next steps}
+\setbeamerfont{block body}{size=\footnotesize}
+
+\begin{itemize}
+    \item Multithreaded parallelism
+    \begin{itemize}
+        \item Expected high speedup values
+    \end{itemize}
+    \vspace{0.5cm}
+    \item Improve data locality
+    \begin{itemize}
+    \item Implement all products in BSR format
+            \item  Irregular access patterns decreases performance
+    \end{itemize}
+        \vspace{0.5cm}
+    \item Analyse Gather/Scatter analysis for distributed memory parallelism
+    \begin{itemize}
+        \item Detect possible latency or bandwidth issues
+    \end{itemize}
+\end{itemize}

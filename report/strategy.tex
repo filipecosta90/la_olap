@@ -478,28 +478,37 @@ The matrices used to encode OLAP information will state an high degree of both s
 \begin{figure}[H]
 \centering
 \caption{Sparsity pattern analysis for attribute quantity, from the TPC-H dataset 1GB lineitem table(column \#5).}
+\includegraphics[width=1\columnwidth]{eps/sparsity_5.eps}
 \label{fig:sparse_1_5}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \caption{Sparsity pattern analysis for attribute return flag, from the TPC-H dataset 1GB lineitem table(column \#9).}
+\includegraphics[width=1\columnwidth]{eps/sparsity_9.eps}
 \label{fig:sparse_1_9}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \caption{Sparsity pattern analysis for attribute line status, from the TPC-H dataset 1GB lineitem table(column \#10).}
+\includegraphics[width=1\columnwidth]{eps/sparsity_10.eps}
 \label{fig:sparse_1_10}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \caption{Sparsity pattern analysis for attribute shipdate, from the TPC-H dataset 1GB lineitem table(column \#11).}
+\includegraphics[width=1\columnwidth]{eps/sparsity_11.eps}
 \label{fig:sparse_1_11}
 \end{figure}
 
-
+As visible on the prior sparsity analysis a matrix dimensions $(\ m\ \times\ n\ )$ will have in the worst case a non-zero number equal to n, since each column has at most one element. Therefore, to fully realise the potential of the processing units, it is very important that this memory bottleneck is overcome.\par 
+ Given the example matrix of figure \ref{fig:sparse_1_5} the number of zero elements that would have to be stored and processed would be $(n-1)^2$. Taking into account that for the TPC-H dataset 32GB the number o element arises to 192000551, the necessary amount of memory to store only one single precision dense matrix would be  147 456 846 GB. Regarding the smaller data chunks 
+ the hierarchy of memory consists of small fast memory at the top, closest to the arithmetic unit but getting larger and slower moving further away. Efforts should therefore be done in order to most of the memory system requests will be satisfied by the fast, high levels of memory, maximise occurrence of temporal and spatial locality so that the design of the code is consistent with the design of the caches. 
+ The used matrices must also be compressed to take advantage of their mathematical structure. With the prior statements in mind the storage formats chosen  rely on the Compressed Sparse Column (CSC) and Compressed Sparse Row (CSR) formats \cite{silva2005sparse}. \par 
+ Since each column has at most element, the CSC format construction is thereby simplified, giving place to an sequential column pointer array, bigger in size in one element when compared to the value and row index arrays. Denote that after the LA selection operation the column pointer array no longer keeps the illustrated property. \par 
+Regarding the usage of CSR format, it was chosen due to the creation of an alternative version to the LA operations that took CSC formatted matrices as input. This alternative version took CSR formatted matrices as input and relied on  Intel\textsuperscript{\textregistered} Math Kernel Library version 11.3.
 
 
 

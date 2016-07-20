@@ -1,0 +1,9 @@
+\beamer@endinputifotherversion {3.36pt}
+\select@language {english}
+\beamer@sectionintoc {1}{Actual Progress}{3}{0}{1}
+\beamer@sectionintoc {2}{Translating TPC-H Query-1}{4}{0}{2}
+\beamer@sectionintoc {3}{Implementing and optimizing the LA operations}{6}{0}{3}
+\beamer@sectionintoc {4}{Dataset Characterization}{8}{0}{4}
+\beamer@sectionintoc {5}{Test Platform}{9}{0}{5}
+\beamer@sectionintoc {6}{Query-1 First Results}{11}{0}{6}
+\beamer@sectionintoc {7}{Next Steps}{12}{0}{7}
