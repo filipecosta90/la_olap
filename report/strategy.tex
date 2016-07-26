@@ -11,16 +11,17 @@ As example of raw data consider the displayed table \ref{table:example_table} wh
 \input{tables/table_example.tex}
 
 To obtain useful information from raw data, which in OLAP systems escalated to Terabytes of information, we need to summarise the data by selecting attributes of interest and exhibiting their inter-relationships.\par 
-Consider the following simplified TPC-H query 1: "How many items were sold per return flag and line status?". For this particular question, the necessary attributes to answer the query are present on table lineitem, being \textbf{return flag}, \textbf{line status}, and \textbf{quantity}. In relational algebra that question could be easily answered by the following SQL code:
+Consider the following simplified TPC-H query 1: "How many items were sold per return flag and line status?". For this particular question, the necessary attributes to answer the query are present on table lineitem, being \textbf{return flag}, \textbf{line status}, and \textbf{quantity}. In relational algebra that question could be easily expressed by the following SQL code, which would produce the result presented on table \ref{table:results_simple_query_1}.
 
 \lstinputlisting[caption=SQL code for the simplified TPC-H query 1, label=simple_query_1]{sql/simple_query_1.sql} %input de um ficheiro
 
 
-which would produce the result presented on table \ref{table:results_simple_query_1}
 \input{tables/table_results_simple_query_1.tex}
 
-Aggregations like the presented on the prior simplified query occur in all TPC-H queries, hence performance of group-by and aggregation is quite important. That matter will be addressed in the later sections of the report.\par 
-Regarding expressing the OLAP  in therms of LA, the key resides in expressing operations in the form of matrix algebra expressions.  In this particular example, we should be able to build three matrices, one for each attribute, with each matrix being correlated to relational algebra as the row storage of columns \#5, \#9, and \#10. However, in order to do so, we need to find a two-way association between the presented string on the rows \#9 and \#10 and an unique integer identifier. Our proposed solution encodes strings recurring to Gnome \textbf{Gquarks} - a two-way association between a non-zero unsigned int and a char * - based on a thread safe hashtable. \par 
+Aggregations like the ones presented on this query occur in all TPC-H queries, hence performance of group-by and aggregation deserves a special attention.
+This issue will be addressed in later sections of the report.\par 
+To express OLAP queries in therms of LA, the key lies in expressing operations in the form of matrix algebra expressions. 
+This particular example, requires three matrices, one for each attribute, with each matrix being correlated to relational algebra as the row storage of columns \#5, \#9, and \#10. However, to do so, we need to find a two-way association between the presented string on the rows \#9 and \#10 and an unique integer identifier. Our proposed solution encodes strings recurring to Gnome \textbf{Gquarks} - a two-way association between a non-zero unsigned int and a char * - based on a thread safe hashtable. \par 
 By order of appearance, each unique string will be associated to an unique unsigned integer. Repeated strings will be associated to the prior corresponding unsigned integer. The resulting unsigned integer value range will start in the number 1. The value 0 in GQuarks is associated to NULL. Since in the proposed solution row and column numbers will respect  C-style arrays notation both column and row numbering will start on 0. The GQuark unsigned integer value decremented by 1  will represent the row position on the matrix, and the register number, starting at 0, will represent the column position on the matrix. \par 
 We can now verify that at most one non-zero cell can be found in each column the matrix in order to maintain the two-way association between an register and its corresponding string (matrix is "functional"). There is also the possibility of direct associating an register number with a value, wether integer or floating point. The referred matrices will be diagonal matrices, in which the element value is directly associated with the register.\par 
 Two types of matrices have now been presented:
