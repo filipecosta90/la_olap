@@ -5,7 +5,7 @@
 Regarding the prior described lemas, we shall now assess wether if the linear algebra approach presents performance improvements when compared with the relational one. 
 Before we discuss the measured performance results in the following section, we will briefly summarise characteristics of the multicore platform in our test suite, and present an overview of the performed tunings.\\
 
-Throughout all the experiments, the same platform was used. The system, referenced as compute node 652-1, has two Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} E5-2670v2 (Ivy Bridge architecture) and features 64 GB of DDR3 RAM, supported at a frequency of 1333 MHz divided in 4 memory channels. Table \ref{table:characterization} fully characterises the hardware features of the test platform:
+Throughout all experiments, the same platform was used. The system, referenced as compute node 652-1, has two Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} E5-2670v2 (Ivy Bridge architecture) sharing 64 GB of DDR3 RAM, 1333 MHz, accessed through 4 memory channels. Table \ref{table:characterization} fully characterises the hardware features of the test platform:
 
 \begin{table}[H]
 \centering
@@ -32,7 +32,7 @@ Throughout all the experiments, the same platform was used. The system, referenc
      \label{table:characterization}
 \end{table}
 
-Regarding the software used for both relational and linear algebra, the corresponding versions are stated bellow:
+The software used for both relational and linear algebra, and the corresponding versions are stated bellow:
 
 \begin{itemize}
 \item Linear Algebra: 
@@ -59,7 +59,7 @@ Regarding the software used for both relational and linear algebra, the correspo
            \end{itemize}
 \end{itemize}
 
-Denote that PostgreSQL was compiled specifically for the test platform in order to fully take advantage of the available hardware. 
+PostgreSQL was compiled specifically for the test platform, to fully take advantage of the available computing resources. 
 
 \subsection{Tuning the relational algebra engine}
 Database, application, and storage servers ship with a large number of configuration parameters like buffer cache sizes, number of I/O daemons, and parameters input to the database query optimiser. Finding good settings for these parameters is a challenging task because of the complex ways in which parameter settings can affect performance. The parameters shared\_buffers, effective\_cache\_size, and work\_mem, were adjusted accordingly, with  shared\_buffers begin set to 2GB, effective\_cache\_size being set to 64GB, and work\_mem being set to 25MB. In order to further speed up RA queries, indexes were created for all the database tables.
@@ -67,18 +67,20 @@ Database, application, and storage servers ship with a large number of configura
 
 \subsection{Tuning sparse CSC and CSR methods to assist data level parallelism}
 
-Regarding SSE vectorisation several efforts were made in order to introduce it in both versions of the linear algebra approach. The usage of the performance Library Intel Math Kernel library fully assisted vectorisation on the method responsible for the dot product between sparse matrices and sparse matrix vector on the CSR version.\par 
+Efficient SSE vectorisation was achieved  in both versions of the linear algebra approach. The usage of the performant Intel Math Kernel Library (MKL) fully assisted vectorisation of the dot product between sparse matrices and sparse matrix vector, on the CSR version.\par 
 The compiler was also instructed via auto vectorisation hints, and user mandated vectorisation. The non existence of vector dependencies, when verified, was also explicitly included.\par 
 Alignment of data and data structures can affect performance. 
-Regarding the memory allocation alignment, all data is aligned during creation accordingly to cache line size. Regarding the access alignment,
-for AVX, alignment to 32byte boundaries (8 Single Precision words) allowed a single reference to a cache line for moving 8SP words into the registers (SIMD support). 
+In the memory allocation alignment all data was aligned  according to cache line size. Regarding the access alignment,
+for AVX, alignment to 32-byte boundaries (8 SP chunks) allowed a single reference to a cache line to move 8-SP numbers into the registers. 
 The compiler was instructed to to assume that all CSC and CSR arrays are aligned on an 32-byte boundary.
 
-\subsection{Results from the tuning of relational and linear algebra approaches}
+\subsection{Tuning RA and LA approaches}
 
 
-We conducted experiments on the following TPC-H simplified query-1, shown on listing \ref{used_query_1}, similar to the one presented in listing \ref{query_1}. 
-The experiments focused a variety of datasets ranging from 1GB to 32GB. An overview of their characteristics appears in table \ref{table:dataset_info}. As you can state, the CSC format requires in overall a larger space for data, however, as you will state in the following sections of the report, the CSC format allowed us to simplify several algorithms and improve the overall perfomance.
+We conducted experiments on the simplified TPC-H  query-1, shown in listing \ref{used_query_1}, similar to the one presented in listing \ref{query_1}. 
+The experiments focused a variety of datasets ranging from 1GB to 32GB. An overview of their characteristics appears in table \ref{table:dataset_info}. 
+
+The CSC format requires a  larger  overall space for data, but it allowed us to simplify several algorithms and improve the overall perfomance.
 
 \lstinputlisting[caption=SQL code for the simplified TPC-H query 1 used on the experimentation, label=used_query_1]{sql/used_query_1.sql} %input de um ficheiro
 
@@ -128,12 +130,18 @@ The experiments focused a variety of datasets ranging from 1GB to 32GB. An overv
 
 \subsection{Experimental results analysis}
 
-Figure \ref{fig:time_la_vs_ra} presents the measured time analysis regarding the variety of datasets, the test platform, and both linear and relational algebra approaches. Denote that the presented values were selected through the K-Best technique, with K=3 from a 50 samples. Regarding the linear algebra approach we present the the best solution from CSR and CSC format. The presented linear algebra solution in figure \ref{fig:time_la_vs_ra} is the one using CSR and format and  Intel\textsuperscript{\textregistered} Math Kernel Library version 11.3. \par
-The experiment presented in the current section focus on the best possible sequential solutions for both relational and linear algebra versions. The parallel PostgreSQL line was only introduced in order to elucidate the parallel  goal to achieve in the LA versions discussed in the later sections of this report, and discuss future potential improvements of our linear algebra system. As visible, the coding effort in order to tune sparse CSR methods to assist data level parallelism revealed itself fruitful, however, a further analysis should be produced in order to fully potentiate vectorisation opportunities and optimisations.\par 
+Figure \ref{fig:time_la_vs_ra} plots the measured execution for a range of datasets, and both linear and relational algebra approaches.
+
+Denote that the presented values were selected through the K-Best technique, with K=3, from 50 samples. 
+
+For the linear algebra approach we present the best solution from CSR and CSC format. The presented linear algebra solution in figure \ref{fig:time_la_vs_ra} is the one using CSR and format and  Intel MKL version 11.3. \par
+The experiment presented in the current section focus on the best possible sequential solutions for both relational and linear algebra versions. The parallel PostgreSQL line was only introduced to elucidate the parallel  goal to achieve in the LA versions discussed in later sections of this report, and discuss future potential improvements of our linear algebra system. 
+
+As shown, the coding effort to tune sparse CSR methods to assist data level parallelism revealed itself fruitful. However, a further analysis should be produced in order to fully potentiate vectorisation opportunities and optimisations.\par 
 
 \begin{figure}[H]
 \centering
-\caption{TPC-H benchmark simplified query-1 time for solution analysis for different scale factors,  between sequential linear and relational algebra approaches.}
+\caption{Execution time for the  simplified query-1 from TPC-H benchmark, for different scale factors (dataset sizes from 1GB to 32GB).}
 \includegraphics[width=1\columnwidth]{eps/TIME_LA_vs_RA_1st.eps}
 \label{fig:time_la_vs_ra}
 \end{figure}
