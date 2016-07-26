@@ -2,13 +2,13 @@
 \indent
 \label{conclusion}
 
+We have designed, implemented and evaluated an efficient and parallel LA framework to provide fast responses to OLAP queries in very large databases. We started by developing a typed linear algebra solution to respond to OLAP TPC-H query 1, with faster response times than a Open Source relational algebra competitor, PostgresSQL. 
 
-We have presented a framework for Sparse Linear Algebra represent and query OLAP: In order to do so we develop from the start and parallelise a typed linear algebra solution to respond to OLAP TPC-H query 1,  in a way that the achieved time to compute the query surpasses the relational algebra competitor.\par 
+A challenge in this project was to understand the linear algebra theory prior defined\cite{macedo2015linear} \cite{da2015benchmarking}, to fully represent relational algebra in terms of linear algebra operators. This process was longstanding and it was only managed to do it with help of our advisors. Efforts were made to correctly introduce the key ideias prior presented\cite{macedo2015linear}, and resolving potential difficulties that the previous implementations faced. \par
 
-The major challenge regarding this project was understanding the linear algebra theory prior defined\cite{macedo2015linear} \cite{da2015benchmarking}, in order to fully represent relational algebra in terms of linear algebra operators. This process was longstanding and it was only managed to do it with help of our advisors. Efforts were made in order to correctly introduce the main ideias prior presented\cite{macedo2015linear}, and resolving potential difficulties that prior implementations faced. \par
 
-In spite the already 18x speedup regarding sequential linear algebra version and the 2x speedup regarding the parallel relational algebra engine, a lot of work can be done to further improve
-the algorithm, and fully analyse TPC-H queries results, as stated on section \ref{future_work}, leaving several potential exploratory paths.
+%NÃO SEI O QUE O PROFESSOR QUER COM A LINHA AO LADO DESTE PARAGRAFO
+In spite the already 18x speedup regarding sequential linear algebra version and the 2x speedup regarding the parallel relational algebra engine, a lot of work can be done to further improve the algorithm, and fully analyse TPC-H queries results, as stated on section \ref{future_work}, leaving several potential exploratory paths.
 
  
 
