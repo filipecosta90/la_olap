@@ -5,14 +5,13 @@
 
 The biggest problem of the linear algebra implementation can be the intermediate matrices, if a column has no nonzero element, they are not optimal for further parallelisations. This is the unique speedup 
 
-%NÃO PERCEBO A PALAVRA POR CIMA DE CONTAINER
-container 
+limitation
 
 regarding the relational algebra approach. If that limitation is overcome the speedups would climb to more significant values when compared to the relational algebra version. \par 
 It is also clear that the keys for selection significantly interfere with both linear and relational algebra algorithms. In the LA specific case, a selection operation that returns a low number of nonzero elements might compromise the attainable speedup through parallelisation, since there might not be enough data to keep the computational units busy. \par 
 
 There is still room to greatly improve the parallelisation of this algorithm. For example,  a gather/scatter analysis for distributed memory parallelism might result in larger attainable speedup. However, efforts need to me made to detect possible latency or bandwidth issues. \par 
-Another approach is to duplicate data in a shared memory environment . For the CSC format, regarding the three arrays, every thread would have the total CSC column pointer array and a portion of CSC values and CSC row indexes arrays. The computation of both splited arrays would be thread independent and there would only be necessary to reduce the CSC column pointer. \par 
+Another approach is to duplicate data in a shared memory environment . For the CSC format, regarding the three arrays, every thread would have the total CSC column pointer array and a portion of CSC values and CSC row indexes arrays. The computation of both splitted arrays would be thread independent and there would only be necessary to reduce the CSC column pointer. \par 
 
 To improve data locality the Block Compressed Sparse Row (BSR) Format could be used. However, it would largely increase the algorithm complexity for the defined methods. That improvement should only be used in the CSR linear algebra defined version.\par 
 

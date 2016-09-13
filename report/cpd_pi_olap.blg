@@ -3,11 +3,11 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: cpd_pi_olap.aux
 The style file: plain.bst
 Database file #1: biblio.bib
-Warning--I didn't find a database entry for "gquarks"
+Warning--I didn't find a database entry for "Po15"
 Warning--empty journal in da2015benchmarking
 You've used 4 entries,
             2118 wiz_defined-function locations,
-            520 strings with 4577 characters,
+            521 strings with 4578 characters,
 and the built_in function-call counts, 1219 in all, are:
 = -- 127
 > -- 40

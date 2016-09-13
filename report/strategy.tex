@@ -495,30 +495,35 @@ The matrices used to encode OLAP information displau a high degree of both spars
 \begin{figure}[H]
 \centering
 \caption{Sparsity pattern analysis for attribute quantity, from the TPC-H dataset 1GB lineitem table(column \#5).}
-\includegraphics[width=1\columnwidth]{eps/sparsity_5.eps}
+\includegraphics[width=1\columnwidth]{eps/sparsity_5.png}
 \label{fig:sparse_1_5}
 \end{figure}
 
+\vspace{1.5cm}
 \begin{figure}[H]
 \centering
 \caption{Sparsity pattern analysis for attribute return flag, from the TPC-H dataset 1GB lineitem table(column \#9).}
-\includegraphics[width=1\columnwidth]{eps/sparsity_9.eps}
+\includegraphics[width=1\columnwidth]{eps/sparsity_9.png}
 \label{fig:sparse_1_9}
 \end{figure}
+\vspace{1.5cm}
 
 \begin{figure}[H]
 \centering
 \caption{Sparsity pattern analysis for attribute line status, from the TPC-H dataset 1GB lineitem table(column \#10).}
-\includegraphics[width=1\columnwidth]{eps/sparsity_10.eps}
+\includegraphics[width=1\columnwidth]{eps/sparsity_10.png}
 \label{fig:sparse_1_10}
 \end{figure}
+\vspace{1.5cm}
 
 \begin{figure}[H]
 \centering
 \caption{Sparsity pattern analysis for attribute shipdate, from the TPC-H dataset 1GB lineitem table(column \#11).}
-\includegraphics[width=1\columnwidth]{eps/sparsity_11.eps}
+\includegraphics[width=1\columnwidth]{eps/sparsity_11.png}
 \label{fig:sparse_1_11}
 \end{figure}
+\vspace{1.5cm}
+
 
 As shown in the prior sparsity analysis, a matrix dimensions $(\ m\ \times\ n\ )$ will have, in the worst case, a non-zero number equal to n, since each column has at most one element. Therefore, to fully realise the potential of the processing units,  this memory bottleneck should be overcome.\par 
  Given the example matrix of figure \ref{fig:sparse_1_5}, the number of zero elements that would have to be stored and processed would be $(n-1)^2$. 
