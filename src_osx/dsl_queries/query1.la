@@ -1,0 +1,28 @@
+BEGIN
+bitmap returnFlag;
+bitmap lineStatus;
+bitmap shipdate;
+matrix quantity;
+
+returnFlag = tbl_read('lineitem.tbl', 9);
+lineStatus = tbl_read('lineitem.tbl', 10);
+quantity = tbl_read('lineitem.tbl', 5);
+
+shipdate = tbl_read('lineitem.tbl', 11);
+
+bitmap projection, selection;
+matrix aggregiation, intermediate_result, final_result;
+
+vector bng;
+bng = bang(6);
+
+START
+selection = mx_filter_and ( shipdate, >=, '1998-08-28', <=, '1998-12-01' );
+projection = returnFlag krao lineStatus;
+aggregation = quantity * bng;
+intermediate_result = projection * selection;
+final_result = itermediate_result * aggregation;
+STOP
+
+tbl_write(final_result, 'final_result.tbl');
+END
