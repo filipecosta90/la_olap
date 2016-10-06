@@ -23,5 +23,4 @@ make
   *  Vector-based processing  
 	
   * Column-based storage  
-    Minimizes disk I/O by only accessing the relevant data.
 
