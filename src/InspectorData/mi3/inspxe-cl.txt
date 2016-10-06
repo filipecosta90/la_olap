@@ -1,7 +1,0 @@
-
-=== Start: [2016/07/05 05:08:52] === 
-  
-3 new problem(s) found 
-    2 Memory leak problem(s) detected 
-    1 Memory not deallocated problem(s) detected 
-=== End: [2016/07/05 05:12:31] === 
