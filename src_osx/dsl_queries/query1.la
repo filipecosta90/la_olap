@@ -2,16 +2,19 @@ BEGIN
 bitmap returnFlag;
 bitmap lineStatus;
 bitmap shipdate;
+
 matrix quantity;
+
+bitmap projection;
+bitmap selection;
+matrix aggregiation; 
+matrix intermediate_result;
+matrix final_result;
 
 returnFlag = tbl_read('lineitem.tbl', 9);
 lineStatus = tbl_read('lineitem.tbl', 10);
 quantity = tbl_read('lineitem.tbl', 5);
-
 shipdate = tbl_read('lineitem.tbl', 11);
-
-bitmap projection, selection;
-matrix aggregiation, intermediate_result, final_result;
 
 vector bng;
 bng = bang(6);

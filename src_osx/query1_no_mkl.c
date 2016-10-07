@@ -198,9 +198,9 @@ int main( int argc, char* argv[]){
   __declspec(align(MEM_LINE_SIZE)) int* projection_selection_quantity_row_ind;
   __declspec(align(MEM_LINE_SIZE)) int* projection_selection_quantity_col_ptr;
   //COMMON
-  int  projection_selection_quantity_n_nnz;
+  int projection_selection_quantity_n_nnz;
   int projection_selection_quantity_n_rows;
-  int  projection_selection_quantity_n_cols;
+  int projection_selection_quantity_n_cols;
 
   /* ---------------------------------------------------------------------------
    ** Debug Vectors

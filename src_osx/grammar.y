@@ -32,6 +32,7 @@ int yylex();
 }
 
 %token BGN END 
+%token CREATE LOAD DROP 
 %token <sval> IDENTIFIER 
 %token <ival> INTEGER
 %token HADAMARD KRAO KRON TR
@@ -47,11 +48,36 @@ body : body elem
      | elem 
      ;
 
-elem : element_declaration ';'
+elem : Inline_declaration_type ';'
      | time query time
      | atribuition_function ';'
      | function ';'
      ;
+
+Inline_declaration_type : VECTOR IDENTIFIER
+{
+   printf("need to create vector variable\n");
+   //CSC
+    __declspec(align(MEM_LINE_SIZE)) float* vector_csc_values;
+    __declspec(align(MEM_LINE_SIZE)) int* vector_row_ind;
+    //COMMON
+    int vector_n_nnz;
+    int vector_n_rows;
+}
+| MATRIX IDENTIFIER
+{
+   printf("need to create matrix variable\n");
+    //CSC
+    __declspec(align(MEM_LINE_SIZE)) float* matrix_csc_values;
+    __declspec(align(MEM_LINE_SIZE)) int* matrix_row_ind;
+    __declspec(align(MEM_LINE_SIZE)) int* matrix_col_ptr;
+    //COMMON
+    int matrix_n_nnz;
+    int matrix_n_rows;
+    int matrix_n_cols;
+}
+                    | BITMAP IDENTIFIER
+                    ;
 
 query : query atribuition_function ';'
       | query atribuition_expression ';'
@@ -68,11 +94,6 @@ time : START {
         printf("Tempo: %lf \n",elapsed);
       }
      ;
-
-element_declaration : VECTOR IDENTIFIER
-                    | MATRIX IDENTIFIER
-                    | BITMAP IDENTIFIER
-                    ;
 
 atribuition_function : IDENTIFIER '=' function 
                      ;
