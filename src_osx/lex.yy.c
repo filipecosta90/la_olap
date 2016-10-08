@@ -527,8 +527,8 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "lex_analyser.l"
 #line 4 "lex_analyser.l"
-  #include "y.tab.h"
-  #include <string.h>
+  #include "grammar.tab.h"
+#include <string.h>
 #line 533 "lex.yy.c"
 
 #define INITIAL 0

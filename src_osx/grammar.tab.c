@@ -172,7 +172,7 @@ typedef union YYSTYPE
   char *sval;
 }
 /* Line 193 of yacc.c.  */
-#line 176 "y.tab.c"
+#line 176 "grammar.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -185,7 +185,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 189 "y.tab.c"
+#line 189 "grammar.tab.c"
 
 #ifdef short
 # undef short
@@ -1442,7 +1442,7 @@ yyreduce:
     int vector_n_nnz;
     int vector_n_rows;
 */
-}
+;}
     break;
 
   case 10:
@@ -1459,14 +1459,14 @@ printf("need to create matrix variable\n");
     int matrix_n_rows;
     int matrix_n_cols;
 */
-}
+;}
     break;
 
   case 16:
 #line 89 "grammar.y"
     {
         GET_TIME(start);
-      }
+      ;}
     break;
 
   case 17:
@@ -1475,7 +1475,7 @@ printf("need to create matrix variable\n");
         GET_TIME(stop);
         elapsed = stop - start;
         printf("Tempo: %lf \n",elapsed);
-      }
+      ;}
     break;
 
   case 26:
@@ -1484,12 +1484,12 @@ printf("need to create matrix variable\n");
           char identifier[strlen((yyvsp[(3) - (6)].sval))];
           strcpy(identifier,(yyvsp[(3) - (6)].sval));
           printf("tbl_read(%s,%d)\n",identifier,(yyvsp[(5) - (6)].ival));
-}
+;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1493 "y.tab.c"
+#line 1493 "grammar.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

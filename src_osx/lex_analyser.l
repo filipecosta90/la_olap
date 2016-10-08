@@ -1,8 +1,8 @@
 D     [0-9]
 H     [a-fA-F0-9]
 %{
-  #include "y.tab.h"
-  #include <string.h>
+  #include "grammar.tab.h"
+#include <string.h>
 %}
 
 %%

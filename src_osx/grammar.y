@@ -10,12 +10,11 @@ Compiler for the LA language
 
 
 #include <stdio.h>
-#include <glib.h>
 #include <stdlib.h>
 #include <string.h>
-#include "olap_search.h"
-#include "timer.h"
-//sleep
+#include "olap_search.hpp"
+#include "timer.hpp"
+//sleep:
 #include <unistd.h>
 
 int yylex();
@@ -56,17 +55,18 @@ elem : Inline_declaration_type ';'
 
 Inline_declaration_type : VECTOR IDENTIFIER
 {
-   printf("need to create vector variable\n");
    //CSC
-    __declspec(align(MEM_LINE_SIZE)) float* vector_csc_values;
+/*    __declspec(align(MEM_LINE_SIZE)) float* vector_csc_values;
     __declspec(align(MEM_LINE_SIZE)) int* vector_row_ind;
     //COMMON
     int vector_n_nnz;
     int vector_n_rows;
+*/
 }
 | MATRIX IDENTIFIER
 {
-   printf("need to create matrix variable\n");
+/*
+printf("need to create matrix variable\n");
     //CSC
     __declspec(align(MEM_LINE_SIZE)) float* matrix_csc_values;
     __declspec(align(MEM_LINE_SIZE)) int* matrix_row_ind;
@@ -75,6 +75,7 @@ Inline_declaration_type : VECTOR IDENTIFIER
     int matrix_n_nnz;
     int matrix_n_rows;
     int matrix_n_cols;
+*/
 }
                     | BITMAP IDENTIFIER
                     ;
@@ -121,15 +122,15 @@ function : TBL_READ '(' IDENTIFIER ',' INTEGER ')' {
 
 %%
 
-#include<ctype.h>
 
 void yyerror (const char *s) {
   fprintf (stderr, "%s\n", s);
 }
 
-int yywrap(){
-  return 1;
-}
+int yywrap() {
+                        return 1;
+                        }
+
 
 int main(int argc, char *argv[]){
 /*  int s;
