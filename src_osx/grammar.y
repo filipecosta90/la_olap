@@ -17,10 +17,11 @@ Compiler for the LA language
 //sleep:
 #include <unistd.h>
 
+using namespace std;
 int yylex();
-  void yyerror(const char *s);
+void yyerror(const char *s);
 
-  double start, stop, elapsed;
+double start, stop, elapsed;
 
 %}
 
@@ -31,7 +32,8 @@ int yylex();
 }
 
 %token BGN END 
-%token CREATE LOAD DROP 
+%token CREATE CUBE 
+%token LOAD DROP COLUMN INFILE AS INTO
 %token <sval> IDENTIFIER 
 %token <ival> INTEGER
 %token HADAMARD KRAO KRON TR
@@ -47,11 +49,20 @@ body : body elem
      | elem 
      ;
 
-elem : Inline_declaration_type ';'
+elem : Create_declaration ';' 
+     | Load_declaration ';'
+     | Inline_declaration_type ';'
      | time query time
      | atribuition_function ';'
      | function ';'
      ;
+
+Create_declaration : CREATE CUBE IDENTIFIER {} 
+                   ;
+
+Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {} 
+                 | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER { }
+                 ;
 
 Inline_declaration_type : VECTOR IDENTIFIER
 {

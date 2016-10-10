@@ -51,6 +51,10 @@
 using namespace std;
 map<string, map<string,vector<float> > > data_dict_mx_values;
 map<string, map<string,vector<int> > > data_dict_mx_row_ind;
+map<string, map<string,vector<int> > > data_dict_mx_col_ptr;
+map<string, map<string,int > > data_dict_mx_n_rows;
+map<string, map<string,int > > data_dict_mx_n_cols;
+map<string, map<string,int > > data_dict_mx_n_nnz;
 
 ////////////////////////////////////// AUX /////////////////////////////////////
 ////////////////////////////////////// AUX /////////////////////////////////////

@@ -25,10 +25,18 @@ H     [a-fA-F0-9]
 "vector"  {return (VECTOR);}
 "matrix"  {return (MATRIX);}
 "bitmap"  {return (BITMAP);}
+"load"   {return (LOAD);}
+"create"   {return (CREATE);}
+"cube"   {return (CUBE);}
+"column"   {return (COLUMN);}
+"infile"   {return (INFILE);}
+"as"   {return (AS);}
+"into"   {return (INTO);}
 "bang"    {return (BANG);}
 "tbl_read" {return (TBL_READ);}
 "tbl_write" {return (TBL_WRITE);}
 "mx_filter_and" {return (MX_FILTER_AND);}
+
 
 ";"     { return(';'); }
 ","     { return(','); }
@@ -46,9 +54,7 @@ H     [a-fA-F0-9]
           return (INTEGER);
         }
 [a-zA-Z_'.0-9/]* { 
-          char res[strlen(yytext)+1];
-          strcpy(res, yytext);
-          yylval.sval = res;
+          yylval.sval = strdup(yytext);
           return (IDENTIFIER);
         }
 [<=>]+ { return (CONDITION); }
