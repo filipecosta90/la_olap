@@ -12,7 +12,7 @@ Compiler for the LA language
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "olap_search.hpp"
+#include "olap.hpp"
 #include "timer.hpp"
 //sleep:
 #include <unistd.h>
@@ -60,33 +60,18 @@ elem : Create_declaration ';'
 Create_declaration : CREATE CUBE IDENTIFIER {} 
                    ;
 
-Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {} 
+Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
+  col_read_csc ( $6, $4 );
+                 
+                 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER { }
                  ;
 
 Inline_declaration_type : VECTOR IDENTIFIER
 {
-   //CSC
-/*    __declspec(align(MEM_LINE_SIZE)) float* vector_csc_values;
-    __declspec(align(MEM_LINE_SIZE)) int* vector_row_ind;
-    //COMMON
-    int vector_n_nnz;
-    int vector_n_rows;
-*/
 }
 | MATRIX IDENTIFIER
 {
-/*
-printf("need to create matrix variable\n");
-    //CSC
-    __declspec(align(MEM_LINE_SIZE)) float* matrix_csc_values;
-    __declspec(align(MEM_LINE_SIZE)) int* matrix_row_ind;
-    __declspec(align(MEM_LINE_SIZE)) int* matrix_col_ptr;
-    //COMMON
-    int matrix_n_nnz;
-    int matrix_n_rows;
-    int matrix_n_cols;
-*/
 }
                     | BITMAP IDENTIFIER
                     ;
@@ -144,9 +129,5 @@ int yywrap() {
 
 
 int main(int argc, char *argv[]){
-/*  int s;
-  while(s = yylex()){
-    printf("%d\n",s);
-  }*/
   return (yyparse());
 }

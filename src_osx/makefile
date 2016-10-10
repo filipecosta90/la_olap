@@ -1,4 +1,4 @@
-CC = g++
+CC = g++  
 LIBLDIR= 
 
 #include
@@ -18,7 +18,7 @@ lex.yy.c: lex_analyser.l
 grammar.tab.c: grammar.y 
 	bison -d grammar.y
 
-dsl: grammar.tab.c lex.yy.c olap_search.o
+dsl: grammar.tab.c lex.yy.c olap.cpp olap.hpp
 	$(CC) -o $(EXECNAME) $(CFLAGS) grammar.tab.c lex.yy.c 
 
 .PHONY: clean

@@ -29,7 +29,25 @@
  ** University of Minho, High Performance Computing Dpt. , April 2016
  ** -------------------------------------------------------------------------*/
 
-#ifndef _olap_cpp
-#define _olap_cpp
-#include "olap_search.hpp"
+#ifndef _olap_cu 
+#define _olap_cu 
+#include "olap.hpp"
+
+void col_read_csc (
+    char* filename, int col_number
+/*    ,
+    int* n_nnz, int* n_rows, int* n_cols,
+    vector<float>& A_csc_values,
+    vector<int>& A_row_ind,
+    vector<int>& A_col_ptr
+ */   ){
+
+  FILE* f = fopen(filename, "r" );
+  fseek(f, 0, SEEK_END);
+  long fileSize = ftell(f);
+  vector<char> dev(fileSize);
+  cout << " file has size " << fileSize << endl;
+  fclose(f);
+}
+
 #endif

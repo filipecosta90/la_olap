@@ -24,9 +24,8 @@
  **              recurring to Intel MKL and GLIB libraries.
  **
  **     Authors: Filipe Oliveira <a57816@alunos.uminho.pt>
- **          and Sérgio Caldas   <a57779@alunos.uminho.pt>
  **
- ** University of Minho, High Performance Computing Dpt. , April 2016
+ ** University of Minho, High Performance Computing Dpt. , October 2016
  ** -------------------------------------------------------------------------*/
 
 //Cache-Lines size is (typically) 32 bytes
@@ -48,6 +47,11 @@
 #include <map>
 #include <vector>
 
+//GPU libs
+//#include <thrust/device_vector.h>                                               
+//#include <thrust/copy.h>                                                        
+//#include <thrust/count.h> 
+
 using namespace std;
 map<string, map<string,vector<float> > > data_dict_mx_values;
 map<string, map<string,vector<int> > > data_dict_mx_row_ind;
@@ -56,9 +60,17 @@ map<string, map<string,int > > data_dict_mx_n_rows;
 map<string, map<string,int > > data_dict_mx_n_cols;
 map<string, map<string,int > > data_dict_mx_n_nnz;
 
-////////////////////////////////////// AUX /////////////////////////////////////
-////////////////////////////////////// AUX /////////////////////////////////////
-////////////////////////////////////// AUX /////////////////////////////////////
 
-//starts at position 1 
+void col_read_csc (
+    char* filename, int col_number
+/*    ,
+    int* n_nnz, int* n_rows, int* n_cols,
+    vector<float>& A_csc_values,
+    vector<int>& A_row_ind,
+    vector<int>& A_col_ptr
+ */   );
+
+
+
+
 #endif

@@ -143,7 +143,7 @@ Compiler for the LA language
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "olap_search.hpp"
+#include "olap.hpp"
 #include "timer.hpp"
 //sleep:
 #include <unistd.h>
@@ -498,9 +498,9 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    45,    45,    48,    49,    52,    53,    54,    55,    56,
-      57,    60,    63,    64,    67,    77,    91,    94,    95,    96,
-      97,   100,   103,   110,   113,   116,   117,   118,   119,   120,
-     121,   124,   129,   130,   131
+      57,    60,    63,    67,    70,    73,    76,    79,    80,    81,
+      82,    85,    88,    95,    98,   101,   102,   103,   104,   105,
+     106,   109,   114,   115,   116
 };
 #endif
 
@@ -1477,53 +1477,38 @@ yyreduce:
 
   case 12:
 #line 63 "grammar.y"
-    {;}
+    {
+  col_read_csc ( (yyvsp[(6) - (10)].sval), (yyvsp[(4) - (10)].ival) );
+                 
+                 ;}
     break;
 
   case 13:
-#line 64 "grammar.y"
+#line 67 "grammar.y"
     { ;}
     break;
 
   case 14:
-#line 68 "grammar.y"
+#line 71 "grammar.y"
     {
-   //CSC
-/*    __declspec(align(MEM_LINE_SIZE)) float* vector_csc_values;
-    __declspec(align(MEM_LINE_SIZE)) int* vector_row_ind;
-    //COMMON
-    int vector_n_nnz;
-    int vector_n_rows;
-*/
 ;}
     break;
 
   case 15:
-#line 78 "grammar.y"
+#line 74 "grammar.y"
     {
-/*
-printf("need to create matrix variable\n");
-    //CSC
-    __declspec(align(MEM_LINE_SIZE)) float* matrix_csc_values;
-    __declspec(align(MEM_LINE_SIZE)) int* matrix_row_ind;
-    __declspec(align(MEM_LINE_SIZE)) int* matrix_col_ptr;
-    //COMMON
-    int matrix_n_nnz;
-    int matrix_n_rows;
-    int matrix_n_cols;
-*/
 ;}
     break;
 
   case 21:
-#line 100 "grammar.y"
+#line 85 "grammar.y"
     {
         GET_TIME(start);
       ;}
     break;
 
   case 22:
-#line 103 "grammar.y"
+#line 88 "grammar.y"
     {
         GET_TIME(stop);
         elapsed = stop - start;
@@ -1532,7 +1517,7 @@ printf("need to create matrix variable\n");
     break;
 
   case 31:
-#line 124 "grammar.y"
+#line 109 "grammar.y"
     {
           char identifier[strlen((yyvsp[(3) - (6)].sval))];
           strcpy(identifier,(yyvsp[(3) - (6)].sval));
@@ -1542,7 +1527,7 @@ printf("need to create matrix variable\n");
 
 
 /* Line 1267 of yacc.c.  */
-#line 1546 "grammar.tab.c"
+#line 1531 "grammar.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1756,7 +1741,7 @@ yyreturn:
 }
 
 
-#line 134 "grammar.y"
+#line 119 "grammar.y"
 
 
 
@@ -1770,10 +1755,6 @@ int yywrap() {
 
 
 int main(int argc, char *argv[]){
-/*  int s;
-  while(s = yylex()){
-    printf("%d\n",s);
-  }*/
   return (yyparse());
 }
 
