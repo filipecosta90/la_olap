@@ -29,8 +29,8 @@
  ** University of Minho, High Performance Computing Dpt. , April 2016
  ** -------------------------------------------------------------------------*/
 
-#ifndef _olap_cu 
-#define _olap_cu 
+#ifndef _olap_cpp
+#define _olap_cpp 
 #include "olap.hpp"
 
 void col_read_csc (

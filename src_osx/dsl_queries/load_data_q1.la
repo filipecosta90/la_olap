@@ -5,3 +5,4 @@ load bitmap column 9 infile 'lineitem.tbl' as returnflag into dataset_1gb;
 load bitmap column 10 infile 'lineitem.tbl' as linestatus into dataset_1gb;
 load bitmap column 11 infile 'lineitem.tbl' as shipdate into dataset_1gb;
 END
+

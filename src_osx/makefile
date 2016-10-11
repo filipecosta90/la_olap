@@ -1,27 +1,50 @@
-CC = g++  
-LIBLDIR= 
+CC    ?= clang
+CXX   ?= clang++
 
-#include
-INCLUDE= 
+EXE = dsl
 
-#flags
-LIB= 
-EXECNAME= dsl
+CDEBUG = -g -Wall
 
-CFLAGS= $(INCLUDE)  -Wall -Wextra -O3 
+CXXDEBUG = -g -Wall
 
-all: dsl 
+CSTD = -std=c99
+CXXSTD = -std=c++14
 
-lex.yy.c: lex_analyser.l
-	flex lex_analyser.l
+CFLAGS = -Wno-deprecated-register -O3  $(CDEBUG) $(CSTD)
+CXXFLAGS = -Wno-deprecated-register -O3  $(CXXDEBUG) $(CXXSTD)
 
-grammar.tab.c: grammar.y 
-	bison -d grammar.y
 
-dsl: grammar.tab.c lex.yy.c olap.cpp olap.hpp
-	$(CC) -o $(EXECNAME) $(CFLAGS) grammar.tab.c lex.yy.c 
+CPPOBJ = main olap_driver
+SOBJ =  parser lexer
+
+FILES = $(addsuffix .cpp, $(CPPOBJ))
+
+OBJS  = $(addsuffix .o, $(CPPOBJ))
+
+CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
+						 olap_parser.tab.cc olap_parser.tab.hh \
+						 location.hh position.hh \
+						 stack.hh olap_parser.output parser.o \
+						 lexer.o olap_lexer.yy.cc $(EXE)\
+
+.PHONY: all
+all: dsl
+
+dsl: $(FILES)
+	$(MAKE) $(SOBJ)
+	$(MAKE) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJS) parser.o lexer.o $(LIBS)
+
+
+parser: olap_parser.yy
+	bison -d -v olap_parser.yy
+	$(CXX) $(CXXFLAGS) -c -o parser.o olap_parser.tab.cc
+
+lexer: olap_lexer.l
+	flex --outfile=olap_lexer.yy.cc  $<
+	$(CXX)  $(CXXFLAGS) -c olap_lexer.yy.cc -o lexer.o
 
 .PHONY: clean
 clean:
-	rm  *.o dsl grammar.tab.c y.output grammar.tab.h grammar.output lex.yy.c dsl  
-	
+	rm -rf $(CLEANLIST)
+
