@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------------
- **    Filename: olap_search.c
+ **    Filename: olap_search.h
  **
  **     License: This file is part of OLAP PROJECT.
  **
@@ -24,30 +24,53 @@
  **              recurring to Intel MKL and GLIB libraries.
  **
  **     Authors: Filipe Oliveira <a57816@alunos.uminho.pt>
- **          and Sérgio Caldas   <a57779@alunos.uminho.pt>
  **
- ** University of Minho, High Performance Computing Dpt. , April 2016
+ ** University of Minho, High Performance Computing Dpt. , October 2016
  ** -------------------------------------------------------------------------*/
 
-#include "olap.hpp"
+//Cache-Lines size is (typically) 32 bytes
+#define MEM_LINE_SIZE 32
+#define ARRAY_SIZE MEM_LINE_SIZE
+#define GROWTH_FACTOR 2
+#define MAX_FIELD_SIZE 128
+#define MAX_REG_SIZE 1024
+#define LESS 1
+#define LESS_EQ 2
+#define GREATER 3
+#define GREATER_EQ 4
+
+#ifndef __OLAP_HPP__
+#define __OLAP_HPP__ 1
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <map>
+#include <vector>
+
+//GPU libs
+//#include <thrust/device_vector.h>
+//#include <thrust/copy.h>
+//#include <thrust/count.h>
 
 using namespace std;
+map<string, map<string,vector<float> > > data_dict_mx_values;
+map<string, map<string,vector<int> > > data_dict_mx_row_ind;
+map<string, map<string,vector<int> > > data_dict_mx_col_ptr;
+map<string, map<string,int > > data_dict_mx_n_rows;
+map<string, map<string,int > > data_dict_mx_n_cols;
+map<string, map<string,int > > data_dict_mx_n_nnz;
+
 
 void col_read_csc (
-    string  filename, int col_number
+                   string filename, int col_number
 /*    ,
-    int* n_nnz, int* n_rows, int* n_cols,
-    vector<float>& A_csc_values,
-    vector<int>& A_row_ind,
-    vector<int>& A_col_ptr
- */   ){
+ int* n_nnz, int* n_rows, int* n_cols,
+ vector<float>& A_csc_values,
+ vector<int>& A_row_ind,
+ vector<int>& A_col_ptr
+ */   );
 
- /* FILE* f = fopen(filename, "r" );
-  fseek(f, 0, SEEK_END);
-  long fileSize = ftell(f);
-  vector<char> dev(fileSize);
-  cout << " file has size " << fileSize << endl;
-  fclose(f);
-  */
-}
 
+
+
+#endif

@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <istream>
 
+#include "olap.hpp"
 #include "olap_scanner.hpp"
 #include "olap_parser.tab.hh"
 

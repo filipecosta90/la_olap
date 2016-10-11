@@ -32,6 +32,7 @@
 #include <FlexLexer.h>
 #endif
 
+#include "olap.hpp"
 #include "olap_parser.tab.hh"
 #include "location.hh"
 

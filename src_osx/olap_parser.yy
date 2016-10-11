@@ -1,15 +1,33 @@
+/* C++ parser interface */
 %skeleton "lalr1.cc"
+
+/* require bison version */
 %require  "3.0"
+
+/* call yylex with a location */
+%locations
+
 %debug
 %defines
 %define api.namespace {OLAP}
 %define parser_class_name {OLAP_Parser}
+%define api.value.type variant
 
+/* assert correct cleanup of semantic value objects */
+%define parse.assert
+
+%parse-param { OLAP_Scanner  &scanner  }
+%parse-param { OLAP_Driver  &driver  }
+
+/* inserted near top of header + source file */
 %code requires{
 namespace OLAP {
 class OLAP_Driver;
 class OLAP_Scanner;
 }
+
+/* include for all linear algebra functions */
+#include "olap.hpp"
 
 // The following definitions is missing when %locations isn't used
 # ifndef YY_NULLPTR
@@ -22,10 +40,7 @@ class OLAP_Scanner;
 
 }
 
-%parse-param { OLAP_Scanner  &scanner  }
-%parse-param { OLAP_Driver  &driver  }
-
-
+/* inserted near top of source file */
 %code{
 #include <iostream>
 #include <cstdlib>
@@ -34,12 +49,12 @@ class OLAP_Scanner;
 /* include for all driver functions */
 #include "olap_driver.hpp"
 
+/* include for all linear algebra functions */
+#include "olap.hpp"
+
 #undef yylex
 #define yylex scanner.yylex
 }
-
-%define api.value.type variant
-%define parse.assert
 
 %token BGN END 
 %token CREATE CUBE 
@@ -49,9 +64,6 @@ class OLAP_Scanner;
 %token HADAMARD KRAO KRON TR
 %token VECTOR MATRIX BITMAP
 %token BANG TBL_READ MX_FILTER_AND TBL_WRITE CONDITION KEY_CONDITION START STOP
-
-%locations
-
 
 %%
 
@@ -69,12 +81,13 @@ elem : Create_declaration ';'
      | time query time
      ;
 
-Create_declaration : CREATE CUBE IDENTIFIER {} 
+Create_declaration : CREATE CUBE IDENTIFIER {
+                   std::cout << "created cube " << $3 << std::endl;
+}
                    ;
 
 Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
-
-
+col_read_csc( "abv",1);
 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
  }
