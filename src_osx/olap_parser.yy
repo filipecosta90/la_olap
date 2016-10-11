@@ -24,10 +24,9 @@
 namespace OLAP {
 class OLAP_Driver;
 class OLAP_Scanner;
+class OLAP_LA;
 }
 
-/* include for all linear algebra functions */
-#include "olap.hpp"
 
 // The following definitions is missing when %locations isn't used
 # ifndef YY_NULLPTR
@@ -48,9 +47,6 @@ class OLAP_Scanner;
 
 /* include for all driver functions */
 #include "olap_driver.hpp"
-
-/* include for all linear algebra functions */
-#include "olap.hpp"
 
 #undef yylex
 #define yylex scanner.yylex
@@ -87,7 +83,7 @@ Create_declaration : CREATE CUBE IDENTIFIER {
                    ;
 
 Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
-col_read_csc( "abv",1);
+driver.col_read_csc( "abv",1);
 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
  }

@@ -5,7 +5,6 @@
 #include <cstddef>
 #include <istream>
 
-#include "olap.hpp"
 #include "olap_scanner.hpp"
 #include "olap_parser.tab.hh"
 
@@ -28,22 +27,13 @@ namespace OLAP{
          */
         void parse( std::istream &iss );
         
-        void add_upper();
-        void add_lower();
-        void add_word( const std::string &word );
-        void add_newline();
-        void add_char();
+        void col_read_csc ( std::string  filename, int col_number );
         
         std::ostream& print(std::ostream &stream);
     private:
         
         void parse_helper( std::istream &stream );
         
-        std::size_t  chars      = 0;
-        std::size_t  words      = 0;
-        std::size_t  lines      = 0;
-        std::size_t  uppercase  = 0;
-        std::size_t  lowercase  = 0;
         OLAP::OLAP_Parser  *parser  = nullptr;
         OLAP::OLAP_Scanner *scanner = nullptr;
         

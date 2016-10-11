@@ -75,60 +75,15 @@ OLAP::OLAP_Driver::parse_helper( std::istream &stream )
 }
 
 void
-OLAP::OLAP_Driver::add_upper()
-{
-    uppercase++;
-    chars++;
-    words++;
-}
-
-void
-OLAP::OLAP_Driver::add_lower()
-{
-    lowercase++;
-    chars++;
-    words++;
-}
-
-void
-OLAP::OLAP_Driver::add_word( const std::string &word )
-{
-    words++;
-    chars += word.length();
-    for(const char &c : word ){
-        if( islower( c ) )
-        {
-            lowercase++;
-        }
-        else if ( isupper( c ) )
-        {
-            uppercase++;
-        }
-    }
-}
-
-void
-OLAP::OLAP_Driver::add_newline()
-{
-    lines++;
-    chars++;
-}
-
-void
-OLAP::OLAP_Driver::add_char()
-{
-    chars++;
+OLAP::OLAP_Driver::col_read_csc ( std::string  filename, int col_number ){
 }
 
 
 std::ostream&
 OLAP::OLAP_Driver::print( std::ostream &stream )
 {
-    stream << red  << "Results: " << norm << "\n";
-    stream << blue << "Uppercase: " << norm << uppercase << "\n";
-    stream << blue << "Lowercase: " << norm << lowercase << "\n";
-    stream << blue << "Lines: " << norm << lines << "\n";
-    stream << blue << "Words: " << norm << words << "\n";
-    stream << blue << "Characters: " << norm << chars << "\n";
+    stream << red  << "Debug info: " << norm << "\n";
+    stream << blue << "OLAP: "  << norm << "\n";
+    
     return(stream);
 }
