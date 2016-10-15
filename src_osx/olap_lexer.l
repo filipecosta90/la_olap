@@ -1,27 +1,25 @@
 
 %{
-    /* C++ string header, for string ops below */
-    #include <string>
+/* C++ string header, for string ops below */
+#include <string>
     
-    /* Implementation of yyFlexScanner */
-    #include "olap_scanner.hpp"
-    #undef  YY_DECL
-    #define YY_DECL int OLAP::OLAP_Scanner::yylex( OLAP::OLAP_Parser::semantic_type * const lval, OLAP::OLAP_Parser::location_type *loc )
+/* Implementation of yyFlexScanner */
+#include "olap_scanner.hpp"
+#undef  YY_DECL
+#define YY_DECL int OLAP::OLAP_Scanner::yylex( OLAP::OLAP_Parser::semantic_type* const lval, OLAP::OLAP_Parser::location_type *loc )
     
-    /* typedef to make the returns for the tokens shorter */
-    using token = OLAP::OLAP_Parser::token;
+/* typedef to make the returns for the tokens shorter */
+using token = OLAP::OLAP_Parser::token;
     
-    /* define yyterminate as this instead of NULL */
-    //#define yyterminate() return( token::END )
+/* define yyterminate as this instead of NULL */
+
+/* msvc2010 requires that we exclude this header file. */
+#define YY_NO_UNISTD_H
     
-    /* msvc2010 requires that we exclude this header file. */
-    #define YY_NO_UNISTD_H
-    
-    /* update location on matching */
-    #define YY_USER_ACTION loc->step(); loc->columns(yyleng);
+/* update location on matching */
+#define YY_USER_ACTION loc->step(); loc->columns(yyleng);
     
 %}
-
 
 
 %option debug
@@ -66,13 +64,16 @@
 "krao"     { return (token::KRAO); }
 
 [0-9]+  {
-   
-          return (token::INTEGER);
+        int i_auto = std::stoi (yytext,nullptr,0);
+        yylval->build<int>(i_auto);
+        return (token::INTEGER);
         }
+
 [a-zA-Z_'.0-9/]* { 
-yylval->build< std::string >( yytext );
-return (token::IDENTIFIER);
+        yylval->build< std::string >( yytext );
+        return (token::IDENTIFIER);
         }
+
 [<=>]+ { return (token::CONDITION); }
 [\t\r]*\'[^']+\' {return(token::KEY_CONDITION);}
 [ \t\v\n\f]   { }

@@ -56,7 +56,7 @@ class OLAP_LA;
 %token CREATE CUBE 
 %token LOAD DROP COLUMN INFILE AS INTO
 %token <std::string> IDENTIFIER
-%token INTEGER
+%token <int> INTEGER
 %token HADAMARD KRAO KRON TR
 %token VECTOR MATRIX BITMAP
 %token BANG TBL_READ MX_FILTER_AND TBL_WRITE CONDITION KEY_CONDITION START STOP
@@ -83,7 +83,7 @@ Create_declaration : CREATE CUBE IDENTIFIER {
                    ;
 
 Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
-driver.col_read_csc( "abv",1);
+driver.load_matrix_csc( $6, $4);
 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
  }

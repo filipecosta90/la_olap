@@ -1,5 +1,5 @@
-CC    ?= clang
-CXX   ?= clang++
+CC    ?= nvcc
+CXX   ?= nvcc
 
 EXE = dsl
 
