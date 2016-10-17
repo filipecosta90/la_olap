@@ -28,7 +28,7 @@
 #ifndef __OLAPSCANNER_HH__
 #define __OLAPSCANNER_HH__ 1
 
-#include "parser.hh"
+#include "olap_parser.hh"
 
 # ifndef YY_DECL
 #  define YY_DECL parse::Parser::token_type                         \
@@ -38,11 +38,11 @@
 # endif
 
 
-# ifndef __FLEX_LEXER_H
-#  define yyFlexLexer parseFlexLexer
-#  include <FlexLexer.h>
-#  undef yyFlexLexer
-# endif
+#if ! defined(yyFlexLexerOnce)
+#include <FlexLexer.h>
+#endif
+
+
 
     namespace OLAP{
 

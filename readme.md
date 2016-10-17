@@ -7,16 +7,19 @@ This is a Multi-Core Linear Algebra based database engine written to use vector 
 ### Requirements
 * bison
 * flex
-* icc 
-* Intel Math Kernel Library 
+* glib
+* cuda
 
 ### How to build?
 
 ```
 git clone https://github.com/filipecosta90/la_olap.git
-cd la_olap/src
+cd la_olap
+mkdir build
+cd build
+cmake ..
 make
-```
+
 
 ### Will Feature :
 

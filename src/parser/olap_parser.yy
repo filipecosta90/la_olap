@@ -1,3 +1,9 @@
+%{
+#include "olap_parser.hh"
+#include "olap_scanner.hh"
+
+%}
+
 /* C++ parser interface */
 %skeleton "lalr1.cc"
 
