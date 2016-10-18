@@ -8,28 +8,22 @@ file(GLOB CUDA_HH_FILES *.cuh )
 file(GLOB HXX_FILES *.hxx)
 
 find_package(BISON)
-find_package(FLEX)
+bison_target(Parser olap_parser.yy ${CMAKE_CURRENT_BINARY_DIR}/olap_parser.cc)
 
-bison_target(Parser olap_parser.yy ${CMAKE_CURRENT_SOURCE_DIR}/olap_parser.cc
-  DEFINES_FILE ${CMAKE_CURRENT_SOURCE_DIR}/olap_parser.hh)
-flex_target(Scanner olap_scanner.ll ${CMAKE_CURRENT_SOURCE_DIR}/olap_scanner.cc)
+find_package(FLEX)
+flex_target(Scanner olap_scanner.ll ${CMAKE_CURRENT_BINARY_DIR}/olap_scanner.cc)
 
 add_flex_bison_dependency(Scanner Parser)
 
-SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/olap_parser.hh GENERATED)
+SET_SOURCE_FILES_PROPERTIES(olap_parser.hh GENERATED)
 
 cuda_add_library(parser
   STATIC
+  ${FLEX_Scanner_OUTPUTS}
+  ${BISON_Parser_OUTPUTS}
   ${HH_FILES}
+  ${SRC_FILES}
   ${CUDA_HH_FILES}
   ${CUDA_SRC_FILES}
-  ${SRC_FILES}
-  ${BISON_Parser_OUTPUTS}
-  ${BISON_Parser_OUTPUT_HEADER}
-  ${FLEX_Scanner_OUTPUTS}
-  ${HXX_FILES}
-  ${CUDA_O}
   )
-
-CUDA_COMPILE(CUDA_O ${CUDA_SRC_FILES})
 

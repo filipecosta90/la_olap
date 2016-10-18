@@ -6,12 +6,12 @@
 %define api.namespace {OLAP}
 %define parser_class_name {OLAP_Parser}
 
-%code requires
-{
-namespace OLAP {
-class OLAP_Driver;
-class OLAP_Scanner;
-}
+%{
+#include "olap_parser.hh"
+#include "olap_scanner.hh"
+  
+#undef yylex
+#define yylex scanner.yylex
 
 // The following definitions is missing when %locations isn't used
 # ifndef YY_NULLPTR
@@ -21,23 +21,30 @@ class OLAP_Scanner;
 #   define YY_NULLPTR 0
 #  endif
 # endif
+%}
 
-}
-
-%parse-param { OLAP_Scanner  &scanner  }
-%parse-param { OLAP_Driver  &driver  }
-
-%code{
+%code requires
+{
 #include <iostream>
-#include <cstdlib>
+ #include <cstdlib>
 #include <fstream>
 
-/* include for all driver functions */
-#include "olap_driver.cuh"
 
-#undef yylex
-#define yylex scanner.yylex
+
+/* include for all driver functions */
+#include "olap_driver.hh"
 }
+
+%code provides
+{
+namespace OLAP {
+// Forward declaration of the Driver and Scanner classes
+class OLAP_Driver;
+class OLAP_Parser;
+}
+}
+%parse-param { OLAP_Scanner  &scanner  }
+%parse-param { OLAP_Driver  &driver  }
 
 %define api.value.type variant
 %define parse.assert

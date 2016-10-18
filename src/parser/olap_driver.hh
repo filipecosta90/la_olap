@@ -2,14 +2,15 @@
 #define __OLAPDRIVER_HH__ 1
 
 #include <string>
+#include <iostream>
+#include <fstream>
 #include <cstddef>
-#include <istream>
 
-#include "olap_scanner.hh"
-#include "olap_parser.hh"
 
 namespace OLAP{
-
+  // Forward declarations of classes
+  class OLAP_Parser;
+  class OLAP_Scanner;
   class OLAP_Driver{
     public:
       OLAP_Driver() = default;

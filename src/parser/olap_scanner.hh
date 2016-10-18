@@ -38,33 +38,33 @@
 namespace OLAP
 {
   class OLAP_Scanner : public yyFlexLexer {
-  public:
+    public:
 
       OLAP_Scanner(std::istream *in) : yyFlexLexer(in)
-      {
-          loc = new OLAP::OLAP_Parser::location_type();
-      };
+    {
+      loc = new OLAP::OLAP_Parser::location_type();
+    };
       virtual ~OLAP_Scanner() {
-          delete loc;
+        delete loc;
       };
-      
+
       //get rid of override virtual function warning
       using FlexLexer::yylex;
-      
+
       virtual
-      int yylex( OLAP::OLAP_Parser::semantic_type * const lval,
-                OLAP::OLAP_Parser::location_type *location );
+        int yylex( OLAP::OLAP_Parser::semantic_type * const lval,
+            OLAP::OLAP_Parser::location_type *location );
       // YY_DECL defined in olap_lexer.l
       // Method body created by flex in olap_lexer.yy.cc
-      
-      
-  private:
+
+
+    private:
       /* yyval ptr */
       OLAP::OLAP_Parser::semantic_type *yylval = nullptr;
       /* location ptr */
       OLAP::OLAP_Parser::location_type *loc    = nullptr;
   };
-    
+
 } /* end namespace OLAP */
 
 #endif /* END __OLAPSCANNER_HH__ */

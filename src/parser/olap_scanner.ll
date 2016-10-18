@@ -3,8 +3,9 @@
 #include <string>
 
 /* Implementation of yyFlexScanner */
+#include "olap_parser.hh"
 #include "olap_scanner.hh"
-
+#include "olap_driver.hh"
 
 #undef  YY_DECL
 #define YY_DECL int OLAP::OLAP_Scanner::yylex( OLAP::OLAP_Parser::semantic_type * const lval, OLAP::OLAP_Parser::location_type *loc )

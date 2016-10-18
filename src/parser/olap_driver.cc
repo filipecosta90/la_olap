@@ -12,7 +12,10 @@
 #include <thrust/copy.h>
 #include <thrust/count.h>
 
-#include "olap_driver.cuh"
+#include "olap_driver.hh"
+#include "olap_parser.hh"
+#include "olap_scanner.hh"
+
 namespace OLAP{
   OLAP_Driver::~OLAP_Driver()
   {
