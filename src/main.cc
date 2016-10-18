@@ -2,9 +2,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <thrust/host_vector.h>
-#include <thrust/device_vector.h>
-
 #include "parser/olap_driver.hh"
 
   int main( const int argc, const char **argv )

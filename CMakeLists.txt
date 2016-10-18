@@ -23,6 +23,8 @@ endif()
 find_package(CUDA)
 if (CUDA_FOUND)
   message("CUDA found, using gpu code!")
+  set(CUDA_SEPARABLE_COMPILATION ON)
+  set(CUDA_PROPAGATE_HOST_FLAGS OFF)
   LIST(APPEND CUDA_NVCC_FLAGS --compiler-options -fno-strict-aliasing -lineinfo -use_fast_math -Xptxas -dlcm=cg)
   add_subdirectory(src/)
 

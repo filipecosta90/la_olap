@@ -17,6 +17,7 @@ add_flex_bison_dependency(Scanner Parser)
 
 SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/olap_parser.hh GENERATED)
 
+CUDA_COMPILE(CUDA_O ${CUDA_SRC_FILES})
 
 cuda_add_library(parser
   STATIC
@@ -26,6 +27,6 @@ cuda_add_library(parser
   ${BISON_Parser_OUTPUT_HEADER}
    ${FLEX_Scanner_OUTPUTS}
   ${HXX_FILES}
-  ${CUDA_SRC_FILES}
+  ${CUDA_O}
   )
 
