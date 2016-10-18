@@ -15,13 +15,17 @@ flex_target(Scanner olap_scanner.ll ${CMAKE_CURRENT_SOURCE_DIR}/olap_scanner.cc)
 
 add_flex_bison_dependency(Scanner Parser)
 
-add_library(parser
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/olap_parser.hh GENERATED)
+
+
+cuda_add_library(parser
   STATIC
-  ${FLEX_Scanner_OUTPUTS}
-  ${BISON_Parser_OUTPUTS}
-  ${HH_FILES}
+ ${HH_FILES}
   ${SRC_FILES}
-  ${CUDA_SRC_FILES}
+  ${BISON_Parser_OUTPUTS}
+  ${BISON_Parser_OUTPUT_HEADER}
+   ${FLEX_Scanner_OUTPUTS}
   ${HXX_FILES}
+  ${CUDA_SRC_FILES}
   )
 
