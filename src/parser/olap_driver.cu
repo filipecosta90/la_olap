@@ -8,9 +8,9 @@
 #include <sys/mman.h>
 
 //GPU libs
-//#include <thrust/device_vector.h>
-//#include <thrust/copy.h>
-//#include <thrust/count.h>
+#include <thrust/device_vector.h>
+#include <thrust/copy.h>
+#include <thrust/count.h>
 
 #include "olap_driver.cuh"
 namespace OLAP{
@@ -116,7 +116,7 @@ namespace OLAP{
        field_index[0]=col_number;
        thrust::device_vector<char> field_separator(1);
        field_separator[0] = '|';
-       */
+     */
   }
 
 
@@ -137,6 +137,6 @@ namespace OLAP{
    return x == '\n';                                                           
    }                                                                           
    };  
-   */
+ */
 
 
