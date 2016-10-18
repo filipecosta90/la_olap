@@ -2,7 +2,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 file(GLOB HH_FILES *.hh)
-file(GLOB SRC_FILES "*.cc" "*.cu")
+file(GLOB SRC_FILES *.cc)
+file(GLOB CUDA_SRC_FILES *.cu )
 file(GLOB HXX_FILES *.hxx)
 
 find_package(BISON)
@@ -20,6 +21,7 @@ add_library(parser
   ${BISON_Parser_OUTPUTS}
   ${HH_FILES}
   ${SRC_FILES}
+  ${CUDA_SRC_FILES}
   ${HXX_FILES}
   )
 
