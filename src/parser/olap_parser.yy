@@ -33,7 +33,7 @@ class OLAP_Scanner;
 #include <fstream>
 
 /* include for all driver functions */
-#include "olap_driver.hh"
+#include "olap_driver.cuh"
 
 #undef yylex
 #define yylex scanner.yylex

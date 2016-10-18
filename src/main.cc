@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "parser/olap_driver.hh"
+#include "parser/olap_driver.cuh"
 
   int main( const int argc, const char **argv )
 {
