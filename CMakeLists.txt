@@ -19,5 +19,18 @@ else()
   message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-#Defines subdirectory
-add_subdirectory(src/)
+
+  add_subdirectory(src/)
+  #find_package(CUDA)
+
+#Defines subdirectory based on cuda support
+#if (CUDA_FOUND)
+#  message("CUDA found, using gpu code!")
+#  LIST(APPEND CUDA_NVCC_FLAGS --compiler-options -fno-strict-aliasing -lineinfo -use_fast_math -Xptxas -dlcm=cg)
+
+#else()
+#  message("CUDA not found, not implemented yet!! Call filipe!")
+#endif()
+
+
+

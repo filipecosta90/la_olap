@@ -1,42 +1,40 @@
-
 %{
-   
-#include "olap_parser.hh"
-#include "olap_scanner.hh"
-#include "olap_driver.hh"
-
-  /* C++ string header, for string ops below */
+/* C++ string header, for string ops below */
 #include <string>
- 
-  /* Implementation of yyFlexScanner */
+
+/* Implementation of yyFlexScanner */
+#include "olap_scanner.hh"
+
 
 #undef  YY_DECL
-#define YY_DECL int OLAP::OLAP_Scanner::yylex( OLAP::OLAP_Parser::semantic_type* const lval, OLAP::OLAP_Parser::location_type *loc )
-    
+#define YY_DECL int OLAP::OLAP_Scanner::yylex( OLAP::OLAP_Parser::semantic_type * const lval, OLAP::OLAP_Parser::location_type *loc )
+
 /* typedef to make the returns for the tokens shorter */
 using token = OLAP::OLAP_Parser::token;
-    
+
 /* define yyterminate as this instead of NULL */
+#define yyterminate() return( token::END )
 
 /* msvc2010 requires that we exclude this header file. */
 #define YY_NO_UNISTD_H
-    
+
 /* update location on matching */
 #define YY_USER_ACTION loc->step(); loc->columns(yyleng);
-    
+
 %}
 
-
 %option debug
-%option c++
 %option nodefault
 %option yyclass="OLAP::OLAP_Scanner"
 %option noyywrap
+%option c++
 
 %%
 %{          /** Code executed at the beginning of yylex **/
-    yylval = lval;
+yylval = lval;
 %}
+
+ /* The rules.  */
 
 "START"   {return (token::START);}
 "STOP"    {return (token::STOP);}
@@ -56,7 +54,6 @@ using token = OLAP::OLAP_Parser::token;
 "tbl_read" {return (token::TBL_READ);}
 "tbl_write" {return (token::TBL_WRITE);}
 "mx_filter_and" {return (token::MX_FILTER_AND);}
-
 ";"     { return(';'); }
 ","     { return(','); }
 "="     { return('='); }
@@ -69,15 +66,15 @@ using token = OLAP::OLAP_Parser::token;
 "krao"     { return (token::KRAO); }
 
 [0-9]+  {
-        int i_auto = std::stoi (yytext,nullptr,0);
-        yylval->build<int>(i_auto);
-        return (token::INTEGER);
-        }
+      int i_auto = std::stoi (yytext,nullptr,0);
+      yylval->build<int>(i_auto);
+      return (token::INTEGER);
+}
 
 [a-zA-Z_'.0-9/]* { 
-        yylval->build< std::string >( yytext );
-        return (token::IDENTIFIER);
-        }
+  yylval->build< std::string >( yytext );
+  return (token::IDENTIFIER);
+}
 
 [<=>]+ { return (token::CONDITION); }
 [\t\r]*\'[^']+\' {return(token::KEY_CONDITION);}

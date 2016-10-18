@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------------
- **    Filename: olap_scanner.hpp
+ **    Filename: olap_scanner.hh
  **
  **     License: This file is part of OLAP PROJECT.
  **
@@ -28,52 +28,43 @@
 #ifndef __OLAPSCANNER_HH__
 #define __OLAPSCANNER_HH__ 1
 
-#include "olap_parser.hh"
-
-# ifndef YY_DECL
-#  define YY_DECL parse::Parser::token_type                         \
-      parse::Scanner::yylex(parse::Parser::semantic_type* yylval,    \
-                               parse::Parser::location_type*,        \
-                               parse::Driver& driver)
-# endif
-
-
 #if ! defined(yyFlexLexerOnce)
 #include <FlexLexer.h>
 #endif
 
+#include "olap_parser.hh"
+#include "location.hh"
 
+namespace OLAP
+{
+  class OLAP_Scanner : public yyFlexLexer {
+  public:
 
-    namespace OLAP{
-
-      class OLAP_Scanner : public yyFlexLexer{
-        public:
-
-          OLAP_Scanner(std::istream *in) : yyFlexLexer(in)
-        {
+      OLAP_Scanner(std::istream *in) : yyFlexLexer(in)
+      {
           loc = new OLAP::OLAP_Parser::location_type();
-        };
-          virtual ~OLAP_Scanner() {
-            delete loc;
-          };
-
-          //get rid of override virtual function warning
-          using FlexLexer::yylex;
-
-          virtual
-            int yylex( OLAP::OLAP_Parser::semantic_type * const lval,
-                OLAP::OLAP_Parser::location_type *location );
-          // YY_DECL defined in olap_lexer.l
-          // Method body created by flex in olap_lexer.yy.cc
-
-
-        private:
-          /* yyval ptr */
-          OLAP::OLAP_Parser::semantic_type *yylval = nullptr;
-          /* location ptr */
-          OLAP::OLAP_Parser::location_type *loc    = nullptr;
       };
+      virtual ~OLAP_Scanner() {
+          delete loc;
+      };
+      
+      //get rid of override virtual function warning
+      using FlexLexer::yylex;
+      
+      virtual
+      int yylex( OLAP::OLAP_Parser::semantic_type * const lval,
+                OLAP::OLAP_Parser::location_type *location );
+      // YY_DECL defined in olap_lexer.l
+      // Method body created by flex in olap_lexer.yy.cc
+      
+      
+  private:
+      /* yyval ptr */
+      OLAP::OLAP_Parser::semantic_type *yylval = nullptr;
+      /* location ptr */
+      OLAP::OLAP_Parser::location_type *loc    = nullptr;
+  };
+    
+} /* end namespace OLAP */
 
-    } /* end namespace OLAP */
-
-#endif
+#endif /* END __OLAPSCANNER_HH__ */

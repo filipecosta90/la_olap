@@ -4,8 +4,7 @@
 
 #include "parser/olap_driver.hh"
 
-  int
-main( const int argc, const char **argv )
+  int main( const int argc, const char **argv )
 {
   /** check for the right # of arguments **/
   if( argc == 2 )

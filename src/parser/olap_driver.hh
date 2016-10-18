@@ -5,6 +5,9 @@
 #include <cstddef>
 #include <istream>
 
+#include "olap_scanner.hh"
+#include "olap_parser.hh"
+
 namespace OLAP{
 
   class OLAP_Driver{
@@ -34,10 +37,16 @@ namespace OLAP{
       OLAP::OLAP_Parser  *parser  = nullptr;
       OLAP::OLAP_Scanner *scanner = nullptr;
 
+      /// Allows Parser and Scanner to access private attributes
+      //            /// of the Driver class
+      friend class  OLAP_Parser;
+      friend class  OLAP_Scanner;
+
+
       const std::string red   = "\033[1;31m";
       const std::string blue  = "\033[1;36m";
       const std::string norm  = "\033[0m";
   };
 
 } /* end namespace OLAP */
-#endif /* END __OLAPDRIVER_HPP__ */
+#endif /* END __OLAPDRIVER_HH__ */

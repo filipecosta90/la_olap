@@ -1,38 +1,17 @@
-%{
-#include "olap_parser.hh"
-#include "olap_scanner.hh"
-
-%}
-
-/* C++ parser interface */
+/* The C++ deterministic parser is selected using the skeleton directive */
 %skeleton "lalr1.cc"
-
-/* require bison version */
 %require  "3.0"
-
-/* call yylex with a location */
-%locations
-
 %debug
 %defines
 %define api.namespace {OLAP}
 %define parser_class_name {OLAP_Parser}
-%define api.value.type variant
 
-/* assert correct cleanup of semantic value objects */
-%define parse.assert
-
-%parse-param { OLAP_Scanner  &scanner  }
-%parse-param { OLAP_Driver  &driver  }
-
-/* inserted near top of header + source file */
-%code requires{
+%code requires
+{
 namespace OLAP {
 class OLAP_Driver;
 class OLAP_Scanner;
-class OLAP_LA;
 }
-
 
 // The following definitions is missing when %locations isn't used
 # ifndef YY_NULLPTR
@@ -45,7 +24,9 @@ class OLAP_LA;
 
 }
 
-/* inserted near top of source file */
+%parse-param { OLAP_Scanner  &scanner  }
+%parse-param { OLAP_Driver  &driver  }
+
 %code{
 #include <iostream>
 #include <cstdlib>
@@ -58,6 +39,13 @@ class OLAP_LA;
 #define yylex scanner.yylex
 }
 
+%define api.value.type variant
+%define parse.assert
+
+/* Entry point of grammar */
+%start initial_expression
+
+/* Tokens */
 %token BGN END 
 %token CREATE CUBE 
 %token LOAD DROP COLUMN INFILE AS INTO
@@ -66,6 +54,8 @@ class OLAP_LA;
 %token HADAMARD KRAO KRON TR
 %token VECTOR MATRIX BITMAP
 %token BANG TBL_READ MX_FILTER_AND TBL_WRITE CONDITION KEY_CONDITION START STOP
+
+%locations
 
 %%
 
@@ -89,7 +79,7 @@ Create_declaration : CREATE CUBE IDENTIFIER {
                    ;
 
 Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
-driver.load_matrix_csc( $6, $4);
+                 driver.load_matrix_csc( $6, $4);
 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
  }
@@ -129,10 +119,8 @@ expression : IDENTIFIER '*' IDENTIFIER
 
 %%
 
-
-void
-OLAP::OLAP_Parser::error( const location_type &l, const std::string &err_message )
-    {
+void OLAP::OLAP_Parser::error( const location_type &l, const std::string &err_message )
+{
 std::cerr << "Error: " << err_message << " at " << l << "\n";
-   }
+}
 
