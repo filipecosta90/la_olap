@@ -17,12 +17,16 @@ add_flex_bison_dependency(Scanner Parser)
 
 SET_SOURCE_FILES_PROPERTIES(olap_parser.hh GENERATED)
 
-cuda_add_library(parser
+
+add_library(parser
   STATIC
   ${FLEX_Scanner_OUTPUTS}
   ${BISON_Parser_OUTPUTS}
   ${HH_FILES}
   ${SRC_FILES}
+  )
+
+CUDA_ADD_LIBRARY(cudalib
   ${CUDA_HH_FILES}
   ${CUDA_SRC_FILES}
   )

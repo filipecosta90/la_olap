@@ -6,7 +6,6 @@
 #include <fstream>
 #include <cstddef>
 
-
 namespace OLAP{
   // Forward declarations of classes
   class OLAP_Parser;

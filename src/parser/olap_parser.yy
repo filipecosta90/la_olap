@@ -86,6 +86,7 @@ Create_declaration : CREATE CUBE IDENTIFIER {
                    ;
 
 Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
+                   std::cout << "load  into " << $10 << std::endl;
                  driver.load_matrix_csc( $6, $4);
 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
