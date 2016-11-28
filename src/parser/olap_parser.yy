@@ -85,7 +85,7 @@ Create_declaration : CREATE CUBE IDENTIFIER {
 
 Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
                  std::cout << "load  into " << $10 << std::endl;
-                 driver.load_matrix_csc( $6, $4);
+                 driver.load_matrix_csc( $6, $4, 100);
 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
 }
@@ -105,7 +105,6 @@ query : query atribuition_expression ';'
 time : START {
      }
      | STOP {
-
 }
      ;
 
