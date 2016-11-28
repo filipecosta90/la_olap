@@ -1,18 +1,14 @@
-#Minimum version of CMake to build this project
-cmake_minimum_required (VERSION 2.8)
-
 #Declaration of the project
 project (olap_engine)
 
-find_package (PkgConfig REQUIRED)
+#Minimum version of CMake to build this project
+cmake_minimum_required (VERSION 2.8)
 
-pkg_check_modules (PC_GLIB REQUIRED glib-2.0)
+INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-FIND_LIBRARY(GLIB_LIBRARIES
-  NAMES glib-2.0
-  HINTS ${PC_GLIB_LIBDIR}
-  ${PC_GLIB_LIBRARY_DIRS}
-  )
+find_package(GLIB2 REQUIRED)
+include_directories(${GLIB2_INCLUDE_DIRS})
 
 #Compilation flags
 # first set "normal flags"

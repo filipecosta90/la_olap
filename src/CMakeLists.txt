@@ -11,3 +11,4 @@ add_executable(
 target_link_libraries(olap_engine parser)
 target_link_libraries(olap_engine cudalib)
 target_link_libraries (olap_engine ${GLIB2_LIBRARIES})
+

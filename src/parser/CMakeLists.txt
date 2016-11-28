@@ -1,8 +1,6 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories (${GLIB2_INCLUDE_DIRS})
-link_directories (${GLIB2_LIBRARY_DIRS})
-add_definitions (${GLIB2_CFLAGS_OTHER})
+
 
 file(GLOB HH_FILES *.hh)
 file(GLOB SRC_FILES *.cc)
