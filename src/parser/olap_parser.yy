@@ -26,10 +26,8 @@
 %code requires
 {
 #include <iostream>
- #include <cstdlib>
+#include <cstdlib>
 #include <fstream>
-
-
 
 /* include for all driver functions */
 #include "olap_driver.hh"
@@ -86,18 +84,16 @@ Create_declaration : CREATE CUBE IDENTIFIER {
                    ;
 
 Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
-                   std::cout << "load  into " << $10 << std::endl;
+                 std::cout << "load  into " << $10 << std::endl;
                  driver.load_matrix_csc( $6, $4);
 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
- }
+}
                  ;
 
-Inline_declaration_type : VECTOR IDENTIFIER
-                        {
+Inline_declaration_type : VECTOR IDENTIFIER {
 }
-| MATRIX IDENTIFIER
-{
+| MATRIX IDENTIFIER {
 }
                     | BITMAP IDENTIFIER
                     ;
@@ -112,7 +108,6 @@ time : START {
 
 }
      ;
-
 
 atribuition_expression : IDENTIFIER '=' expression
                        ;

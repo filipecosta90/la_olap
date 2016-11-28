@@ -23,7 +23,7 @@ make
 
 ### Will Feature :
 
-  *  Vector-based processing  
+  * Vector-based processing  
 	
   * Column-based storage  
 

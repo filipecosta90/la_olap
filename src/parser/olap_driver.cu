@@ -17,30 +17,25 @@
 #include "olap_scanner.hh"
 
 namespace OLAP{
-  OLAP_Driver::~OLAP_Driver()
-  {
+  OLAP_Driver::~OLAP_Driver(){
     delete(scanner);
     scanner = nullptr;
     delete(parser);
     parser = nullptr;
   }
 
-  void OLAP_Driver::parse( const char * const filename )
-  {
+  void OLAP_Driver::parse( const char * const filename ){
     assert( filename != nullptr );
     std::ifstream in_file( filename );
-    if( ! in_file.good() )
-    {
+    if( ! in_file.good() ){
       exit( EXIT_FAILURE );
     }
     parse_helper( in_file );
     return;
   }
 
-  void OLAP_Driver::parse( std::istream &stream )
-  {
-    if( ! stream.good()  && stream.eof() )
-    {
+  void OLAP_Driver::parse( std::istream &stream ){
+    if( ! stream.good()  && stream.eof() ){
       return;
     }
     //else
@@ -53,32 +48,27 @@ namespace OLAP{
   {
 
     delete(scanner);
-    try
-    {
+    try{
       scanner = new OLAP::OLAP_Scanner( &stream );
     }
-    catch( std::bad_alloc &ba )
-    {
+    catch( std::bad_alloc &ba ){
       std::cerr << "Failed to allocate scanner: (" <<
         ba.what() << "), exiting!!\n";
       exit( EXIT_FAILURE );
     }
 
     delete(parser);
-    try
-    {
+    try{
       parser = new OLAP::OLAP_Parser( (*scanner) /* scanner */,
           (*this) /* driver */ );
     }
-    catch( std::bad_alloc &ba )
-    {
+    catch( std::bad_alloc &ba ){
       std::cerr << "Failed to allocate parser: (" <<
         ba.what() << "), exiting!!\n";
       exit( EXIT_FAILURE );
     }
     const int accept( 0 );
-    if( parser->parse() != accept )
-    {
+    if( parser->parse() != accept ){
       std::cerr << "Parse failed!!\n";
     }
     return;
@@ -100,11 +90,11 @@ namespace OLAP{
 
     p = (char*)mmap (0, fsize, PROT_READ, MAP_SHARED, fd, 0);                  
 
-    if (p == MAP_FAILED) {                                                        
+    if (p == MAP_FAILED){                                                        
       perror ("mmap");                                                            
     }                                                                             
 
-    if (close (fd) == -1) {                                                       
+    if (close (fd) == -1){                                                       
       perror ("close");                                                           
     }                                                                             
 
@@ -124,8 +114,7 @@ namespace OLAP{
   }
 
 
-  std::ostream& OLAP_Driver::print( std::ostream &stream )
-  {
+  std::ostream& OLAP_Driver::print( std::ostream &stream ){
     stream << red  << "Debug info: " << norm << "\n";
     stream << blue << "OLAP: "  << norm << "\n";
 

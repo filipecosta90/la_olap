@@ -40,10 +40,9 @@ namespace OLAP
   class OLAP_Scanner : public yyFlexLexer {
     public:
 
-      OLAP_Scanner(std::istream *in) : yyFlexLexer(in)
-    {
-      loc = new OLAP::OLAP_Parser::location_type();
-    };
+      OLAP_Scanner(std::istream *in) : yyFlexLexer(in){
+        loc = new OLAP::OLAP_Parser::location_type();
+      };
       virtual ~OLAP_Scanner() {
         delete loc;
       };
@@ -56,7 +55,6 @@ namespace OLAP
             OLAP::OLAP_Parser::location_type *location );
       // YY_DECL defined in olap_lexer.l
       // Method body created by flex in olap_lexer.yy.cc
-
 
     private:
       /* yyval ptr */
