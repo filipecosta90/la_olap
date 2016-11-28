@@ -12,16 +12,19 @@
 #include <thrust/copy.h>
 #include <thrust/count.h>
 
+//GLIB 
+#include <glib.h>
+
+
 #include "olap_driver.hh"
 #include "olap_parser.hh"
 #include "olap_scanner.hh"
 
-struct is_newline_break{                                                                               
-  __host__ __device__                                                           
-    bool operator()(const char x)                                               
-    {                                                                           
-      return x == '\n';                                                           
-    }                                                                           
+struct is_newline_break{
+  __host__ __device__
+    bool operator()(const char x){
+      return x == '\n';
+    }
 };
 
 struct parse_functor
@@ -52,6 +55,7 @@ struct parse_functor
       while(total_parsed_cols < *num_cols_to_parse){
         // if its the column we want to parse
         if(ind[total_parsed_cols] == current_column) { //process
+          //save the column start position in reference to the array start
           dest_col_start[total_parsed_cols][i]=line_start+inline_pos;
           in_col_nonzeros = 0;
           while(source[line_start+inline_pos] != *field_separator){
@@ -146,19 +150,19 @@ namespace OLAP{
     thrust::device_vector<char> dev(file_size);
     char* mapped_file;
 
-    mapped_file = (char*)mmap (0, file_size, PROT_READ, MAP_SHARED, fd, 0);                  
+    mapped_file = (char*)mmap (0, file_size, PROT_READ, MAP_SHARED, fd, 0);
 
-    if (mapped_file == MAP_FAILED){                                                        
-      perror ("mmap");                                                            
-    }                                                                             
+    if (mapped_file == MAP_FAILED){
+      perror ("mmap");
+    }
 
-    if (close (fd) == -1){                                                       
-      perror ("close");                                                           
-    }                                                                             
+    if (close (fd) == -1){
+      perror ("close");
+    }
 
-    thrust::copy(mapped_file, mapped_file+file_size, dev.begin());                                     
-    int line_count = std::count(dev.begin(), dev.end(), '\n');                        
-    std::cout << "There are " << line_count << " total lines in a file with size " << file_size << std::endl;    
+    thrust::copy(mapped_file, mapped_file+file_size, dev.begin());
+    int line_count = std::count(dev.begin(), dev.end(), '\n');
+    std::cout << "There are " << line_count << " total lines in a file with size " << file_size << std::endl;
 
     // find out the position of every newline
     thrust::device_vector<int> dev_newline_pos(line_count+1); 
@@ -208,21 +212,17 @@ namespace OLAP{
         thrust::raw_pointer_cast(dest_len.data())
         );
     thrust::for_each(begin, begin + line_count, ff);
-/*
     for (int pos = 0; pos < line_count ; pos ++  ){
       std::string col ( &(mapped_file[dev_col_start1[pos]]), dev_col_size1[pos] );
-      std::cout << dev_col_start1[pos] << " " << dev_col_size1[pos] << " : " << col<<  std::endl;
+     int quark_field; 
+      //std::cout << dev_col_start1[pos] << " " << dev_col_size1[pos] << " : " << col<<  std::endl;
     }
-*/
-    std::cout << "leaving load matrix " << std::endl;
   }
 
   std::ostream& OLAP_Driver::print( std::ostream &stream ){
     stream << red  << "Debug info: " << norm << "\n";
     stream << blue << "OLAP: "  << norm << "\n";
-
     return(stream);
   }
 }
-
 

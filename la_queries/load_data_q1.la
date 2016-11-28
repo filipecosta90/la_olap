@@ -1,8 +1,8 @@
 BEGIN
 create cube dataset_1gb;
-load matrix column 5 infile la_queries/lineitem.tbl as quantity into dataset_1gb;
-load bitmap column 9 infile la_queries/lineitem.tbl as returnflag into dataset_1gb;
-load bitmap column 10 infile la_queries/lineitem.tbl as linestatus into dataset_1gb;
-load matrix column 11 infile la_queries/lineitem.tbl as shipdate into dataset_1gb;
+load matrix column 5 infile ../../la_queries/lineitem.tbl as quantity into dataset_1gb;
+load bitmap column 9 infile ../../la_queries/lineitem.tbl as returnflag into dataset_1gb;
+load bitmap column 10 infile ../../la_queries/lineitem.tbl as linestatus into dataset_1gb;
+load matrix column 11 infile ../../la_queries/lineitem.tbl as shipdate into dataset_1gb;
 END
 

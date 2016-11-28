@@ -1,5 +1,8 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories (${GLIB2_INCLUDE_DIRS})
+link_directories (${GLIB2_LIBRARY_DIRS})
+add_definitions (${GLIB2_CFLAGS_OTHER})
 
 file(GLOB HH_FILES *.hh)
 file(GLOB SRC_FILES *.cc)
@@ -16,7 +19,6 @@ flex_target(Scanner olap_scanner.ll ${CMAKE_CURRENT_BINARY_DIR}/olap_scanner.cc)
 add_flex_bison_dependency(Scanner Parser)
 
 SET_SOURCE_FILES_PROPERTIES(olap_parser.hh GENERATED)
-
 
 add_library(parser
   STATIC
