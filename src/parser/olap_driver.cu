@@ -9,8 +9,10 @@
 
 //GPU libs
 #include <thrust/device_vector.h>
+#include <thrust/sequence.h>
 #include <thrust/copy.h>
 #include <thrust/count.h>
+#include <thrust/fill.h>
 
 //GLIB
 #include "olap_driver.hh"
@@ -18,7 +20,8 @@
 #include "olap_scanner.hh"
 #include "olap_engine.hxx"
 
-struct is_newline_break{
+struct is_newline_break
+{
   __host__ __device__
     bool operator()(const char x){
       return x == '\n';
@@ -79,6 +82,16 @@ struct parse_functor
     }
 };
 
+struct quark_functor 
+{ 
+  const float a; 
+  quark_functor(float _a) : a(_a) {} 
+  __host__ __device__ 
+    float operator()(const float& x, const float& y) const { 
+      return a * x + y; 
+    } 
+};
+
 namespace OLAP{
   OLAP_Driver::~OLAP_Driver(){
     delete(scanner);
@@ -136,11 +149,17 @@ namespace OLAP{
     return;
   }
 
-  void OLAP_Driver::load_matrix_csc ( std::string filename, int col_number, int max_col_size ){
+  void OLAP_Driver::load_matrix_csc ( 
+      std::string filename, int col_number, int max_col_size, 
+      int* n_nnz, int* n_rows, int* n_cols,
+      float** __restrict__  A_csc_values,
+      int** __restrict__  A_row_ind,
+      int** __restrict__  A_col_ptr
+      ){
     std::cout << "loading column " << col_number << " from file " << filename << std::endl;
     std::clock_t start1 = std::clock();
     int fd;
-    fd = open ( filename.c_str(), O_RDONLY );
+    fd = open ( filename.c_str(), O_RDONLY | O_NONBLOCK );
     if ( fd == -1 ){
       perror("open");
     }
@@ -211,12 +230,44 @@ namespace OLAP{
         thrust::raw_pointer_cast(dev_newline_pos.data()), 
         thrust::raw_pointer_cast(dest_len.data())
         );
+
     thrust::for_each(begin, begin + line_count, ff);
+
+    thrust::device_vector<int> aux_csc_col_ptr (line_count+1);
+    thrust::host_vector<int> aux_csc_row_ind (line_count);
+    thrust::device_vector<float> aux_csc_values (line_count);
+
+    // initialize aux_csc_col_ptr to 0,1,2,3, (line_count+1) .... thrust::sequence(aux_csc_col_ptr.begin(), aux_csc_col_ptr.end());
+    thrust::sequence(aux_csc_col_ptr.begin(), aux_csc_col_ptr.end());
+
+    // fill aux_csc_values with ones
+    thrust::fill(aux_csc_values.begin(), aux_csc_values.end(), 1.0f);
+
     for (int pos = 0; pos < line_count ; pos ++  ){
-      std::string col ( &(mapped_file[dev_col_start1[pos]]), dev_col_size1[pos] );
-      int quark_field = engine->get_row_from_string( col ); 
-      //std::cout << dev_col_start1[pos] << " " << dev_col_size1[pos] << " : " << col<< " | " << quark_field <<  std::endl;
+      const std::string element ( &(mapped_file[dev_col_start1[pos]]), dev_col_size1[pos] );
+      const int row_of_element = engine->get_row_from_string( element ); 
+      aux_csc_row_ind[pos] = row_of_element;
+      std::cout << dev_col_start1[pos] << " " << dev_col_size1[pos] << " : " << element << " | " << row_of_element <<  std::endl;
     }
+
+    thrust::device_vector<int> dev_aux_csc_row_ind = aux_csc_row_ind;
+    float current_major_row  = thrust::reduce(dev_aux_csc_row_ind.begin(), dev_aux_csc_row_ind.end(), (int) 0, thrust::maximum<float>());
+    current_major_row++;
+    *n_rows = current_major_row; 
+    *n_cols = line_count;
+    *n_nnz = line_count; 
+
+    // extract raw pointer from the device vector of aux_csc_values.data
+    *A_csc_values = thrust::raw_pointer_cast(aux_csc_values.data());
+
+    // extract raw pointer from the device vector of aux_csc_col_ptr.data
+    // JA  points to column starts in A 
+    *A_col_ptr = thrust::raw_pointer_cast(aux_csc_col_ptr.data());
+
+    // extract raw pointer from the device vector of aux_csc_row_ind.data
+    // IA splits the array A into rows
+    *A_row_ind = thrust::raw_pointer_cast(aux_csc_row_ind.data());
+
   }
 
   std::ostream& OLAP_Driver::print( std::ostream &stream ){

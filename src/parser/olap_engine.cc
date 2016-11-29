@@ -15,6 +15,7 @@
 #include "olap_engine.hxx"
 
 int OLAP::OLAP_Engine::get_row_from_string(std::string field ){
+  // since quarks start by 1 and we want to start at line 0 and not 1 lets decrement
   return (((int) g_quark_from_string ( field.c_str() )) -1 );
 }
 

@@ -6,6 +6,8 @@
 #include <fstream>
 #include <cstddef>
 
+#define MEM_LINE_SIZE 32
+
 namespace OLAP{
   // Forward declarations of classes
   class OLAP_Parser;
@@ -28,7 +30,13 @@ namespace OLAP{
        */
       void parse( std::istream &iss );
 
-      void load_matrix_csc ( std::string  filename, int col_number, int max_col_size );
+      void load_matrix_csc ( 
+          std::string  filename, int col_number, int max_col_size,
+          int* n_nnz, int* n_rows, int* n_cols,
+          float** __restrict__ A_csc_values,
+          int** __restrict__ A_row_ind,
+          int** __restrict__ A_col_ptr
+          );
 
       std::ostream& print(std::ostream &stream);
     private:

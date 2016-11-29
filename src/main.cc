@@ -9,8 +9,6 @@
 
 int main( const int argc, const char **argv )
 {
-  int quark_field = (int) g_quark_from_string ("teste");
-  std::cout << "quark" << quark_field << std::endl;
   /** check for the right # of arguments **/
   if( argc == 2 )
   {

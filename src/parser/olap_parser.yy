@@ -9,7 +9,7 @@
 %{
 #include "olap_parser.hh"
 #include "olap_scanner.hh"
-  
+
 #undef yylex
 #define yylex scanner.yylex
 
@@ -85,14 +85,19 @@ Create_declaration : CREATE CUBE IDENTIFIER {
 
 Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
                  std::cout << "load  into " << $10 << std::endl;
-                 driver.load_matrix_csc( $6, $4, 100);
+                 int n_nnz, n_rows, n_cols;
+                 float *A_csc_values;
+                 int *A_row_ind, *A_col_ptr;
+                 driver.load_matrix_csc( $6, $4, 100, &n_nnz, &n_rows, &n_cols, &A_csc_values, &A_row_ind, &A_col_ptr );
+                 std::cout << "NNZ " << n_nnz << "|\tN_ROWS " << n_rows << "|\tN_COLS " << n_cols << std::endl;
+    
 } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
 }
                  ;
 
 Inline_declaration_type : VECTOR IDENTIFIER {
-}
+                        }
 | MATRIX IDENTIFIER {
 }
                     | BITMAP IDENTIFIER
@@ -124,5 +129,5 @@ expression : IDENTIFIER '*' IDENTIFIER
 void OLAP::OLAP_Parser::error( const location_type &l, const std::string &err_message )
 {
 std::cerr << "Error: " << err_message << " at " << l << "\n";
-}
+   }
 
