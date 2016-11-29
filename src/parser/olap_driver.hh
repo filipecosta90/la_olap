@@ -10,6 +10,7 @@ namespace OLAP{
   // Forward declarations of classes
   class OLAP_Parser;
   class OLAP_Scanner;
+  class OLAP_Engine;
   class OLAP_Driver{
     public:
       OLAP_Driver() = default;
@@ -36,11 +37,12 @@ namespace OLAP{
 
       OLAP::OLAP_Parser  *parser  = nullptr;
       OLAP::OLAP_Scanner *scanner = nullptr;
-
+      OLAP::OLAP_Engine *engine = nullptr;
       /// Allows Parser and Scanner to access private attributes
       //            /// of the Driver class
       friend class  OLAP_Parser;
       friend class  OLAP_Scanner;
+      friend class  OLAP_Engine;
 
       const std::string red   = "\033[1;31m";
       const std::string blue  = "\033[1;36m";

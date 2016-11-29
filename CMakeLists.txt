@@ -4,11 +4,12 @@ project (olap_engine)
 #Minimum version of CMake to build this project
 cmake_minimum_required (VERSION 2.8)
 
-INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 find_package(GLIB2 REQUIRED)
+
 include_directories(${GLIB2_INCLUDE_DIRS})
+link_directories (${GLIB2_LIBRARY_DIRS})
 
 #Compilation flags
 # first set "normal flags"
@@ -26,7 +27,7 @@ else()
   message(STATUS "The compiler ${CMAKE_CUDA_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-set(CUDA_HOST_COMPILER clang++) # shouldn't fail anymore
+##set(CUDA_HOST_COMPILER clang++) # shouldn't fail anymore
 
 #Defines subdirectory based on cuda support
 find_package(CUDA)

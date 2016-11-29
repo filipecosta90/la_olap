@@ -12,13 +12,11 @@
 #include <thrust/copy.h>
 #include <thrust/count.h>
 
-//GLIB 
-#include <glib.h>
-
-
+//GLIB
 #include "olap_driver.hh"
 #include "olap_parser.hh"
 #include "olap_scanner.hh"
+#include "olap_engine.hxx"
 
 struct is_newline_break{
   __host__ __device__
@@ -87,6 +85,8 @@ namespace OLAP{
     scanner = nullptr;
     delete(parser);
     parser = nullptr;
+    delete(engine);
+    engine=nullptr;
   }
 
   void OLAP_Driver::parse( const char * const filename ){
@@ -136,7 +136,7 @@ namespace OLAP{
     return;
   }
 
-  void OLAP_Driver::load_matrix_csc ( std::string  filename, int col_number, int max_col_size ){
+  void OLAP_Driver::load_matrix_csc ( std::string filename, int col_number, int max_col_size ){
     std::cout << "loading column " << col_number << " from file " << filename << std::endl;
     std::clock_t start1 = std::clock();
     int fd;
@@ -214,8 +214,8 @@ namespace OLAP{
     thrust::for_each(begin, begin + line_count, ff);
     for (int pos = 0; pos < line_count ; pos ++  ){
       std::string col ( &(mapped_file[dev_col_start1[pos]]), dev_col_size1[pos] );
-     int quark_field; 
-      //std::cout << dev_col_start1[pos] << " " << dev_col_size1[pos] << " : " << col<<  std::endl;
+      int quark_field = engine->get_row_from_string( col ); 
+      //std::cout << dev_col_start1[pos] << " " << dev_col_size1[pos] << " : " << col<< " | " << quark_field <<  std::endl;
     }
   }
 

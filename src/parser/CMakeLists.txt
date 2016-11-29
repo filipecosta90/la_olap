@@ -1,7 +1,6 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-
 file(GLOB HH_FILES *.hh)
 file(GLOB SRC_FILES *.cc)
 file(GLOB CUDA_SRC_FILES *.cu )
@@ -28,6 +27,6 @@ add_library(parser
 
 CUDA_ADD_LIBRARY(cudalib
   ${CUDA_HH_FILES}
-  ${CUDA_SRC_FILES}
+    ${CUDA_SRC_FILES}
   )
 
