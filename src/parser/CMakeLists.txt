@@ -30,6 +30,6 @@ add_library(parser
 
 CUDA_ADD_LIBRARY(cudalib
   ${CUDA_HH_FILES}
-  olap_driver.cu
+  tbl_parser.cu
   )
 

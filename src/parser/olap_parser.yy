@@ -11,6 +11,7 @@
 #include <glib.h>
 #include "olap_parser.hh"
 #include "olap_scanner.hh"
+#include "olap_engine.hxx"
 
 #undef yylex
 #define yylex scanner.yylex
@@ -24,6 +25,7 @@
 #  endif
 # endif
 
+OLAP::OLAP_Engine *db_engine = NULL;
 GHashTable *cubes_table = NULL; 
 %}
 
@@ -72,12 +74,9 @@ class OLAP_Engine;
 %%
 
 initial_expression : BGN 
-                        {    cubes_table = g_hash_table_new_full(
-                              g_str_hash, g_str_equal, //< This is an integer hash.
-                                    free, //< Call "free" on the key (made with "malloc").
-                                          free //< Call "free" on the value (made with "strdup").
-                                             );
-                        }
+                        {    
+                        db_engine = new OLAP::OLAP_Engine();
+                       }
                         body END
                    ;
 
@@ -93,26 +92,16 @@ elem : Create_declaration ';'
      ;
 
 Create_declaration : CREATE CUBE IDENTIFIER {
-                   GHashTable *cube = g_hash_table_new_full (g_str_hash,
-        g_str_equal, g_free, g_free);
-          g_hash_table_insert (cubes_table,
-                               (void*) $3.c_str() ,
-                                                    cube);
-std::cout << "created cube " << $3 << std::endl;
+  db_engine->create_cube($3);
+ std::cout << "created cube " << $3 << std::endl;
    }
                    ;
 
-Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
-                 
-                   GHashTable *cube = (GHashTable*) g_hash_table_lookup ( cubes_table,  (void*) $10.c_str() );
+Load_declaration : LOAD MATRIX COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {                 
+                 OLAP::OLAP_Cube *cube = db_engine->cube_lookup($10);
+                 cube->load_matrix_to_csc_from_tbl($6,$4,100);
                  std::cout << "load  into " << $10 << std::endl;
-                 int n_nnz, n_rows, n_cols;
-                 float *A_csc_values;
-                 int *A_row_ind, *A_col_ptr;
-                 driver.load_matrix_csc( $6, $4, 100, &n_nnz, &n_rows, &n_cols, &A_csc_values, &A_row_ind, &A_col_ptr );
-                 std::cout << "NNZ " << n_nnz << "|\tN_ROWS " << n_rows << "|\tN_COLS " << n_cols << std::endl;
-
-} 
+               } 
                  | LOAD BITMAP COLUMN INTEGER INFILE IDENTIFIER AS IDENTIFIER INTO IDENTIFIER {
 }
                  ;

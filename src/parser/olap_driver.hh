@@ -30,14 +30,6 @@ namespace OLAP{
        */
       void parse( std::istream &iss );
 
-      void load_matrix_csc ( 
-          std::string  filename, int col_number, int max_col_size,
-          int* n_nnz, int* n_rows, int* n_cols,
-          float** __restrict__ A_csc_values,
-          int** __restrict__ A_row_ind,
-          int** __restrict__ A_col_ptr
-          );
-
       std::ostream& print(std::ostream &stream);
     private:
 
