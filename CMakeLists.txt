@@ -2,7 +2,7 @@
 project (olap_engine)
 
 #Minimum version of CMake to build this project
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
@@ -35,9 +35,9 @@ if (CUDA_FOUND)
   message("CUDA found, using gpu code!")
   set(CUDA_SEPARABLE_COMPILATION ON)
   set(BUILD_SHARED_LIBS OFF)
-  set(CUDA_ATTACH_VS_BUILD_RULE_TO_CUDA_FILE ON)
+  set(CUDA_ATTACH_VS_BUILD_RULE_TO_CUDA_FILE OFF)
   set(CUDA_PROPAGATE_HOST_FLAGS OFF)
-  LIST(APPEND CUDA_NVCC_FLAGS --compiler-options -fno-strict-aliasing -lineinfo -use_fast_math -Xptxas -dlcm=cg)
+  LIST(APPEND CUDA_NVCC_FLAGS --compiler-options -fno-strict-aliasing -std=c++11  -lineinfo -use_fast_math -Xptxas -dlcm=cg)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
   add_subdirectory(src/)
 else()
