@@ -6,6 +6,7 @@ file(GLOB SRC_FILES *.cc)
 file(GLOB CUDA_SRC_FILES *.cu )
 file(GLOB CUDA_HH_FILES *.cuh )
 file(GLOB HXX_FILES *.hxx)
+file(GLOB CXX_FILES *.cxx)
 
 find_package(BISON)
 bison_target(Parser olap_parser.yy ${CMAKE_CURRENT_BINARY_DIR}/olap_parser.cc)
@@ -23,10 +24,12 @@ add_library(parser
   ${BISON_Parser_OUTPUTS}
   ${HH_FILES}
   ${SRC_FILES}
+  ${HXX_FILES}
+  ${CXX_FILES}
   )
 
 CUDA_ADD_LIBRARY(cudalib
   ${CUDA_HH_FILES}
-    ${CUDA_SRC_FILES}
+  olap_driver.cu
   )
 
