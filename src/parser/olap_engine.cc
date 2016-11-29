@@ -13,6 +13,7 @@
 #include <glib.h>
 
 #include "olap_engine.hxx"
+#include "olap_cube.hxx"
 
 int OLAP::OLAP_Engine::get_row_from_string(std::string field ){
   // since quarks start by 1 and we want to start at line 0 and not 1 lets decrement
